@@ -10,5 +10,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Herramienta> Herramientas { get; set; }
     public DbSet<Fabricante> Fabricantes { get; set; }
 
+    public DbSet<MetodosPago> MetodosPagos { get; set; }
+    public DbSet<Efectivo> Efectivos { get; set; }
+    public DbSet<TarjetaCredito> TarjetasCredito { get; set; }
+    public DbSet<Paypal> Paypals { get; set; }
 
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+    }
 }
