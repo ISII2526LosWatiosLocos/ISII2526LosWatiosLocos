@@ -21,6 +21,8 @@
         //ofertaitems
         //itemsreparacion
 
+        public Fabricante Fabricante { get; set; }
+
 
     }
 }
