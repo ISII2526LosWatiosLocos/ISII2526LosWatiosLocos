@@ -8,5 +8,7 @@
         [Required, StringLength(100)]
         public string Nombre { get; set; }
 
+        public List<Herramienta> Herramientas { get; set; }
+
     }
 }
