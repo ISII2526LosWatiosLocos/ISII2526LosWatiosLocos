@@ -21,6 +21,8 @@
         //ofertaitems
         //itemsreparacion
 
+        public List<OfertaItem> OfertaItems { get; set; }
+        public Fabricante Fabricante { get; set; }
 
     }
 }
