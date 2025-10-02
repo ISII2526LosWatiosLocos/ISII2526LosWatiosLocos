@@ -21,6 +21,6 @@
         //ofertaitems
         //itemsreparacion
 
-
+        public List<OfertaItem> OfertaItems { get; set; }
     }
 }

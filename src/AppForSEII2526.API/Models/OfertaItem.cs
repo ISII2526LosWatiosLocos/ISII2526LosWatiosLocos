@@ -11,5 +11,8 @@
         public int Porcentaje { get; set; }
 
         public float PrecioFinal { get; set; }
+
+        //Relaciones
+        public Herramienta Herramienta { get; set; }
     }
 }
