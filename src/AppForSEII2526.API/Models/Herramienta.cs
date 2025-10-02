@@ -17,11 +17,12 @@
 
         //Faltan las siguientes clases:
         //alquilar item
-        //compraitems
-        //ofertaitems
         //itemsreparacion
 
+        public List<CompraItem> CompraItems { get; set; }
+
         public List<OfertaItem> OfertaItems { get; set; }
+
         public Fabricante Fabricante { get; set; }
 
     }
