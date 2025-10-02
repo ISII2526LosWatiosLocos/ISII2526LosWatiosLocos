@@ -18,6 +18,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<TarjetaCredito> TarjetasCredito { get; set; }
     public DbSet<Paypal> Paypals { get; set; }
 
+    public DbSet<DirigidaOferta> DirigidasOfertas { get; set; }
+    public DbSet<Cliente> Clientes { get; set; }
+    public DbSet<Socio> Socios { get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
