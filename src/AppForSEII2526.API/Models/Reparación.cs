@@ -6,10 +6,6 @@ namespace AppForSEII2526.API.Models
         [Key]
         public int Id { get; set; }
 
-        public class Reparacion
-        {
-            [Key]
-            public int Id { get; set; }
 
             [Required]
             [DataType(System.ComponentModel.DataAnnotations.DataType.Text), Display(Name = "Apellido Cliente")]
@@ -37,6 +33,6 @@ namespace AppForSEII2526.API.Models
             [DataType(System.ComponentModel.DataAnnotations.DataType.Currency), Display(Name = "Precio Total")]
             public float PrecioTotal { get; set; }
 
-        }
+        
     }
     }
