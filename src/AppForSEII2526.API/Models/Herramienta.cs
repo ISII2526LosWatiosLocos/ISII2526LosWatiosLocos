@@ -19,9 +19,10 @@
         //alquilar item
         //compraitems
         //ofertaitems
-        //itemsreparacion
+       
 
         public List<OfertaItem> OfertaItems { get; set; }
+        public List<ReparaciónItem> ReparaciónItems { get; set; }
         public Fabricante Fabricante { get; set; }
 
     }
