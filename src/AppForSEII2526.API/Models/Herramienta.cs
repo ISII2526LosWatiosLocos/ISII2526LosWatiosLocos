@@ -18,11 +18,15 @@
 
         //Faltan las siguientes clases:
         //alquilar item
-        //itemsreparacion
+        
+       
+
+
 
         public List<CompraItem> CompraItems { get; set; }
 
         public List<OfertaItem> OfertaItems { get; set; }
+        public List<ReparaciónItem> ReparaciónItems { get; set; }
 
         public Fabricante Fabricante { get; set; }
 
