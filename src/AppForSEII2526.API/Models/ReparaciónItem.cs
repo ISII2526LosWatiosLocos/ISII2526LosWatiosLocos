@@ -16,5 +16,12 @@
 
         [Required]
         public float Precio { get; set; }
+
+        //Relaciones
+        public Herramienta Herramienta
+        {
+            get; set;
+
+        }
     }
 }
