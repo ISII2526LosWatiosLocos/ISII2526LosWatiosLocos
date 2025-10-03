@@ -8,7 +8,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<ReparaciónItem> ReparaciónItems { get; set; } 
 
     public DbSet<Reparación> reparaciones { get; set; }
-    public DbSet<ReparaciónItem> ReparaciónItems { get; set; }
+   
     
 
     public DbSet<Compra> Compras { get; set; }
