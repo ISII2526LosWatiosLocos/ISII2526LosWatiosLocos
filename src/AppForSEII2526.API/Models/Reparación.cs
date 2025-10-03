@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 namespace AppForSEII2526.API.Models
 {
     public class Reparación
@@ -35,4 +35,4 @@ namespace AppForSEII2526.API.Models
 
         
     }
-    }
+}

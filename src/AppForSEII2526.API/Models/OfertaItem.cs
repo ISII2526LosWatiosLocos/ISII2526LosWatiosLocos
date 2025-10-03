@@ -10,6 +10,7 @@
 
         public int Porcentaje { get; set; }
 
+        [Required]
         public float PrecioFinal { get; set; }
 
         //Relaciones
