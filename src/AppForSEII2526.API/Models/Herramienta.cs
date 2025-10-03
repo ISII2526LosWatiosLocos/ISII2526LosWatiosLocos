@@ -8,7 +8,7 @@
         [Required, StringLength(100, ErrorMessage = "No puede contener más de 100 caracteres")]
         public string Nombre { get; set; }
 
-        [StringLength(50, ErrorMessage = "No puede contener más de 50 caracteres")]
+        [Required, StringLength(50, ErrorMessage = "No puede contener más de 50 caracteres")]
         public string Material { get; set; }
 
         [Required]
