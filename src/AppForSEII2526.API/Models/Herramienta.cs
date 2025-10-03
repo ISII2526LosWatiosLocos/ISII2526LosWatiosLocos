@@ -11,6 +11,7 @@
         [StringLength(50, ErrorMessage = "No puede contener más de 50 caracteres")]
         public string Material { get; set; }
 
+        [Required]
         public float Precio { get; set; }
 
         public int TiempoReparacion { get; set; }
