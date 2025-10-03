@@ -13,5 +13,9 @@
         public int Descripción { get; set; }
 
         public float Precio { get; set; }
+
+        public Herramienta Herramienta { get; set; }
+
+        public Compra Compra { get; set; }
     }
 }
