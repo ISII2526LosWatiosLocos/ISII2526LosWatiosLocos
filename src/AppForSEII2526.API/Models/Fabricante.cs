@@ -5,7 +5,7 @@
         [Key]
         public int Id { get; set; }
 
-        [Required, StringLength(100)]
+        [Required, StringLength(100, ErrorMessage = "Numero de caracteres excedido de 100")]
         public string Nombre { get; set; }
 
         public List<Herramienta> Herramientas { get; set; }
