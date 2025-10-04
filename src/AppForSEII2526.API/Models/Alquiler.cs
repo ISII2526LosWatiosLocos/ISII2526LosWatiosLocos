@@ -56,5 +56,7 @@ namespace AppForSEII2526.API.Models
 
         // Relaciones
         public List<AlquilarItem> AlquilarItems { get; set; }
+        public MetodosPago metodosPago { get; set; }
+
     }
 }
