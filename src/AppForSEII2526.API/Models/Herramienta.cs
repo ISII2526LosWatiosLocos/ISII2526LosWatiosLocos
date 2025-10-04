@@ -24,10 +24,9 @@
 
 
         public List<CompraItem> CompraItems { get; set; }
-
+        public List<AlquilarItem> AlquilarItems { get; set; }
         public List<OfertaItem> OfertaItems { get; set; }
         public List<ReparaciónItem> ReparaciónItems { get; set; }
-
         public Fabricante Fabricante { get; set; }
 
     }
