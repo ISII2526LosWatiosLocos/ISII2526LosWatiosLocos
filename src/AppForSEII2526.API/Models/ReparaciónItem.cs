@@ -8,8 +8,8 @@
         [Required]
         public int cantidad { get; set; }
 
-        [Required]
-        public String Descripción { get; set; }
+        // descripciión es el único atributo no obligatorio de ets a clase
+        public String? Descripción { get; set; }
 
         [Required]
         public int IdHerramienta { get; set; }
