@@ -18,6 +18,7 @@
         public float Precio { get; set; }
 
         //Relaciones
+        public Oferta Oferta { get; set; }
         public Herramienta Herramienta
         {
             get; set;
