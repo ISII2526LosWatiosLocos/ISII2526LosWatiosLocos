@@ -18,6 +18,9 @@
         public float Precio { get; set; }
 
         //Relaciones
+
+        public Reparación Reparación { get; set; }
+
         public Herramienta Herramienta
         {
             get; set;
