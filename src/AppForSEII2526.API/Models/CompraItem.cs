@@ -13,9 +13,7 @@
         public int Descripción { get; set; }
         [Required]
         public float Precio { get; set; }
-        [Required]
         public Herramienta Herramienta { get; set; }
-        [Required]
         public Compra Compra { get; set; }
     }
 }
