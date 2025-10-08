@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppForSEII2526.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251006141256_CreateIdentitySchema")]
+    [Migration("20251008132205_CreateIdentitySchema")]
     partial class CreateIdentitySchema
     {
         /// <inheritdoc />
@@ -155,6 +155,9 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NumeroTelefono")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -371,19 +374,10 @@ namespace AppForSEII2526.API.Migrations
 
             modelBuilder.Entity("AppForSEII2526.API.Models.OfertaItem", b =>
                 {
-                    b.Property<int>("IdOferta")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("OfertaId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdOferta"));
 
                     b.Property<int>("HerramientaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdHerramienta")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OfertaId")
                         .HasColumnType("int");
 
                     b.Property<int>("Porcentaje")
@@ -392,11 +386,9 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<float>("PrecioFinal")
                         .HasColumnType("real");
 
-                    b.HasKey("IdOferta");
+                    b.HasKey("OfertaId", "HerramientaId");
 
                     b.HasIndex("HerramientaId");
-
-                    b.HasIndex("OfertaId");
 
                     b.ToTable("OfertaItems");
                 });

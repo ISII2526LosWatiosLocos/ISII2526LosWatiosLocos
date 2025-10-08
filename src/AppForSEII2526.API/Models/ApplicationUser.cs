@@ -12,4 +12,7 @@ public class ApplicationUser : IdentityUser {
 
     [StringLength(20, ErrorMessage = "Numero de caracteres excedido. No se puede más de 20 caracteres")]
     public string Correo { get; set; }
+
+    [DataType(System.ComponentModel.DataAnnotations.DataType.PhoneNumber), Display(Name = "Número de Teléfono")]
+    public string? NumeroTelefono { get; set; }
 }

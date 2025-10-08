@@ -33,6 +33,7 @@ namespace AppForSEII2526.API.Migrations
                     Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Apellidos = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Correo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    NumeroTelefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -373,17 +374,14 @@ namespace AppForSEII2526.API.Migrations
                 name: "OfertaItems",
                 columns: table => new
                 {
-                    IdOferta = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IdHerramienta = table.Column<int>(type: "int", nullable: false),
-                    Porcentaje = table.Column<int>(type: "int", nullable: false),
-                    PrecioFinal = table.Column<float>(type: "real", nullable: false),
                     OfertaId = table.Column<int>(type: "int", nullable: false),
-                    HerramientaId = table.Column<int>(type: "int", nullable: false)
+                    HerramientaId = table.Column<int>(type: "int", nullable: false),
+                    Porcentaje = table.Column<int>(type: "int", nullable: false),
+                    PrecioFinal = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OfertaItems", x => x.IdOferta);
+                    table.PrimaryKey("PK_OfertaItems", x => new { x.OfertaId, x.HerramientaId });
                     table.ForeignKey(
                         name: "FK_OfertaItems_Herramientas_HerramientaId",
                         column: x => x.HerramientaId,
@@ -506,11 +504,6 @@ namespace AppForSEII2526.API.Migrations
                 name: "IX_OfertaItems_HerramientaId",
                 table: "OfertaItems",
                 column: "HerramientaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OfertaItems_OfertaId",
-                table: "OfertaItems",
-                column: "OfertaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ofertas_metodosPagoId",
