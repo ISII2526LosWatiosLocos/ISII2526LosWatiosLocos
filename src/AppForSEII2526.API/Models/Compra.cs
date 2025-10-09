@@ -15,6 +15,6 @@
         public float PrecioTotal { get; set; }
 
         public List<CompraItem> CompraItems { get; set; }
-        public MetodosPago MetodoPago { get; set; }
+        public MetodosPago MétodoPago { get; set; }
     }
 }
