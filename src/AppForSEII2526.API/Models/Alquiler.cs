@@ -6,7 +6,7 @@ namespace AppForSEII2526.API.Models
     public class Alquiler
     {
         [Key]
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "No puede contener más de 100 caracteres")]

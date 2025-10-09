@@ -1,12 +1,11 @@
 ﻿namespace AppForSEII2526.API.Models
 {
+    [PrimaryKey(nameof(AlquilerId), nameof(HerramientaId))]
     public class AlquilarItem
     {
-        [Key]
-        public int IdAlquiler { get; set; }
+        public int AlquilerId { get; set; }
 
-        [Required]
-        public int IdHerramienta { get; set; }
+        public int HerramientaId { get; set; }
         [Required]
         public float Precio { get; set; }
         [Required]
