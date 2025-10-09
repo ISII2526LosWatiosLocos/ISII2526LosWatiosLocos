@@ -241,20 +241,16 @@ namespace AppForSEII2526.API.Migrations
                 name: "Compras",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    CompraId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NombreCliente = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApellidoCliente = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DirecciónEnvío = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FechaCompra = table.Column<DateOnly>(type: "date", nullable: false),
                     PrecioTotal = table.Column<float>(type: "real", nullable: false),
-                    MetodoPagoId = table.Column<int>(type: "int", nullable: false),
-                    Teléfono = table.Column<int>(type: "int", nullable: true),
-                    CorreoElectrónico = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    MetodoPagoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Compras", x => x.Id);
+                    table.PrimaryKey("PK_Compras", x => x.CompraId);
                     table.ForeignKey(
                         name: "FK_Compras_MetodosPagos_MetodoPagoId",
                         column: x => x.MetodoPagoId,
@@ -344,23 +340,21 @@ namespace AppForSEII2526.API.Migrations
                 name: "CompraItems",
                 columns: table => new
                 {
-                    IdCompra = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IdHerramienta = table.Column<int>(type: "int", nullable: false),
+                    CompraItemId = table.Column<int>(type: "int", nullable: false),
+                    HerramientaId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
                     Descripción = table.Column<int>(type: "int", nullable: false),
                     Precio = table.Column<float>(type: "real", nullable: false),
-                    HerramientaId = table.Column<int>(type: "int", nullable: false),
                     CompraId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CompraItems", x => x.IdCompra);
+                    table.PrimaryKey("PK_CompraItems", x => new { x.CompraItemId, x.HerramientaId });
                     table.ForeignKey(
                         name: "FK_CompraItems_Compras_CompraId",
                         column: x => x.CompraId,
                         principalTable: "Compras",
-                        principalColumn: "Id",
+                        principalColumn: "CompraId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CompraItems_Herramientas_HerramientaId",
