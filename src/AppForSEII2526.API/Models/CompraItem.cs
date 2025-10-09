@@ -1,10 +1,10 @@
 ﻿namespace AppForSEII2526.API.Models
 {
-    [PrimaryKey(nameof(CompraItemId), nameof(HerramientaId))]
+    [PrimaryKey(nameof(CompraId), nameof(HerramientaId))]
     public class CompraItem
     {
 
-        public int CompraItemId { get; set; }
+        public int CompraId { get; set; }
         public int HerramientaId { get; set; }
 
         [Required]
