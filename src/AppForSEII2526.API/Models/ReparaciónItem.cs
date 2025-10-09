@@ -1,18 +1,18 @@
 ﻿namespace AppForSEII2526.API.Models
 {
+    [PrimaryKey(nameof(ReparaciónId), nameof(HerramientaId))]
     public class ReparaciónItem
-    { 
-        [Key]
-        public int IdReparación { get; set; }
-
+    {
+      
+        public int ReparaciónId { get; set; }
+        public int HerramientaId { get; set; }
+  
         [Required]
         public int cantidad { get; set; }
 
-        // descripciión es el único atributo no obligatorio de ets a clase
+        // descripción es el único atributo no obligatorio de ets a clase
         public String? Descripción { get; set; }
 
-        [Required]
-        public int IdHerramienta { get; set; }
 
         [Required]
         public float Precio { get; set; }
