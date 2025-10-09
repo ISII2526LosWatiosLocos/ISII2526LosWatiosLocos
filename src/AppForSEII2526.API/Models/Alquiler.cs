@@ -6,17 +6,7 @@ namespace AppForSEII2526.API.Models
     public class Alquiler
     {
         [Key]
-        public int ID { get; set; }
-
-        [Required]
-        [StringLength(100, ErrorMessage = "No puede contener más de 100 caracteres")]
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Text), Display(Name = "Nombre Cliente")]
-        public string NombreCliente { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(100, ErrorMessage = "No puede contener más de 100 caracteres")]
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Text), Display(Name = "Apellido Cliente")]
-        public string ApellidoCliente { get; set; } = string.Empty;
+        public int Id { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "No puede contener más de 100 caracteres")]
@@ -48,15 +38,12 @@ namespace AppForSEII2526.API.Models
 
         // Campos opcionales
 
-        [DataType(System.ComponentModel.DataAnnotations.DataType.PhoneNumber), Display(Name = "Número de Teléfono")]
-        public string ?NumeroTelefono { get; set; }
-
         [DataType(System.ComponentModel.DataAnnotations.DataType.EmailAddress), Display(Name = "Correo Electrónico")]
         public string ?Correo { get; set; }
 
         // Relaciones
         public List<AlquilarItem> AlquilarItems { get; set; }
-        public MetodosPago metodosPago { get; set; }
+        public MetodosPago MétodoPago { get; set; }
 
     }
 }
