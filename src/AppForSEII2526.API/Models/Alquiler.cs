@@ -10,16 +10,6 @@ namespace AppForSEII2526.API.Models
 
         [Required]
         [StringLength(100, ErrorMessage = "No puede contener más de 100 caracteres")]
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Text), Display(Name = "Nombre Cliente")]
-        public string NombreCliente { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(100, ErrorMessage = "No puede contener más de 100 caracteres")]
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Text), Display(Name = "Apellido Cliente")]
-        public string ApellidoCliente { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(100, ErrorMessage = "No puede contener más de 100 caracteres")]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Text), Display(Name = "Dirección de Envío")]
         public string DireccionEnvio { get; set; } = string.Empty;
 
@@ -47,9 +37,6 @@ namespace AppForSEII2526.API.Models
         public float PrecioTotal { get; set; }
 
         // Campos opcionales
-
-        [DataType(System.ComponentModel.DataAnnotations.DataType.PhoneNumber), Display(Name = "Número de Teléfono")]
-        public string ?NumeroTelefono { get; set; }
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.EmailAddress), Display(Name = "Correo Electrónico")]
         public string ?Correo { get; set; }
