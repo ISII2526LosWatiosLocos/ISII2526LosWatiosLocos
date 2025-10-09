@@ -3,7 +3,7 @@
     [PrimaryKey(nameof(ReparaciónId), nameof(HerramientaId))]
     public class ReparaciónItem
     {
-      
+
         public int ReparaciónId { get; set; }
         public int HerramientaId { get; set; }
   

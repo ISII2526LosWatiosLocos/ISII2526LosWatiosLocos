@@ -7,7 +7,6 @@ namespace AppForSEII2526.API.Models
         public int Id { get; set; }
 
 
-
             [Required]
             [DataType(System.ComponentModel.DataAnnotations.DataType.Date), Display(Name = "Fecha Entrega")]
             [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
