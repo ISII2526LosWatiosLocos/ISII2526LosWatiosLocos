@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppForSEII2526.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251009051317_CreateIdentitySchema")]
+    [Migration("20251009054416_CreateIdentitySchema")]
     partial class CreateIdentitySchema
     {
         /// <inheritdoc />
@@ -193,11 +193,11 @@ namespace AppForSEII2526.API.Migrations
 
             modelBuilder.Entity("AppForSEII2526.API.Models.Compra", b =>
                 {
-                    b.Property<int>("CompraId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompraId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DirecciónEnvío")
                         .IsRequired()
@@ -212,7 +212,7 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<float>("PrecioTotal")
                         .HasColumnType("real");
 
-                    b.HasKey("CompraId");
+                    b.HasKey("Id");
 
                     b.HasIndex("MetodoPagoId");
 
@@ -221,7 +221,7 @@ namespace AppForSEII2526.API.Migrations
 
             modelBuilder.Entity("AppForSEII2526.API.Models.CompraItem", b =>
                 {
-                    b.Property<int>("CompraItemId")
+                    b.Property<int>("CompraId")
                         .HasColumnType("int");
 
                     b.Property<int>("HerramientaId")
@@ -230,18 +230,13 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
-                    b.Property<int>("CompraId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Descripción")
                         .HasColumnType("int");
 
                     b.Property<float>("Precio")
                         .HasColumnType("real");
 
-                    b.HasKey("CompraItemId", "HerramientaId");
-
-                    b.HasIndex("CompraId");
+                    b.HasKey("CompraId", "HerramientaId");
 
                     b.HasIndex("HerramientaId");
 

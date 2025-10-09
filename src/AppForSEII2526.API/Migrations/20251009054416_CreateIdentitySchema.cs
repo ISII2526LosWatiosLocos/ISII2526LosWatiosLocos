@@ -241,7 +241,7 @@ namespace AppForSEII2526.API.Migrations
                 name: "Compras",
                 columns: table => new
                 {
-                    CompraId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DirecciónEnvío = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FechaCompra = table.Column<DateOnly>(type: "date", nullable: false),
@@ -250,7 +250,7 @@ namespace AppForSEII2526.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Compras", x => x.CompraId);
+                    table.PrimaryKey("PK_Compras", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Compras_MetodosPagos_MetodoPagoId",
                         column: x => x.MetodoPagoId,
@@ -340,21 +340,20 @@ namespace AppForSEII2526.API.Migrations
                 name: "CompraItems",
                 columns: table => new
                 {
-                    CompraItemId = table.Column<int>(type: "int", nullable: false),
+                    CompraId = table.Column<int>(type: "int", nullable: false),
                     HerramientaId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
                     Descripción = table.Column<int>(type: "int", nullable: false),
-                    Precio = table.Column<float>(type: "real", nullable: false),
-                    CompraId = table.Column<int>(type: "int", nullable: false)
+                    Precio = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CompraItems", x => new { x.CompraItemId, x.HerramientaId });
+                    table.PrimaryKey("PK_CompraItems", x => new { x.CompraId, x.HerramientaId });
                     table.ForeignKey(
                         name: "FK_CompraItems_Compras_CompraId",
                         column: x => x.CompraId,
                         principalTable: "Compras",
-                        principalColumn: "CompraId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CompraItems_Herramientas_HerramientaId",
@@ -473,11 +472,6 @@ namespace AppForSEII2526.API.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CompraItems_CompraId",
-                table: "CompraItems",
-                column: "CompraId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CompraItems_HerramientaId",
