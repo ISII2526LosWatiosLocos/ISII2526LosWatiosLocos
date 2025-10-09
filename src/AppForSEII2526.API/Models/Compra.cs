@@ -1,10 +1,10 @@
 ﻿namespace AppForSEII2526.API.Models
 {
-    [PrimaryKey(nameof(CompraId))]
+
     public class Compra
     {
-
-        public int CompraId { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         [Required]
         public string DirecciónEnvío { get; set; }
