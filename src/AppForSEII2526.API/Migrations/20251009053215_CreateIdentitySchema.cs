@@ -58,13 +58,13 @@ namespace AppForSEII2526.API.Migrations
                 name: "Fabricantes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    FabricanteId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Fabricantes", x => x.Id);
+                    table.PrimaryKey("PK_Fabricantes", x => x.FabricanteId);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,7 +190,7 @@ namespace AppForSEII2526.API.Migrations
                 name: "Herramientas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    HerramientaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Material = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -200,12 +200,12 @@ namespace AppForSEII2526.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Herramientas", x => x.Id);
+                    table.PrimaryKey("PK_Herramientas", x => x.HerramientaId);
                     table.ForeignKey(
                         name: "FK_Herramientas_Fabricantes_FabricanteId",
                         column: x => x.FabricanteId,
                         principalTable: "Fabricantes",
-                        principalColumn: "Id",
+                        principalColumn: "FabricanteId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -332,7 +332,7 @@ namespace AppForSEII2526.API.Migrations
                         name: "FK_AlquilarItems_Herramientas_HerramientaId",
                         column: x => x.HerramientaId,
                         principalTable: "Herramientas",
-                        principalColumn: "Id",
+                        principalColumn: "HerramientaId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -360,7 +360,7 @@ namespace AppForSEII2526.API.Migrations
                         name: "FK_CompraItems_Herramientas_HerramientaId",
                         column: x => x.HerramientaId,
                         principalTable: "Herramientas",
-                        principalColumn: "Id",
+                        principalColumn: "HerramientaId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -380,7 +380,7 @@ namespace AppForSEII2526.API.Migrations
                         name: "FK_OfertaItems_Herramientas_HerramientaId",
                         column: x => x.HerramientaId,
                         principalTable: "Herramientas",
-                        principalColumn: "Id",
+                        principalColumn: "HerramientaId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OfertaItems_Ofertas_OfertaId",
@@ -410,7 +410,7 @@ namespace AppForSEII2526.API.Migrations
                         name: "FK_ReparaciónItems_Herramientas_HerramientaId",
                         column: x => x.HerramientaId,
                         principalTable: "Herramientas",
-                        principalColumn: "Id",
+                        principalColumn: "HerramientaId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ReparaciónItems_Reparaciones_ReparaciónId",

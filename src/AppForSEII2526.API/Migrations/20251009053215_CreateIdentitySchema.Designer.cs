@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppForSEII2526.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251009051317_CreateIdentitySchema")]
+    [Migration("20251009053215_CreateIdentitySchema")]
     partial class CreateIdentitySchema
     {
         /// <inheritdoc />
@@ -250,29 +250,29 @@ namespace AppForSEII2526.API.Migrations
 
             modelBuilder.Entity("AppForSEII2526.API.Models.Fabricante", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("FabricanteId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FabricanteId"));
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("Id");
+                    b.HasKey("FabricanteId");
 
                     b.ToTable("Fabricantes");
                 });
 
             modelBuilder.Entity("AppForSEII2526.API.Models.Herramienta", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("HerramientaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HerramientaId"));
 
                     b.Property<int>("FabricanteId")
                         .HasColumnType("int");
@@ -293,7 +293,7 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<int>("TiempoReparacion")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("HerramientaId");
 
                     b.HasIndex("FabricanteId");
 
