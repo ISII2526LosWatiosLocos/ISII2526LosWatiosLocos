@@ -2,19 +2,23 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="AppForSEII2526.API.Models.Compra">
     <Position X="5.75" Y="13" Width="1.5" />
-    <AssociationLine Name="MetodoPago" Type="AppForSEII2526.API.Models.MetodosPago" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="Usuario" Type="AppForSEII2526.API.Models.ApplicationUser" FixedFromPoint="true">
       <Path>
-        <Point X="6.375" Y="15.45" />
-        <Point X="6.375" Y="19.812" />
-        <Point X="9.25" Y="19.812" />
+        <Point X="7.25" Y="13.688" />
+        <Point X="9.122" Y="13.688" Type="JumpStart" />
+        <Point X="9.288" Y="13.688" Type="JumpEnd" />
+        <Point X="9.707" Y="13.688" Type="JumpStart" />
+        <Point X="9.873" Y="13.688" Type="JumpEnd" />
+        <Point X="11" Y="13.688" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACCAAAAAAAAAAAABQAAAACCAAAAAMAAAAAIAAAEAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAAAAABQAAAACCAAAAAAAIAAEAAAAAAA=</HashCode>
       <FileName>Models\Compra.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="MetodoPago" />
+      <Property Name="MétodoPago" />
+      <Property Name="Usuario" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="CompraItems" />
@@ -24,13 +28,13 @@
     <Position X="5.75" Y="8.5" Width="1.5" />
     <AssociationLine Name="Herramienta" Type="AppForSEII2526.API.Models.Herramienta" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="5.75" Y="9.125" />
-        <Point X="2.812" Y="9.125" />
-        <Point X="2.812" Y="6.623" />
+        <Point X="6.188" Y="8.5" />
+        <Point X="6.188" Y="5.312" />
+        <Point X="11" Y="5.312" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAEABEAAAAAAAAAAAAAAAAQABAAAAAAIAAEAAAAAAA=</HashCode>
+      <HashCode>AAAgABEAAAAAAACAAAAAAAAQAAAAAAAAIAAEAAAAAAA=</HashCode>
       <FileName>Models\CompraItem.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -39,34 +43,39 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.Herramienta">
-    <Position X="2.75" Y="4.75" Width="1.5" />
+    <Position X="11" Y="4.75" Width="1.5" />
     <AssociationLine Name="CompraItems" Type="AppForSEII2526.API.Models.CompraItem" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="3.062" Y="6.623" />
-        <Point X="3.062" Y="8.875" />
-        <Point X="5.75" Y="8.875" />
+        <Point X="11" Y="5" />
+        <Point X="5.875" Y="5" />
+        <Point X="5.875" Y="8.5" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="AlquilarItems" Type="AppForSEII2526.API.Models.AlquilarItem" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="4.25" Y="5.312" />
-        <Point X="15.5" Y="5.312" />
-        <Point X="15.5" Y="8.5" />
+        <Point X="12.5" Y="5.312" />
+        <Point X="17" Y="5.312" />
+        <Point X="17" Y="8.5" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="OfertaItems" Type="AppForSEII2526.API.Models.OfertaItem" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="4.25" Y="6.25" />
-        <Point X="12.562" Y="6.25" />
-        <Point X="12.562" Y="8.5" />
+        <Point X="12.5" Y="6.25" />
+        <Point X="14.062" Y="6.25" />
+        <Point X="14.062" Y="8.5" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="ReparaciónItems" Type="AppForSEII2526.API.Models.ReparaciónItem" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="3.875" Y="6.623" />
-        <Point X="3.875" Y="7.637" />
-        <Point X="9.5" Y="7.637" />
+        <Point X="11" Y="6" />
+        <Point X="9.5" Y="6" />
         <Point X="9.5" Y="8.5" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Fabricante" Type="AppForSEII2526.API.Models.Fabricante" FixedToPoint="true">
+      <Path>
+        <Point X="11.438" Y="4.75" />
+        <Point X="11.438" Y="2.796" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -84,16 +93,16 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.AlquilarItem">
-    <Position X="14.75" Y="8.5" Width="1.5" />
+    <Position X="16.25" Y="8.5" Width="1.5" />
     <AssociationLine Name="Herramienta" Type="AppForSEII2526.API.Models.Herramienta" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="15.938" Y="8.5" />
-        <Point X="15.938" Y="5" />
-        <Point X="4.25" Y="5" />
+        <Point X="17.438" Y="8.5" />
+        <Point X="17.438" Y="5" />
+        <Point X="12.5" Y="5" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAEABAAAAAAAAAAAAAAQABIAAAAAIAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAEEBAAAAACAAAAAAAAQAAAAAAAAIAAAAAAAAAA=</HashCode>
       <FileName>Models\AlquilarItem.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -102,7 +111,13 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.Fabricante">
-    <Position X="2.75" Y="1.5" Width="1.5" />
+    <Position X="11" Y="1.5" Width="1.5" />
+    <AssociationLine Name="Herramientas" Type="AppForSEII2526.API.Models.Herramienta" FixedFromPoint="true">
+      <Path>
+        <Point X="12.062" Y="2.796" />
+        <Point X="12.062" Y="4.75" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAgAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
       <FileName>Models\Fabricante.cs</FileName>
@@ -112,27 +127,38 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.MetodosPago">
-    <Position X="9.25" Y="19.25" Width="1.5" />
+    <Position X="11" Y="23.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\MetodosPago.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="AppForSEII2526.API.Models.Alquiler">
-    <Position X="14.75" Y="13" Width="1.5" />
-    <AssociationLine Name="metodosPago" Type="AppForSEII2526.API.Models.MetodosPago" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+    <Position X="16.25" Y="13" Width="1.5" />
+    <AssociationLine Name="MétodoPago" Type="AppForSEII2526.API.Models.MetodosPago" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="15.5" Y="16.026" />
-        <Point X="15.5" Y="19.812" />
-        <Point X="10.75" Y="19.812" />
+        <Point X="17.281" Y="15.45" />
+        <Point X="17.281" Y="24.375" />
+        <Point X="12.5" Y="24.375" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Usuario" Type="AppForSEII2526.API.Models.ApplicationUser" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="16.25" Y="13.688" />
+        <Point X="14.377" Y="13.688" Type="JumpStart" />
+        <Point X="14.211" Y="13.688" Type="JumpEnd" />
+        <Point X="13.796" Y="13.688" Type="JumpStart" />
+        <Point X="13.63" Y="13.688" Type="JumpEnd" />
+        <Point X="12.5" Y="13.688" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAASQAEAAAAgAAAABAAAEAAAoAAAAAAQACAAAAgEAA=</HashCode>
+      <HashCode>AAACQQAEAAAAAAAAABAAAEAAAoAAAAAAIAAEAAAgAAA=</HashCode>
       <FileName>Models\Alquiler.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="metodosPago" />
+      <Property Name="MétodoPago" />
+      <Property Name="Usuario" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="AlquilarItems" />
@@ -143,13 +169,12 @@
     <AssociationLine Name="Herramienta" Type="AppForSEII2526.API.Models.Herramienta" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="9.938" Y="8.5" />
-        <Point X="9.938" Y="7.386" />
-        <Point X="4.125" Y="7.386" />
-        <Point X="4.125" Y="6.623" />
+        <Point X="9.938" Y="6.25" />
+        <Point X="11" Y="6.25" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AQAAABAAAAAAAAAAAAAAAAAQABACAAAAIAAAAAAAAEA=</HashCode>
+      <HashCode>AQAgABAAAAAAAACAAAAAAAAQAAAAAAAAIAAAAAAAAEA=</HashCode>
       <FileName>Models\ReparaciónItem.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -158,58 +183,80 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.Reparación">
-    <Position X="8.75" Y="13" Width="1.5" />
-    <AssociationLine Name="MétodoPago" Type="AppForSEII2526.API.Models.MetodosPago" ManuallyRouted="true" FixedToPoint="true">
+    <Position X="8.75" Y="17" Width="1.5" />
+    <AssociationLine Name="MétodoPago" Type="AppForSEII2526.API.Models.MetodosPago" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="9.5" Y="15.257" />
-        <Point X="9.5" Y="15.632" />
-        <Point X="9.5" Y="15.632" />
-        <Point X="9.5" Y="19.25" />
+        <Point X="9.5" Y="18.68" />
+        <Point X="9.5" Y="24.019" />
+        <Point X="11" Y="24.019" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Usuario" Type="AppForSEII2526.API.Models.ApplicationUser" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="10.25" Y="17.188" />
+        <Point X="11.125" Y="17.188" />
+        <Point X="11.125" Y="14.81" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACCAAAAAAAAACAABAAAAAAAAQAAAAAIAAAAIEAEAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAACAABAAAAAAAAQAAAAAIAAEAIAAAAA=</HashCode>
       <FileName>Models\Reparación.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="MétodoPago" />
+      <Property Name="Usuario" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="ReparaciónItems" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.Oferta">
-    <Position X="11.75" Y="13" Width="1.5" />
-    <AssociationLine Name="metodosPago" Type="AppForSEII2526.API.Models.MetodosPago" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+    <Position X="13.25" Y="17" Width="1.5" />
+    <AssociationLine Name="TipoDirigida" Type="AppForSEII2526.API.Models.tipoDirigidaOferta" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="11.75" Y="14.375" />
-        <Point X="10.688" Y="14.375" />
-        <Point X="10.688" Y="19.25" />
+        <Point X="14.75" Y="17.875" />
+        <Point X="15.688" Y="17.875" />
+        <Point X="15.688" Y="19.75" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="MétodoPago" Type="AppForSEII2526.API.Models.MetodosPago" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14" Y="18.68" />
+        <Point X="14" Y="24.062" />
+        <Point X="12.5" Y="24.062" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Usuario" Type="AppForSEII2526.API.Models.ApplicationUser" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.25" Y="17.188" />
+        <Point X="12.375" Y="17.188" />
+        <Point X="12.375" Y="14.81" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAACAAAAAAAAAAAAgCAAAAAQEAAAAAAAEA=</HashCode>
+      <HashCode>AAACAAAAAAAACAAAAAAAAAAAAgCAAAAAIEAEAAAAAEA=</HashCode>
       <FileName>Models\Oferta.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="TipoDirigida" />
-      <Property Name="metodosPago" />
+      <Property Name="MétodoPago" />
+      <Property Name="Usuario" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Items" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.OfertaItem">
-    <Position X="11.75" Y="8.5" Width="1.5" />
+    <Position X="13.25" Y="8.5" Width="1.5" />
     <AssociationLine Name="Herramienta" Type="AppForSEII2526.API.Models.Herramienta" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="12.938" Y="8.5" />
-        <Point X="12.938" Y="6" />
-        <Point X="4.25" Y="6" />
+        <Point X="14.438" Y="8.5" />
+        <Point X="14.438" Y="6" />
+        <Point X="12.5" Y="6" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AACAAAAAAAAAAAABAAAAAAAgABAACAAAIAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAQAAAACBAAAAAAAgAAAACAAAIAAAAAAAAAA=</HashCode>
       <FileName>Models\OfertaItem.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -218,28 +265,75 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.Paypal" Collapsed="true">
-    <Position X="11" Y="21.25" Width="1.5" />
+    <Position X="12.75" Y="25.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\Paypal.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="AppForSEII2526.API.Models.Efectivo" Collapsed="true">
-    <Position X="7.5" Y="21.25" Width="1.5" />
+    <Position X="9.25" Y="25.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\Efectivo.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="AppForSEII2526.API.Models.TarjetaCredito" Collapsed="true">
-    <Position X="9.25" Y="21.25" Width="1.5" />
+    <Position X="11" Y="25.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\TarjetaCredito.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="AppForSEII2526.API.Models.ApplicationUser">
+    <Position X="11" Y="13" Width="1.5" />
+    <AssociationLine Name="Compras" Type="AppForSEII2526.API.Models.Compra" FixedFromPoint="true">
+      <Path>
+        <Point X="11" Y="14.125" />
+        <Point X="9.873" Y="14.125" Type="JumpStart" />
+        <Point X="9.707" Y="14.125" Type="JumpEnd" />
+        <Point X="9.288" Y="14.125" Type="JumpStart" />
+        <Point X="9.122" Y="14.125" Type="JumpEnd" />
+        <Point X="7.25" Y="14.125" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Ofertas" Type="AppForSEII2526.API.Models.Oferta" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="12.062" Y="14.81" />
+        <Point X="12.062" Y="17.625" />
+        <Point X="13.25" Y="17.625" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Reparaciones" Type="AppForSEII2526.API.Models.Reparación" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="11.438" Y="14.81" />
+        <Point X="11.438" Y="17.608" />
+        <Point X="10.25" Y="17.608" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Alquileres" Type="AppForSEII2526.API.Models.Alquiler" FixedFromPoint="true">
+      <Path>
+        <Point X="12.5" Y="14.125" />
+        <Point X="13.63" Y="14.125" Type="JumpStart" />
+        <Point X="13.796" Y="14.125" Type="JumpEnd" />
+        <Point X="14.211" Y="14.125" Type="JumpStart" />
+        <Point X="14.377" Y="14.125" Type="JumpEnd" />
+        <Point X="16.25" Y="14.125" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAgAAAAAEAAAAwAAAAAAAAAEACACAAAAAAAA=</HashCode>
+      <FileName>Models\ApplicationUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Compras" />
+      <Property Name="Ofertas" />
+      <Property Name="Reparaciones" />
+      <Property Name="Alquileres" />
+    </ShowAsCollectionAssociation>
+  </Class>
   <Enum Name="AppForSEII2526.API.Models.tipoDirigidaOferta">
-    <Position X="11.75" Y="16" Width="1.5" />
+    <Position X="15" Y="19.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAQAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\tipoOferta.cs</FileName>

@@ -6,6 +6,8 @@
         [Key]
         public int Id { get; set; }
 
+        // Campos obligatorios
+
         [Required]
         public string DirecciónEnvío { get; set; }
         [Required]
@@ -14,7 +16,10 @@
         [Required]
         public float PrecioTotal { get; set; }
 
+        // Relaciones
+
         public List<CompraItem> CompraItems { get; set; }
         public MetodosPago MétodoPago { get; set; }
+        public ApplicationUser Usuario { get; set; }
     }
 }

@@ -28,6 +28,7 @@ namespace AppForSEII2526.API.Models
             public MetodosPago MétodoPago { get; set; }
         //Relaciones 
         public List<ReparaciónItem> ReparaciónItems { get; set; }
+        public ApplicationUser Usuario { get; set; }
 
 
     }
