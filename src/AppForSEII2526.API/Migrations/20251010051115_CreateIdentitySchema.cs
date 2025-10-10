@@ -32,7 +32,7 @@ namespace AppForSEII2526.API.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Apellidos = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Correo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    CorreoElectrónico = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     NumeroTelefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -213,25 +213,28 @@ namespace AppForSEII2526.API.Migrations
                 name: "Alquileres",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NombreCliente = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    ApellidoCliente = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     DireccionEnvio = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     FechaAlquiler = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaFin = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PrecioTotal = table.Column<float>(type: "real", nullable: false),
-                    NumeroTelefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Correo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    metodosPagoId = table.Column<int>(type: "int", nullable: false)
+                    MétodoPagoId = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Alquileres", x => x.ID);
+                    table.PrimaryKey("PK_Alquileres", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Alquileres_MetodosPagos_metodosPagoId",
-                        column: x => x.metodosPagoId,
+                        name: "FK_Alquileres_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Alquileres_MetodosPagos_MétodoPagoId",
+                        column: x => x.MétodoPagoId,
                         principalTable: "MetodosPagos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -246,14 +249,20 @@ namespace AppForSEII2526.API.Migrations
                     DirecciónEnvío = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FechaCompra = table.Column<DateOnly>(type: "date", nullable: false),
                     PrecioTotal = table.Column<float>(type: "real", nullable: false),
-                    MetodoPagoId = table.Column<int>(type: "int", nullable: false)
+                    MétodoPagoId = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Compras", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Compras_MetodosPagos_MetodoPagoId",
-                        column: x => x.MetodoPagoId,
+                        name: "FK_Compras_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Compras_MetodosPagos_MétodoPagoId",
+                        column: x => x.MétodoPagoId,
                         principalTable: "MetodosPagos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -269,14 +278,20 @@ namespace AppForSEII2526.API.Migrations
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaOferta = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TipoDirigida = table.Column<int>(type: "int", nullable: true),
-                    metodosPagoId = table.Column<int>(type: "int", nullable: false)
+                    MétodoPagoId = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Ofertas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ofertas_MetodosPagos_metodosPagoId",
-                        column: x => x.metodosPagoId,
+                        name: "FK_Ofertas_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Ofertas_MetodosPagos_MétodoPagoId",
+                        column: x => x.MétodoPagoId,
                         principalTable: "MetodosPagos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -288,17 +303,20 @@ namespace AppForSEII2526.API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ApellidoCliente = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FechaEntrega = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaRecogida = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NombreCliente = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NumTelefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PrecioTotal = table.Column<float>(type: "real", nullable: false),
-                    MétodoPagoId = table.Column<int>(type: "int", nullable: false)
+                    MétodoPagoId = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reparaciones", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reparaciones_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Reparaciones_MetodosPagos_MétodoPagoId",
                         column: x => x.MétodoPagoId,
@@ -311,22 +329,19 @@ namespace AppForSEII2526.API.Migrations
                 name: "AlquilarItems",
                 columns: table => new
                 {
-                    IdAlquiler = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IdHerramienta = table.Column<int>(type: "int", nullable: false),
+                    AlquilerId = table.Column<int>(type: "int", nullable: false),
+                    HerramientaId = table.Column<int>(type: "int", nullable: false),
                     Precio = table.Column<float>(type: "real", nullable: false),
-                    Cantidad = table.Column<int>(type: "int", nullable: false),
-                    AlquilerID = table.Column<int>(type: "int", nullable: false),
-                    HerramientaId = table.Column<int>(type: "int", nullable: false)
+                    Cantidad = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AlquilarItems", x => x.IdAlquiler);
+                    table.PrimaryKey("PK_AlquilarItems", x => new { x.AlquilerId, x.HerramientaId });
                     table.ForeignKey(
-                        name: "FK_AlquilarItems_Alquileres_AlquilerID",
-                        column: x => x.AlquilerID,
+                        name: "FK_AlquilarItems_Alquileres_AlquilerId",
+                        column: x => x.AlquilerId,
                         principalTable: "Alquileres",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AlquilarItems_Herramientas_HerramientaId",
@@ -393,18 +408,15 @@ namespace AppForSEII2526.API.Migrations
                 name: "ReparaciónItems",
                 columns: table => new
                 {
-                    IdReparación = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ReparaciónId = table.Column<int>(type: "int", nullable: false),
+                    HerramientaId = table.Column<int>(type: "int", nullable: false),
                     cantidad = table.Column<int>(type: "int", nullable: false),
                     Descripción = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IdHerramienta = table.Column<int>(type: "int", nullable: false),
-                    Precio = table.Column<float>(type: "real", nullable: false),
-                    ReparaciónId = table.Column<int>(type: "int", nullable: false),
-                    HerramientaId = table.Column<int>(type: "int", nullable: false)
+                    Precio = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReparaciónItems", x => x.IdReparación);
+                    table.PrimaryKey("PK_ReparaciónItems", x => new { x.ReparaciónId, x.HerramientaId });
                     table.ForeignKey(
                         name: "FK_ReparaciónItems_Herramientas_HerramientaId",
                         column: x => x.HerramientaId,
@@ -420,19 +432,19 @@ namespace AppForSEII2526.API.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AlquilarItems_AlquilerID",
-                table: "AlquilarItems",
-                column: "AlquilerID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AlquilarItems_HerramientaId",
                 table: "AlquilarItems",
                 column: "HerramientaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Alquileres_metodosPagoId",
+                name: "IX_Alquileres_MétodoPagoId",
                 table: "Alquileres",
-                column: "metodosPagoId");
+                column: "MétodoPagoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Alquileres_UsuarioId",
+                table: "Alquileres",
+                column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -479,9 +491,14 @@ namespace AppForSEII2526.API.Migrations
                 column: "HerramientaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Compras_MetodoPagoId",
+                name: "IX_Compras_MétodoPagoId",
                 table: "Compras",
-                column: "MetodoPagoId");
+                column: "MétodoPagoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Compras_UsuarioId",
+                table: "Compras",
+                column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Herramientas_FabricanteId",
@@ -494,9 +511,14 @@ namespace AppForSEII2526.API.Migrations
                 column: "HerramientaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ofertas_metodosPagoId",
+                name: "IX_Ofertas_MétodoPagoId",
                 table: "Ofertas",
-                column: "metodosPagoId");
+                column: "MétodoPagoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ofertas_UsuarioId",
+                table: "Ofertas",
+                column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reparaciones_MétodoPagoId",
@@ -504,14 +526,14 @@ namespace AppForSEII2526.API.Migrations
                 column: "MétodoPagoId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reparaciones_UsuarioId",
+                table: "Reparaciones",
+                column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ReparaciónItems_HerramientaId",
                 table: "ReparaciónItems",
                 column: "HerramientaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ReparaciónItems_ReparaciónId",
-                table: "ReparaciónItems",
-                column: "ReparaciónId");
         }
 
         /// <inheritdoc />
@@ -551,9 +573,6 @@ namespace AppForSEII2526.API.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Compras");
 
             migrationBuilder.DropTable(
@@ -567,6 +586,9 @@ namespace AppForSEII2526.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Fabricantes");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "MetodosPagos");
