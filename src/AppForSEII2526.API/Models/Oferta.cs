@@ -27,7 +27,6 @@ namespace AppForSEII2526.API.Models
         public List<OfertaItem> Items { get; set; }
 
         public MetodosPago MétodoPago { get; set; }
-        public ApplicationUser Usuario { get; set; }
 
 
     }

@@ -322,14 +322,9 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<int?>("TipoDirigida")
                         .HasColumnType("int");
 
-                    b.Property<string>("UsuarioId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MétodoPagoId");
-
-                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Ofertas");
                 });
@@ -656,13 +651,7 @@ namespace AppForSEII2526.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AppForSEII2526.API.Models.ApplicationUser", "Usuario")
-                        .WithMany("Ofertas")
-                        .HasForeignKey("UsuarioId");
-
                     b.Navigation("MétodoPago");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("AppForSEII2526.API.Models.OfertaItem", b =>
@@ -781,8 +770,6 @@ namespace AppForSEII2526.API.Migrations
                     b.Navigation("Alquileres");
 
                     b.Navigation("Compras");
-
-                    b.Navigation("Ofertas");
 
                     b.Navigation("Reparaciones");
                 });

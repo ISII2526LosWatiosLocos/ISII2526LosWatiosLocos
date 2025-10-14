@@ -278,17 +278,11 @@ namespace AppForSEII2526.API.Migrations
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaOferta = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TipoDirigida = table.Column<int>(type: "int", nullable: true),
-                    MétodoPagoId = table.Column<int>(type: "int", nullable: false),
-                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    MétodoPagoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Ofertas", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Ofertas_AspNetUsers_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Ofertas_MetodosPagos_MétodoPagoId",
                         column: x => x.MétodoPagoId,
@@ -514,11 +508,6 @@ namespace AppForSEII2526.API.Migrations
                 name: "IX_Ofertas_MétodoPagoId",
                 table: "Ofertas",
                 column: "MétodoPagoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Ofertas_UsuarioId",
-                table: "Ofertas",
-                column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reparaciones_MétodoPagoId",

@@ -5,10 +5,10 @@
     <AssociationLine Name="Usuario" Type="AppForSEII2526.API.Models.ApplicationUser" FixedFromPoint="true">
       <Path>
         <Point X="7.25" Y="13.688" />
-        <Point X="9.122" Y="13.688" Type="JumpStart" />
-        <Point X="9.288" Y="13.688" Type="JumpEnd" />
-        <Point X="9.707" Y="13.688" Type="JumpStart" />
-        <Point X="9.873" Y="13.688" Type="JumpEnd" />
+        <Point X="9.417" Y="13.688" Type="JumpStart" />
+        <Point X="9.583" Y="13.688" Type="JumpEnd" />
+        <Point X="9.854" Y="13.688" Type="JumpStart" />
+        <Point X="10.021" Y="13.688" Type="JumpEnd" />
         <Point X="11" Y="13.688" />
       </Path>
     </AssociationLine>
@@ -145,10 +145,10 @@
     <AssociationLine Name="Usuario" Type="AppForSEII2526.API.Models.ApplicationUser" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="16.25" Y="13.688" />
-        <Point X="14.377" Y="13.688" Type="JumpStart" />
-        <Point X="14.211" Y="13.688" Type="JumpEnd" />
-        <Point X="13.796" Y="13.688" Type="JumpStart" />
-        <Point X="13.63" Y="13.688" Type="JumpEnd" />
+        <Point X="14.411" Y="13.688" Type="JumpStart" />
+        <Point X="14.245" Y="13.688" Type="JumpEnd" />
+        <Point X="13.865" Y="13.688" Type="JumpStart" />
+        <Point X="13.698" Y="13.688" Type="JumpEnd" />
         <Point X="12.5" Y="13.688" />
       </Path>
     </AssociationLine>
@@ -226,21 +226,13 @@
         <Point X="12.5" Y="24.062" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="Usuario" Type="AppForSEII2526.API.Models.ApplicationUser" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="13.25" Y="17.188" />
-        <Point X="12.375" Y="17.188" />
-        <Point X="12.375" Y="14.81" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAACAAAAAAAAAAAAgCAAAAAIEAEAAAAAEA=</HashCode>
+      <HashCode>AAACAAAAAAAACAAAAAAAAAAAAgCAAAAAIEAAAAAAAEA=</HashCode>
       <FileName>Models\Oferta.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="TipoDirigida" />
       <Property Name="MétodoPago" />
-      <Property Name="Usuario" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Items" />
@@ -290,18 +282,11 @@
     <AssociationLine Name="Compras" Type="AppForSEII2526.API.Models.Compra" FixedFromPoint="true">
       <Path>
         <Point X="11" Y="14.125" />
-        <Point X="9.873" Y="14.125" Type="JumpStart" />
-        <Point X="9.707" Y="14.125" Type="JumpEnd" />
-        <Point X="9.288" Y="14.125" Type="JumpStart" />
-        <Point X="9.122" Y="14.125" Type="JumpEnd" />
+        <Point X="10.021" Y="14.125" Type="JumpStart" />
+        <Point X="9.854" Y="14.125" Type="JumpEnd" />
+        <Point X="9.583" Y="14.125" Type="JumpStart" />
+        <Point X="9.417" Y="14.125" Type="JumpEnd" />
         <Point X="7.25" Y="14.125" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="Ofertas" Type="AppForSEII2526.API.Models.Oferta" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="12.062" Y="14.81" />
-        <Point X="12.062" Y="17.625" />
-        <Point X="13.25" Y="17.625" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="Reparaciones" Type="AppForSEII2526.API.Models.Reparación" FixedFromPoint="true" FixedToPoint="true">
@@ -314,20 +299,19 @@
     <AssociationLine Name="Alquileres" Type="AppForSEII2526.API.Models.Alquiler" FixedFromPoint="true">
       <Path>
         <Point X="12.5" Y="14.125" />
-        <Point X="13.63" Y="14.125" Type="JumpStart" />
-        <Point X="13.796" Y="14.125" Type="JumpEnd" />
-        <Point X="14.211" Y="14.125" Type="JumpStart" />
-        <Point X="14.377" Y="14.125" Type="JumpEnd" />
+        <Point X="13.698" Y="14.125" Type="JumpStart" />
+        <Point X="13.865" Y="14.125" Type="JumpEnd" />
+        <Point X="14.245" Y="14.125" Type="JumpStart" />
+        <Point X="14.411" Y="14.125" Type="JumpEnd" />
         <Point X="16.25" Y="14.125" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAIAAgAAAAAEAAAAwAAAAAAAAAEACACAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAIAAgAAAAAEAAAAgAAAAAAAAAEACACAAAAAAAA=</HashCode>
       <FileName>Models\ApplicationUser.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Compras" />
-      <Property Name="Ofertas" />
       <Property Name="Reparaciones" />
       <Property Name="Alquileres" />
     </ShowAsCollectionAssociation>
