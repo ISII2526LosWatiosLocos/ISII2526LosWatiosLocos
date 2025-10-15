@@ -5,7 +5,7 @@ namespace AppForSEII2526.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HerramientasController : ControllerBase
+    public class HerramientasController : ControllerBase 
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<HerramientasController> _logger;
