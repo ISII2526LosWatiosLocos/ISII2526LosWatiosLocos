@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AppForSEII2526.API.DTOs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppForSEII2526.API.Controllers
@@ -19,5 +20,19 @@ namespace AppForSEII2526.API.Controllers
             _context = context;
             _logger = logger;
         }
+
+        [HttpGet]
+        [Route("Para-Oferta")]
+        [ProducesResponseType(typeof(IList<HerramientasDTO>),  (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetHerramientasParaOferta()
+        {
+            var herramientas = await _context.Herramientas
+                .Include (h => h.Fabricante)
+                .Select (h => new HerramientasDTO(
+                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
+                .ToListAsync();
+            return Ok(herramientas);
+        }
+
     }
 }
