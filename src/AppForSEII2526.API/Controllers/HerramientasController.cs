@@ -5,7 +5,7 @@ namespace AppForSEII2526.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HerramientasController : ControllerBase
+    public class HerramientasController : ControllerBase 
     {
 
         //used to enable your controller to access to the database
