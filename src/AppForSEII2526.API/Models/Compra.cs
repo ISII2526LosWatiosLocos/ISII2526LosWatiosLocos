@@ -1,7 +1,9 @@
-﻿namespace AppForSEII2526.API.Models
+﻿using AppForSEII2526.API.DTOs;
+
+namespace AppForSEII2526.API.Models
 {
 
-    public class Compra
+    public class ComprasDTO
     {
         [Key]
         public int Id { get; set; }
@@ -21,5 +23,33 @@
         public List<CompraItem> CompraItems { get; set; }
         public MetodosPago MétodoPago { get; set; }
         public ApplicationUser Usuario { get; set; }
+
+        public ComprasDTO(int Id, string DirecciónEnvío, DateOnly FechaCompra, float PrecioTotal, List<CompraItem> CompraItems, MetodosPago MétodoPago, ApplicationUser Usuario)
+        {
+            this.Id = Id;
+            this.DirecciónEnvío = DirecciónEnvío;
+            this.FechaCompra = FechaCompra;
+            this.PrecioTotal = PrecioTotal;
+            this.CompraItems = CompraItems;
+            this.MétodoPago = MétodoPago;
+            this.Usuario = Usuario;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is ComprasDTO dTO &&
+                   Id == dTO.Id &&
+                   DirecciónEnvío == dTO.DirecciónEnvío &&
+                   FechaCompra.Equals(dTO.FechaCompra) &&
+                   PrecioTotal == dTO.PrecioTotal &&
+                   EqualityComparer<List<CompraItem>>.Default.Equals(CompraItems, dTO.CompraItems) &&
+                   EqualityComparer<MetodosPago>.Default.Equals(MétodoPago, dTO.MétodoPago) &&
+                   EqualityComparer<ApplicationUser>.Default.Equals(Usuario, dTO.Usuario);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, DirecciónEnvío, FechaCompra, PrecioTotal, CompraItems, MétodoPago, Usuario);
+        }
     }
 }
