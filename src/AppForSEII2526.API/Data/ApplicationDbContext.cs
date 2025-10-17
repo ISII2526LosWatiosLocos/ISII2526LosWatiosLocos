@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using AppForSEII2526.API.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using AppForSEII2526.API.Models;
+using System.Reflection.Emit;
 
 namespace AppForSEII2526.API.Data;
 
@@ -27,6 +28,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        builder.Entity<MetodosPago>()
+        .HasDiscriminator<string>("TipoDePago") // 1. Usa una columna llamada "TipoDePago" y que sea de tipo string.
+        .HasValue<TarjetaCredito>("TarjetaCredito") // 2. Si el valor es "TarjetaCredito", es un objeto TarjetaCredito.
+        .HasValue<Paypal>("PayPal")                 // 3. Si el valor es "PayPal", es un objeto PayPal.
+        .HasValue<Efectivo>("Efectivo");           // 4. Si el valor es "Efectivo", es un objeto Efectivo.
     }
 
 }
