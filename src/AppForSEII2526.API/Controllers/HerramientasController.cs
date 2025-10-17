@@ -21,7 +21,6 @@ namespace AppForSEII2526.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
         [Route("Para-Oferta")]
         [ProducesResponseType(typeof(IList<HerramientasDTO>),  (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetHerramientasParaOferta()
@@ -32,7 +31,18 @@ namespace AppForSEII2526.API.Controllers
                     h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
                 .ToListAsync();
             return Ok(herramientas);
+            
+        [HttpGet]
+        [Route("Para-Compra")]
+        [ProducesResponseType(typeof(IList<HerramientasDTO>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetHerramientasParaCompra()
+        {
+            var herramientas = await _context.Herramientas
+                .Include(h => h.Fabricante)
+                .Select(h => new HerramientasDTO(
+                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
+                .ToListAsync();
+            return Ok(herramientas);
         }
-
     }
 }
