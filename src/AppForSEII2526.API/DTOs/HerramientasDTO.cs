@@ -17,6 +17,8 @@ namespace AppForSEII2526.API.DTOs
 
         public int TiempoReparacion { get; set; }
 
+        public string NombreFabricante { get; set; }
+
 
         public List<CompraItem> CompraItems { get; set; }
         public List<AlquilarItem> AlquilarItems { get; set; }
@@ -36,6 +38,14 @@ namespace AppForSEII2526.API.DTOs
             OfertaItems = ofertaItems;
             ReparaciónItems = reparaciónItems;
             Fabricante = fabricante;
+        }
+
+        public HerramientasDTO(string nombre, string material, string nombrefabricante, float precio)
+        {
+            Nombre = nombre;
+            Material = material;
+            Precio = precio;
+            NombreFabricante = nombrefabricante;
         }
 
         public override bool Equals(object? obj)
