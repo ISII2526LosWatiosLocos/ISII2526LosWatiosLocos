@@ -23,7 +23,7 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("Para-Compra")]
-        [ProducesResponseType(typeof(IList<ComprasDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<HerramientasDTO>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetHerramientasParaCompra()
         {
             var herramientas = await _context.Herramientas
