@@ -6,7 +6,7 @@ namespace AppForSEII2526.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HerramientasController : ControllerBase
+    public class HerramientasController : ControllerBase 
     {
 
         //used to enable your controller to access to the database
@@ -21,6 +21,17 @@ namespace AppForSEII2526.API.Controllers
             _logger = logger;
         }
 
+        [Route("Para-Oferta")]
+        [ProducesResponseType(typeof(IList<HerramientasDTO>),  (int) HttpStatusCode.OK)]
+        public async Task<IActionResult> GetHerramientasParaOferta()
+        {
+            var herramientas = await _context.Herramientas
+                .Include (h => h.Fabricante)
+                .Select (h => new HerramientasDTO(
+                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
+                .ToListAsync();
+            return Ok(herramientas);
+            
         [HttpGet]
         [Route("Para-Compra")]
         [ProducesResponseType(typeof(IList<HerramientasDTO>), (int)HttpStatusCode.OK)]
