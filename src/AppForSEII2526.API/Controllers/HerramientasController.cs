@@ -88,6 +88,40 @@ namespace AppForSEII2526.API.Controllers
 
             return Ok(ofertasDTO);
         }
+
+        [HttpGet]
+        [Route("Detalle-Compra")]
+        // El tipo de respuesta es una lista de ComprasDTO
+        [ProducesResponseType(typeof(IList<ComprasDTO>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetDetalleHerramientasParaCompra()
+        {
+            var compras = await _context.Compras
+                .Include(o => o.MétodoPago)
+                .Include(o => o.Usuario)
+                .Include(o => o.CompraItems)
+                    .ThenInclude(oi => oi.Herramienta)
+                        .ThenInclude(h => h.Fabricante)
+                .ToListAsync();
+
+
+            var comprasDTO = compras.Select(o => new ComprasDTO(
+                o.Usuario.Nombre,
+                o.Usuario.Apellidos,
+                o.DirecciónEnvío,
+                o.PrecioTotal,
+                o.FechaCompra,
+
+
+                o.CompraItems.Select(oi => new HerramientasDTO(
+                    oi.Herramienta.Nombre,
+                    oi.Herramienta.Material,
+                    oi.Herramienta.Precio
+                )).ToList()
+
+            )).ToList();
+
+            return Ok(comprasDTO);
+        }
     }
 
 }
