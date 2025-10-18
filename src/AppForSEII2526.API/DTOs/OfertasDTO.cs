@@ -2,7 +2,6 @@
 {
     public class OfertasDTO
     {
-        public int Id { get; set; }
         public DateTime FechaFinal { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaOferta { get; set; }
@@ -12,7 +11,6 @@
 
         // El constructor que usaremos desde el controlador
         public OfertasDTO(
-            int id,
             DateTime fechaFinal,
             DateTime fechaInicio,
             DateTime fechaOferta,
@@ -21,7 +19,6 @@
             List<HerramientasDTO> items 
         )
         {
-            Id = id;
             FechaFinal = fechaFinal;
             FechaInicio = fechaInicio;
             FechaOferta = fechaOferta;
@@ -33,7 +30,6 @@
         public override bool Equals(object? obj)
         {
             return obj is OfertasDTO dTO &&
-                   Id == dTO.Id &&
                    FechaFinal == dTO.FechaFinal &&
                    FechaInicio == dTO.FechaInicio &&
                    FechaOferta == dTO.FechaOferta &&
@@ -44,7 +40,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, FechaFinal, FechaInicio, FechaOferta, TipoDirigida, MetodoPago, Items);
+            return HashCode.Combine(FechaFinal, FechaInicio, FechaOferta, TipoDirigida, MetodoPago, Items);
         }
     }
 }
