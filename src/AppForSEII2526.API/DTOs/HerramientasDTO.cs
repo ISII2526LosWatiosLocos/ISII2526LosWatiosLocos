@@ -47,6 +47,13 @@ namespace AppForSEII2526.API.DTOs
             NombreFabricante = nombrefabricante;
         }
 
+        public HerramientasDTO(string nombre, string material, float precio)
+        {
+            Nombre = nombre;
+            Material = material;
+            Precio = precio;
+        }
+
         public override bool Equals(object? obj)
         {
             return obj is HerramientasDTO dTO &&
