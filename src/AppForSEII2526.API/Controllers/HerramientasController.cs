@@ -6,7 +6,7 @@ namespace AppForSEII2526.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HerramientasController : ControllerBase 
+    public class HerramientasController : ControllerBase
     {
 
         //used to enable your controller to access to the database
@@ -49,5 +49,45 @@ namespace AppForSEII2526.API.Controllers
                 .ToListAsync();
             return Ok(herramientas);
         }
+
+
+
+        [HttpGet]
+        [Route("Detalle-Oferta")]
+        // Corregido: El tipo de respuesta es una lista de OfertasDTO
+        [ProducesResponseType(typeof(IList<OfertasDTO>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetDetalleHerramientasParaOferta()
+        {
+            var ofertas = await _context.Ofertas
+                .Include(o => o.MetodosPago)
+                .Include(o => o.Items) 
+                    .ThenInclude(oi => oi.Herramienta)
+                        .ThenInclude(h => h.Fabricante)
+                .ToListAsync();
+
+           
+            var ofertasDTO = ofertas.Select(o => new OfertasDTO(
+                o.Id,
+                o.FechaFinal,
+                o.FechaInicio,
+                o.FechaOferta,
+                o.TipoDirigida.ToString(), 
+                
+                o.MetodosPago.Nombre, 
+
+                
+                o.Items.Select(oi => new HerramientasDTO(
+                    oi.Herramienta.Nombre,
+                    oi.Herramienta.Material,
+                    oi.Herramienta.Fabricante.Nombre,
+                    oi.Herramienta.Precio, 
+                    oi.PrecioFinal        
+                )).ToList()
+
+            )).ToList();
+
+            return Ok(ofertasDTO);
+        }
     }
+
 }

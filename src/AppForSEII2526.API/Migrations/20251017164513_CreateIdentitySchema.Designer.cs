@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppForSEII2526.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251014132612_CreateIdentitySchema")]
+    [Migration("20251017164513_CreateIdentitySchema")]
     partial class CreateIdentitySchema
     {
         /// <inheritdoc />
@@ -288,7 +288,11 @@ namespace AppForSEII2526.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Discriminator")
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TipoDePago")
                         .IsRequired()
                         .HasMaxLength(21)
                         .HasColumnType("nvarchar(21)");
@@ -297,7 +301,7 @@ namespace AppForSEII2526.API.Migrations
 
                     b.ToTable("MetodosPagos");
 
-                    b.HasDiscriminator().HasValue("MetodosPago");
+                    b.HasDiscriminator<string>("TipoDePago").HasValue("MetodosPago");
 
                     b.UseTphMappingStrategy();
                 });
@@ -319,7 +323,7 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<DateTime>("FechaOferta")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MétodoPagoId")
+                    b.Property<int>("MetodosPagoId")
                         .HasColumnType("int");
 
                     b.Property<int?>("TipoDirigida")
@@ -327,7 +331,7 @@ namespace AppForSEII2526.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MétodoPagoId");
+                    b.HasIndex("MetodosPagoId");
 
                     b.ToTable("Ofertas");
                 });
@@ -553,7 +557,7 @@ namespace AppForSEII2526.API.Migrations
                 {
                     b.HasBaseType("AppForSEII2526.API.Models.MetodosPago");
 
-                    b.HasDiscriminator().HasValue("Paypal");
+                    b.HasDiscriminator().HasValue("PayPal");
                 });
 
             modelBuilder.Entity("AppForSEII2526.API.Models.TarjetaCredito", b =>
@@ -648,13 +652,13 @@ namespace AppForSEII2526.API.Migrations
 
             modelBuilder.Entity("AppForSEII2526.API.Models.Oferta", b =>
                 {
-                    b.HasOne("AppForSEII2526.API.Models.MetodosPago", "MétodoPago")
+                    b.HasOne("AppForSEII2526.API.Models.MetodosPago", "MetodosPago")
                         .WithMany()
-                        .HasForeignKey("MétodoPagoId")
+                        .HasForeignKey("MetodosPagoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("MétodoPago");
+                    b.Navigation("MetodosPago");
                 });
 
             modelBuilder.Entity("AppForSEII2526.API.Models.OfertaItem", b =>

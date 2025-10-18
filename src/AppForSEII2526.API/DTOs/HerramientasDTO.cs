@@ -19,6 +19,8 @@ namespace AppForSEII2526.API.DTOs
 
         public string NombreFabricante { get; set; }
 
+        public float precioOferta { get; set; }
+
 
         public List<CompraItem> CompraItems { get; set; }
         public List<AlquilarItem> AlquilarItems { get; set; }
@@ -26,18 +28,15 @@ namespace AppForSEII2526.API.DTOs
         public List<ReparaciónItem> ReparaciónItems { get; set; }
         public Fabricante Fabricante { get; set; }
 
-        public HerramientasDTO(int id, string nombre, string material, float precio, int tiempoReparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaItems, List<ReparaciónItem> reparaciónItems, Fabricante fabricante)
+      
+
+        public HerramientasDTO(string nombre, string material, string nombrefabricante, float precio, float precioOferta)
         {
-            Id = id;
             Nombre = nombre;
             Material = material;
             Precio = precio;
-            TiempoReparacion = tiempoReparacion;
-            CompraItems = compraItems;
-            AlquilarItems = alquilarItems;
-            OfertaItems = ofertaItems;
-            ReparaciónItems = reparaciónItems;
-            Fabricante = fabricante;
+            NombreFabricante = nombrefabricante;
+            this.precioOferta = precioOferta;
         }
 
         public HerramientasDTO(string nombre, string material, string nombrefabricante, float precio)

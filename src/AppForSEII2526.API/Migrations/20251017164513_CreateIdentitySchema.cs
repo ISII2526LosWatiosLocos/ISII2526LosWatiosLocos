@@ -73,7 +73,8 @@ namespace AppForSEII2526.API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false)
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TipoDePago = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -278,14 +279,14 @@ namespace AppForSEII2526.API.Migrations
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaOferta = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TipoDirigida = table.Column<int>(type: "int", nullable: true),
-                    MétodoPagoId = table.Column<int>(type: "int", nullable: false)
+                    MetodosPagoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Ofertas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ofertas_MetodosPagos_MétodoPagoId",
-                        column: x => x.MétodoPagoId,
+                        name: "FK_Ofertas_MetodosPagos_MetodosPagoId",
+                        column: x => x.MetodosPagoId,
                         principalTable: "MetodosPagos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -505,9 +506,9 @@ namespace AppForSEII2526.API.Migrations
                 column: "HerramientaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ofertas_MétodoPagoId",
+                name: "IX_Ofertas_MetodosPagoId",
                 table: "Ofertas",
-                column: "MétodoPagoId");
+                column: "MetodosPagoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reparaciones_MétodoPagoId",
