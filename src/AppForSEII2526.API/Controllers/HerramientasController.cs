@@ -54,7 +54,6 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("Detalle-Oferta")]
-        // Corregido: El tipo de respuesta es una lista de OfertasDTO
         [ProducesResponseType(typeof(IList<OfertasDTO>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetDetalleHerramientasParaOferta()
         {
@@ -67,7 +66,6 @@ namespace AppForSEII2526.API.Controllers
 
            
             var ofertasDTO = ofertas.Select(o => new OfertasDTO(
-                o.Id,
                 o.FechaFinal,
                 o.FechaInicio,
                 o.FechaOferta,
