@@ -2,6 +2,10 @@
 {
     public class ComprasDTO
     {
+        private string nombre;
+        private string apellidos;
+        private List<HerramientasDTO> herramientasDTOs;
+
         [Key]
         public int Id { get; set; }
 
@@ -27,9 +31,19 @@
             this.DirecciónEnvío = DirecciónEnvío;
             this.FechaCompra = FechaCompra;
             this.PrecioTotal = PrecioTotal;
-            this.CompraItems = CompraItems;
+            this.CompraItems = CompraItems.ToList();
             this.MétodoPago = MétodoPago;
             this.Usuario = Usuario;
+        }
+
+        public ComprasDTO(string nombre, string apellidos, string direcciónEnvío, float precioTotal, DateOnly fechaCompra, List<HerramientasDTO> herramientasDTOs)
+        {
+            this.nombre = nombre;
+            this.apellidos = apellidos;
+            DirecciónEnvío = direcciónEnvío;
+            PrecioTotal = precioTotal;
+            FechaCompra = fechaCompra;
+            this.herramientasDTOs = herramientasDTOs;
         }
 
         public override bool Equals(object? obj)
