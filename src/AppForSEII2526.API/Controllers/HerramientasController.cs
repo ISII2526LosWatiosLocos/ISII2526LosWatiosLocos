@@ -1,4 +1,5 @@
 ﻿using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +29,7 @@ namespace AppForSEII2526.API.Controllers
         {
             var herramientas = await _context.Herramientas
                 .Include(h => h.Fabricante)
-                .Where (h => (filtroFabricante == null || h.Fabricante.Nombre == filtroFabricante) &&
+                .Where(h => (filtroFabricante == null || h.Fabricante.Nombre == filtroFabricante) &&
                             (filtroPrecio == null || h.Precio <= filtroPrecio))
                 .Select(h => new HerramientasParaOfertarDTO(
                     h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
@@ -36,7 +37,7 @@ namespace AppForSEII2526.API.Controllers
             return Ok(herramientas);
 
         }
-            
+
         [HttpGet]
         [Route("Para-Compra")]
         [ProducesResponseType(typeof(IList<HerramientasDTO>), (int)HttpStatusCode.OK)]
@@ -60,34 +61,49 @@ namespace AppForSEII2526.API.Controllers
         {
             var ofertas = await _context.Ofertas
                 .Include(o => o.MetodosPago)
-                .Include(o => o.Items) 
+                .Include(o => o.Items)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
                 .ToListAsync();
 
-           
+
             var ofertasDTO = ofertas.Select(o => new OfertasDTO(
                 o.Id,
                 o.FechaFinal,
                 o.FechaInicio,
                 o.FechaOferta,
-                o.TipoDirigida.ToString(), 
-                
-                o.MetodosPago.Nombre, 
+                o.TipoDirigida.ToString(),
 
-                
+                o.MetodosPago.Nombre,
+
+
                 o.Items.Select(oi => new HerramientasDTO(
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
                     oi.Herramienta.Fabricante.Nombre,
-                    oi.Herramienta.Precio, 
-                    oi.PrecioFinal        
+                    oi.Herramienta.Precio,
+                    oi.PrecioFinal
                 )).ToList()
 
             )).ToList();
 
             return Ok(ofertasDTO);
         }
-    }
 
-}
+
+        [HttpGet]
+        [Route("Detalle-Reparación")]
+        [ProducesResponseType(typeof(IList<HerramientasDTO>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetHerramientasParaReparación(string? filtroFabricante, float? filtroPrecio)
+        {
+            var herramientas = await _context.Herramientas
+              .Where(h => (filtroFabricante == null || h.Fabricante.Nombre == filtroFabricante) &&
+                            (filtroPrecio == null || h.Precio <= filtroPrecio))
+                .Select(h => new HerramientasParaOfertarDTO(
+                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
+                .ToListAsync();
+            return Ok(herramientas);
+
+        }
+    }
+        }
