@@ -40,10 +40,12 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("Para-Compra")]
         [ProducesResponseType(typeof(IList<HerramientasDTO>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetHerramientasParaCompra()
+        public async Task<IActionResult> GetHerramientasParaCompra(string? filtroMaterial, float? filtroPrecio)
         {
             var herramientas = await _context.Herramientas
                 .Include(h => h.Fabricante)
+                .Where(h => (filtroMaterial == null || h.Material == filtroMaterial) &&
+                            (filtroPrecio == null || h.Precio <= filtroPrecio))
                 .Select(h => new HerramientasDTO(
                     h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
                 .ToListAsync();
