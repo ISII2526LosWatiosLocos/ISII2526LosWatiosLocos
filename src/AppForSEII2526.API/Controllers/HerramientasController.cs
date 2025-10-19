@@ -152,6 +152,38 @@ namespace AppForSEII2526.API.Controllers
 
             return Ok(comprasDTO);
         }
+
+        [HttpGet]
+        [Route("Detalle-Reparacion")]
+        [ProducesResponseType(typeof(IList<ReparacionesDTO>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetDetalleHerramientasParaReparacion()
+        {
+            var reparaciones = await _context.Reparaciones
+                .Include(r => r.Usuario)
+                .Include(r => r.MétodoPago)
+                .Include(r => r.ReparaciónItems)
+                    .ThenInclude(ri => ri.Herramienta)
+                        .ThenInclude(h => h.Fabricante)
+                .ToListAsync();
+
+            var reparacionesDTO = reparaciones.Select(r => new ReparacionesDTO(
+                r.Usuario.Nombre,
+                r.Usuario.Apellidos,
+                r.FechaEntrega,
+                r.FechaRecogida,
+                r.PrecioTotal,
+                r.ReparaciónItems.Select(ri => new HerramientasDTO(
+                    ri.Herramienta.Nombre,
+                    ri.Herramienta.Precio,
+                    ri.Herramienta.Descripción,
+                    ri.Herramienta.Cantidad
+                )
+              ).ToList()
+            )).ToList();
+
+            return Ok(reparacionesDTO);
+        }
+
     }
 
 }

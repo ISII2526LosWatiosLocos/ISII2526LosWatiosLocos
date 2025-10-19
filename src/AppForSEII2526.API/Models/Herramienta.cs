@@ -14,12 +14,12 @@
         [Required]
         public float Precio { get; set; }
 
-        public int TiempoReparacion { get; set; }
+        public int TiempoReparación { get; set; }
 
         //Faltan las siguientes clases:
         //alquilar item
-        
-       
+
+
 
 
 
@@ -28,8 +28,7 @@
         public List<OfertaItem> OfertaItems { get; set; }
         public List<ReparaciónItem> ReparaciónItems { get; set; }
         public Fabricante Fabricante { get; set; }
-
-        public int TiempoReparación { get; set; }
-
+        public float Cantidad { get; internal set; }
+        public string Descripción { get; internal set; }
     }
 }

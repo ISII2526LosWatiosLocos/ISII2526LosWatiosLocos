@@ -12,6 +12,9 @@ namespace AppForSEII2526.API.DTOs
         [Required, StringLength(50, ErrorMessage = "No puede contener más de 50 caracteres")]
         public string Material { get; set; }
 
+        [Required, StringLength(150, ErrorMessage = "No puede contener más de 150 caracteres")]
+        public string Descripción { get; set; }
+
         [Required]
         public float Precio { get; set; }
 
@@ -21,14 +24,15 @@ namespace AppForSEII2526.API.DTOs
 
         public float precioOferta { get; set; }
 
+        public int Cantidad { get; set; }
+
 
         public List<CompraItem> CompraItems { get; set; }
         public List<AlquilarItem> AlquilarItems { get; set; }
         public List<OfertaItem> OfertaItems { get; set; }
         public List<ReparaciónItem> ReparaciónItems { get; set; }
         public Fabricante Fabricante { get; set; }
-
-      
+        public float Cantidad1 { get; }
 
         public HerramientasDTO(string nombre, string material, string nombrefabricante, float precio, float precioOferta)
         {
@@ -46,12 +50,27 @@ namespace AppForSEII2526.API.DTOs
             Precio = precio;
             NombreFabricante = nombrefabricante;
         }
+        public HerramientasDTO(string Nombre, float Precio, String Descripción, int Cantidad)
+        {
+            this.Nombre = Nombre;
+            Precio = Precio;
+            this.Descripción = Descripción;
+            this.Cantidad = Cantidad;
 
+        }
         public HerramientasDTO(string nombre, string material, float precio)
         {
             Nombre = nombre;
             Material = material;
             Precio = precio;
+        }
+
+        public HerramientasDTO(string nombre, float Precio, string descripción, float Cantidad)
+        {
+            Nombre = nombre;
+            this.Precio = Precio;
+            Descripción = descripción;
+            Cantidad = Cantidad;
         }
 
         public override bool Equals(object? obj)
