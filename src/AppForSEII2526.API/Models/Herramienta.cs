@@ -29,5 +29,7 @@
         public List<ReparaciónItem> ReparaciónItems { get; set; }
         public Fabricante Fabricante { get; set; }
 
+        public int TiempoReparación { get; set; }
+
     }
 }
