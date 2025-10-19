@@ -39,7 +39,7 @@ namespace AppForSEII2526.API.Controllers
         
         [HttpGet]
         [Route("Para-Alquiler")]
-        [ProducesResponseType(typeof(IList<HerramientasDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<HerramientasParaAlquilarDTO>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetHerramientasParaAlquiler(String? filtroNombre, String? filtroMaterial)
         {
             var herramientas = await _context.Herramientas
