@@ -36,7 +36,22 @@ namespace AppForSEII2526.API.Controllers
             return Ok(herramientas);
 
         }
-            
+        
+        [HttpGet]
+        [Route("Para-Alquiler")]
+        [ProducesResponseType(typeof(IList<HerramientasParaAlquilarDTO>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetHerramientasParaAlquiler(String? filtroNombre, String? filtroMaterial)
+        {
+            var herramientas = await _context.Herramientas
+                .Include(h => h.Fabricante)
+                .Where(h => (filtroNombre == null || filtroNombre == h.Nombre) &&
+                            (filtroMaterial == null || filtroMaterial == h.Material))
+                .Select(h => new HerramientasParaAlquilarDTO(
+                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
+                .ToListAsync();
+            return Ok(herramientas);
+        }
+
         [HttpGet]
         [Route("Para-Compra")]
         [ProducesResponseType(typeof(IList<HerramientasDTO>), (int)HttpStatusCode.OK)]
