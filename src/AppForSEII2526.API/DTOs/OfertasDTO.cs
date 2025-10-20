@@ -7,24 +7,29 @@
         public DateTime FechaOferta { get; set; }
         public string TipoDirigida { get; set; }
         public string MetodoPago { get; set; }
-        public List<HerramientasDTO> Items { get; set; }
 
-        // El constructor que usaremos desde el controlador
-        public OfertasDTO(
-            DateTime fechaFinal,
-            DateTime fechaInicio,
-            DateTime fechaOferta,
-            string tipoDirigida,
-            string metodoPago, 
-            List<HerramientasDTO> items 
-        )
+        public string nombreHerramienta { get; set; }
+
+        public string materialHerramienta { get; set; }
+
+        public string fabricanteHerramienta { get; set; }
+
+        public float precioHerramienta { get; set; }
+
+        public float precioOferta { get; set; }
+
+        public OfertasDTO(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, string tipoDirigida, string metodoPago, string nombreHerramienta, string materialHerramienta, string fabricanteHerramienta, float precioHerramienta, float precioOferta)
         {
             FechaFinal = fechaFinal;
             FechaInicio = fechaInicio;
             FechaOferta = fechaOferta;
             TipoDirigida = tipoDirigida;
             MetodoPago = metodoPago;
-            Items = items;
+            this.nombreHerramienta = nombreHerramienta;
+            this.materialHerramienta = materialHerramienta;
+            this.fabricanteHerramienta = fabricanteHerramienta;
+            this.precioHerramienta = precioHerramienta;
+            this.precioOferta = precioOferta;
         }
 
         public override bool Equals(object? obj)
@@ -35,12 +40,27 @@
                    FechaOferta == dTO.FechaOferta &&
                    TipoDirigida == dTO.TipoDirigida &&
                    MetodoPago == dTO.MetodoPago &&
-                   EqualityComparer<List<HerramientasDTO>>.Default.Equals(Items, dTO.Items);
+                   nombreHerramienta == dTO.nombreHerramienta &&
+                   materialHerramienta == dTO.materialHerramienta &&
+                   fabricanteHerramienta == dTO.fabricanteHerramienta &&
+                   precioHerramienta == dTO.precioHerramienta &&
+                   precioOferta == dTO.precioOferta;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(FechaFinal, FechaInicio, FechaOferta, TipoDirigida, MetodoPago, Items);
+            HashCode hash = new HashCode();
+            hash.Add(FechaFinal);
+            hash.Add(FechaInicio);
+            hash.Add(FechaOferta);
+            hash.Add(TipoDirigida);
+            hash.Add(MetodoPago);
+            hash.Add(nombreHerramienta);
+            hash.Add(materialHerramienta);
+            hash.Add(fabricanteHerramienta);
+            hash.Add(precioHerramienta);
+            hash.Add(precioOferta);
+            return hash.ToHashCode();
         }
     }
 }

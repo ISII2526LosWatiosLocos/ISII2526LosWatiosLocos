@@ -75,9 +75,9 @@ namespace AppForSEII2526.API.Controllers
             var herramientas = await _context.Herramientas
                 .Include(h => h.Fabricante)
                 .Where(h => (filtroNombre == null || h.Nombre == filtroNombre) &&
-                    (filtroTiempoReparacion == null || h.TiempoReparación <= filtroTiempoReparacion))
+                    (filtroTiempoReparacion == null || h.TiempoReparacion <= filtroTiempoReparacion))
                 .Select(h => new HerramientasParaReparaciónDTO(
-                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio, h.TiempoReparación))
+                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio, h.TiempoReparacion))
                 .ToListAsync();
             return Ok(herramientas);
 
@@ -101,18 +101,13 @@ namespace AppForSEII2526.API.Controllers
                 o.FechaFinal,
                 o.FechaInicio,
                 o.FechaOferta,
-                o.TipoDirigida.ToString(), 
-                
-                o.MetodosPago.Nombre, 
-
-                
-                o.Items.Select(oi => new HerramientasDTO(
-                    oi.Herramienta.Nombre,
-                    oi.Herramienta.Material,
-                    oi.Herramienta.Fabricante.Nombre,
-                    oi.Herramienta.Precio, 
-                    oi.PrecioFinal        
-                )).ToList()
+                o.TipoDirigida.ToString(),
+                o.MetodosPago.Nombre,
+                o.Items.Select(oi => oi.Herramienta.Nombre).FirstOrDefault()!,
+                o.Items.Select(oi => oi.Herramienta.Material).FirstOrDefault()!,
+                o.Items.Select(oi => oi.Herramienta.Fabricante.Nombre).FirstOrDefault()!,
+                o.Items.Select(oi => oi.Herramienta.Precio).FirstOrDefault(),
+                o.Items.Select(oi => oi.PrecioFinal).FirstOrDefault()
 
             )).ToList();
 

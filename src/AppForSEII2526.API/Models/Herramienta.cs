@@ -16,20 +16,12 @@
 
         public int TiempoReparacion { get; set; }
 
-        //Faltan las siguientes clases:
-        //alquilar item
-        
-       
-
-
-
         public List<CompraItem> CompraItems { get; set; }
         public List<AlquilarItem> AlquilarItems { get; set; }
         public List<OfertaItem> OfertaItems { get; set; }
         public List<ReparaciónItem> ReparaciónItems { get; set; }
         public Fabricante Fabricante { get; set; }
 
-        public int TiempoReparación { get; set; }
 
     }
 }
