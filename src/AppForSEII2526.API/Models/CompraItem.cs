@@ -10,7 +10,7 @@
         [Required]
         public int Cantidad { get; set; }
         [Required]
-        public int Descripción { get; set; }
+        public string Descripción { get; set; }
         [Required]
         public float Precio { get; set; }
 

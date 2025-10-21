@@ -134,14 +134,10 @@ namespace AppForSEII2526.API.Controllers
                 o.Usuario.Apellidos,
                 o.DirecciónEnvío,
                 o.PrecioTotal,
-                o.FechaCompra,
+                o.FechaCompra
 
 
-                o.CompraItems.Select(oi => new HerramientasDTO(
-                    oi.Herramienta.Nombre,
-                    oi.Herramienta.Material,
-                    oi.Herramienta.Precio
-                )).ToList()
+
 
             )).ToList();
 

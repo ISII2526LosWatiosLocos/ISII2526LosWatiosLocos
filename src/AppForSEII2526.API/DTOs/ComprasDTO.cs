@@ -4,7 +4,7 @@
     {
         private string nombre;
         private string apellidos;
-        private List<HerramientasDTO> herramientasDTOs;
+        
         public int Id { get; set; }
         public string DirecciónEnvío { get; set; }
         public DateOnly FechaCompra { get; set; }
@@ -24,14 +24,13 @@
             this.Usuario = Usuario;
         }
 
-        public ComprasDTO(string nombre, string apellidos, string direcciónEnvío, float precioTotal, DateOnly fechaCompra, List<HerramientasDTO> herramientasDTOs)
+        public ComprasDTO(string nombre, string apellidos, string direcciónEnvío, float precioTotal, DateOnly fechaCompra)
         {
             this.nombre = nombre;
             this.apellidos = apellidos;
             DirecciónEnvío = direcciónEnvío;
             PrecioTotal = precioTotal;
             FechaCompra = fechaCompra;
-            this.herramientasDTOs = herramientasDTOs;
         }
 
         public override bool Equals(object? obj)
