@@ -135,13 +135,11 @@ namespace AppForSEII2526.API.Controllers
                 o.DirecciónEnvío,
                 o.PrecioTotal,
                 o.FechaCompra,
-
-
-                o.CompraItems.Select(oi => new HerramientasDTO(
-                    oi.Herramienta.Nombre,
-                    oi.Herramienta.Material,
-                    oi.Herramienta.Precio
-                )).ToList()
+                o.CompraItems.Select(oi => oi.Herramienta.Nombre).FirstOrDefault()!,
+                o.CompraItems.Select(oi => oi.Herramienta.Material).FirstOrDefault()!,
+                o.CompraItems.Select(oi => oi.Herramienta.Precio).FirstOrDefault()!,
+                o.CompraItems.Select(oi => oi.Descripción).FirstOrDefault()!,
+                o.CompraItems.Select(oi => oi.Cantidad).FirstOrDefault()!
 
             )).ToList();
 
