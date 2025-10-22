@@ -1,6 +1,6 @@
 ﻿namespace AppForSEII2526.API.DTOs
 {
-    public class ComprasDTO
+    public class ComprasParaDetalleDTO
     {
         private string Nombre { get; set; }
         private string Apellidos { get; set; }
@@ -14,7 +14,7 @@
         public int CantidadHerramienta { get; set; }
 
 
-        public ComprasDTO(string Nombre, string Apellidos, string DirecciónEnvío, float PrecioTotal, DateOnly FechaCompra, string NombreHerramienta, string MaterialHerramienta, float PrecioHerramienta, string DescripcionHerramienta, int CantidadHerramienta)
+        public ComprasParaDetalleDTO(string Nombre, string Apellidos, string DirecciónEnvío, float PrecioTotal, DateOnly FechaCompra, string NombreHerramienta, string MaterialHerramienta, float PrecioHerramienta, string DescripcionHerramienta, int CantidadHerramienta)
         {
             this.Nombre = Nombre;
             this.Apellidos = Apellidos;
@@ -31,7 +31,7 @@
 
         public override bool Equals(object? obj)
         {
-            return obj is ComprasDTO dTO &&
+            return obj is ComprasParaDetalleDTO dTO &&
                    Nombre == dTO.Nombre &&
                    Apellidos == dTO.Apellidos &&
                    DirecciónEnvío == dTO.DirecciónEnvío &&
