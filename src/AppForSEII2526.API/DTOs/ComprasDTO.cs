@@ -2,52 +2,32 @@
 {
     public class ComprasDTO
     {
-        private string nombre;
-        private string apellidos;
-        
-        public int Id { get; set; }
+        private string Nombre { get; set; }
+        private string Apellidos { get; set; }
         public string DirecciónEnvío { get; set; }
-        public DateOnly FechaCompra { get; set; }
         public float PrecioTotal { get; set; }
-        public List<CompraItem> CompraItems { get; set; }
-        public MetodosPago MétodoPago { get; set; }
-        public ApplicationUser Usuario { get; set; }
+        public DateOnly FechaCompra { get; set; }
+        public string NombreHerramienta { get; set; }
+        public string MaterialHerramienta { get; set; }
+        public float PrecioHerramienta { get; set; }
+        public string DescripcionHerramienta { get; set; }
+        public int CantidadHerramienta { get; set; }
 
-        public ComprasDTO(int Id, string DirecciónEnvío, DateOnly FechaCompra, float PrecioTotal, List<CompraItem> CompraItems, MetodosPago MétodoPago, ApplicationUser Usuario)
+
+        public ComprasDTO(string Nombre, string Apellidos, string DirecciónEnvío, float PrecioTotal, DateOnly FechaCompra, string NombreHerramienta, string MaterialHerramienta, float PrecioHerramienta, string DescripcionHerramienta, int CantidadHerramienta)
         {
-            this.Id = Id;
+            this.Nombre = Nombre;
+            this.Apellidos = Apellidos;
             this.DirecciónEnvío = DirecciónEnvío;
-            this.FechaCompra = FechaCompra;
             this.PrecioTotal = PrecioTotal;
-            this.CompraItems = CompraItems.ToList();
-            this.MétodoPago = MétodoPago;
-            this.Usuario = Usuario;
+            this.FechaCompra = FechaCompra;
+            this.NombreHerramienta = NombreHerramienta;
+            this.MaterialHerramienta = MaterialHerramienta;
+            this.PrecioHerramienta = PrecioHerramienta;
+            this.DescripcionHerramienta = DescripcionHerramienta;
+            this.CantidadHerramienta = CantidadHerramienta;
+            
         }
 
-        public ComprasDTO(string nombre, string apellidos, string direcciónEnvío, float precioTotal, DateOnly fechaCompra)
-        {
-            this.nombre = nombre;
-            this.apellidos = apellidos;
-            DirecciónEnvío = direcciónEnvío;
-            PrecioTotal = precioTotal;
-            FechaCompra = fechaCompra;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return obj is ComprasDTO dTO &&
-                   Id == dTO.Id &&
-                   DirecciónEnvío == dTO.DirecciónEnvío &&
-                   FechaCompra.Equals(dTO.FechaCompra) &&
-                   PrecioTotal == dTO.PrecioTotal &&
-                   EqualityComparer<List<CompraItem>>.Default.Equals(CompraItems, dTO.CompraItems) &&
-                   EqualityComparer<MetodosPago>.Default.Equals(MétodoPago, dTO.MétodoPago) &&
-                   EqualityComparer<ApplicationUser>.Default.Equals(Usuario, dTO.Usuario);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id, DirecciónEnvío, FechaCompra, PrecioTotal, CompraItems, MétodoPago, Usuario);
-        }
     }
 }

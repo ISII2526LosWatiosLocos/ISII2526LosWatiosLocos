@@ -134,10 +134,12 @@ namespace AppForSEII2526.API.Controllers
                 o.Usuario.Apellidos,
                 o.DirecciónEnvío,
                 o.PrecioTotal,
-                o.FechaCompra
-
-
-
+                o.FechaCompra,
+                o.CompraItems.Select(oi => oi.Herramienta.Nombre).FirstOrDefault()!,
+                o.CompraItems.Select(oi => oi.Herramienta.Material).FirstOrDefault()!,
+                o.CompraItems.Select(oi => oi.Herramienta.Precio).FirstOrDefault()!,
+                o.CompraItems.Select(oi => oi.Descripción).FirstOrDefault()!,
+                o.CompraItems.Select(oi => oi.Cantidad).FirstOrDefault()!
 
             )).ToList();
 
