@@ -22,7 +22,7 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("Detalle-Oferta")]
-        [ProducesResponseType(typeof(IList<OfertasDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<OfertasParaDetalleDTO>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetDetalleHerramientasParaOferta()
         {
             var ofertas = await _context.Ofertas
@@ -33,7 +33,7 @@ namespace AppForSEII2526.API.Controllers
                 .ToListAsync();
 
 
-            var ofertasDTO = ofertas.Select(o => new OfertasDTO(
+            var ofertasDTO = ofertas.Select(o => new OfertasParaDetalleDTO(
                 o.FechaFinal,
                 o.FechaInicio,
                 o.FechaOferta,

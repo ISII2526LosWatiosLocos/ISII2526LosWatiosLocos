@@ -1,6 +1,6 @@
 ﻿namespace AppForSEII2526.API.DTOs
 {
-    public class OfertasDTO
+    public class OfertasParaDetalleDTO
     {
         public DateTime FechaFinal { get; set; }
         public DateTime FechaInicio { get; set; }
@@ -18,7 +18,7 @@
 
         public float precioOferta { get; set; }
 
-        public OfertasDTO(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, string tipoDirigida, string metodoPago, string nombreHerramienta, string materialHerramienta, string fabricanteHerramienta, float precioHerramienta, float precioOferta)
+        public OfertasParaDetalleDTO(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, string tipoDirigida, string metodoPago, string nombreHerramienta, string materialHerramienta, string fabricanteHerramienta, float precioHerramienta, float precioOferta)
         {
             FechaFinal = fechaFinal;
             FechaInicio = fechaInicio;
@@ -34,7 +34,7 @@
 
         public override bool Equals(object? obj)
         {
-            return obj is OfertasDTO dTO &&
+            return obj is OfertasParaDetalleDTO dTO &&
                    FechaFinal == dTO.FechaFinal &&
                    FechaInicio == dTO.FechaInicio &&
                    FechaOferta == dTO.FechaOferta &&
