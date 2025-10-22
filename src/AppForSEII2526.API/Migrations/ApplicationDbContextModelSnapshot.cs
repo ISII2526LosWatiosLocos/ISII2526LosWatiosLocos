@@ -212,8 +212,9 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
-                    b.Property<int>("Descripción")
-                        .HasColumnType("int");
+                    b.Property<string>("Descripción")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Precio")
                         .HasColumnType("real");
