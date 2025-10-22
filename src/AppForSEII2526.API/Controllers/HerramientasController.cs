@@ -116,11 +116,11 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("Detalle-Compra")]
-        // El tipo de respuesta es una lista de ComprasDTO
-        [ProducesResponseType(typeof(IList<ComprasDTO>), (int)HttpStatusCode.OK)]
+        // El tipo de respuesta es una lista de ComprasParaDetalleDTO
+        [ProducesResponseType(typeof(IList<ComprasParaDetalleDTO>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetDetalleHerramientasParaCompra()
         {
-            var compras = await _context.Compras
+            var comprasParaDetalle = await _context.Compras
                 .Include(o => o.MétodoPago)
                 .Include(o => o.Usuario)
                 .Include(o => o.CompraItems)
@@ -129,7 +129,7 @@ namespace AppForSEII2526.API.Controllers
                 .ToListAsync();
 
 
-            var comprasDTO = compras.Select(o => new ComprasDTO(
+            var comprasParaDetalleDTO = comprasParaDetalle.Select(o => new ComprasParaDetalleDTO(
                 o.Usuario.Nombre,
                 o.Usuario.Apellidos,
                 o.DirecciónEnvío,
@@ -143,7 +143,7 @@ namespace AppForSEII2526.API.Controllers
 
             )).ToList();
 
-            return Ok(comprasDTO);
+            return Ok(comprasParaDetalleDTO);
         }
     }
 
