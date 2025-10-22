@@ -12,7 +12,7 @@
         public List<OfertaItemsDTO> Items { get; set; }
 
 
-        public OfertasDTO(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, string tipoDirigida, string metodoPago, List<OfertaItemsDTO> items)
+        public OfertasParaDetalleDTO(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, string tipoDirigida, string metodoPago, List<OfertaItemsDTO> items)
         {
             FechaFinal = fechaFinal;
             FechaInicio = fechaInicio;
