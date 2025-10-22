@@ -54,7 +54,7 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,
                     oi.Herramienta.Fabricante.Nombre,
                     oi.Herramienta.Precio,
-                    oi.PrecioFinal
+                    oi.Herramienta.Precio * (100f - oi.Porcentaje) / 100
                 )).ToList()
             )).ToList();
 

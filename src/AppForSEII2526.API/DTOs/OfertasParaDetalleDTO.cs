@@ -9,10 +9,10 @@
         public string MetodoPago { get; set; }
 
         //Lista de items
-        public List<OfertaItemsDTO> Items { get; set; }
+        public IList<OfertaItemsDTO> Items { get; set; }
 
+        public OfertasParaDetalleDTO(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, string tipoDirigida, string metodoPago, IList<OfertaItemsDTO> items)
 
-        public OfertasParaDetalleDTO(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, string tipoDirigida, string metodoPago, List<OfertaItemsDTO> items)
         {
             FechaFinal = fechaFinal;
             FechaInicio = fechaInicio;
@@ -30,7 +30,7 @@
                    FechaOferta == dTO.FechaOferta &&
                    TipoDirigida == dTO.TipoDirigida &&
                    MetodoPago == dTO.MetodoPago &&
-                   EqualityComparer<List<OfertaItemsDTO>>.Default.Equals(Items, dTO.Items);
+                   EqualityComparer<IList<OfertaItemsDTO>>.Default.Equals(Items, dTO.Items);
         }
 
         public override int GetHashCode()
