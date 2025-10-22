@@ -11,8 +11,8 @@
         //Lista de items
         public IList<OfertaItemsDTO> Items { get; set; }
 
-
         public OfertasParaDetalleDTO(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, string tipoDirigida, string metodoPago, IList<OfertaItemsDTO> items)
+
         {
             FechaFinal = fechaFinal;
             FechaInicio = fechaInicio;
