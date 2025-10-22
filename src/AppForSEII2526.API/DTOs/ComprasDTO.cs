@@ -29,5 +29,35 @@
             
         }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is ComprasDTO dTO &&
+                   Nombre == dTO.Nombre &&
+                   Apellidos == dTO.Apellidos &&
+                   DirecciónEnvío == dTO.DirecciónEnvío &&
+                   PrecioTotal == dTO.PrecioTotal &&
+                   FechaCompra.Equals(dTO.FechaCompra) &&
+                   NombreHerramienta == dTO.NombreHerramienta &&
+                   MaterialHerramienta == dTO.MaterialHerramienta &&
+                   PrecioHerramienta == dTO.PrecioHerramienta &&
+                   DescripcionHerramienta == dTO.DescripcionHerramienta &&
+                   CantidadHerramienta == dTO.CantidadHerramienta;
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(Nombre);
+            hash.Add(Apellidos);
+            hash.Add(DirecciónEnvío);
+            hash.Add(PrecioTotal);
+            hash.Add(FechaCompra);
+            hash.Add(NombreHerramienta);
+            hash.Add(MaterialHerramienta);
+            hash.Add(PrecioHerramienta);
+            hash.Add(DescripcionHerramienta);
+            hash.Add(CantidadHerramienta);
+            return hash.ToHashCode();
+        }
     }
 }
