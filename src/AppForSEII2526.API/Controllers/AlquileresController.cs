@@ -28,7 +28,7 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetDetalleHerramientasParaAlquiler()
         {
-            if (_context.Compras == null)
+            if (_context.Alquileres == null)
             {
                 _logger.LogError("Error: La tabla no existe.");
                 return NotFound();
