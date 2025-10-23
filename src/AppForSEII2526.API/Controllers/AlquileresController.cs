@@ -21,6 +21,52 @@ namespace AppForSEII2526.API.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
+        [Route("Detalle-Alquiler")]
+        // El tipo de respuesta es una lista de AlquileresParaDetalleDTO
+        [ProducesResponseType(typeof(IList<AlquileresParaDetalleDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetDetalleHerramientasParaAlquiler()
+        {
+            if (_context.Compras == null)
+            {
+                _logger.LogError("Error: La tabla no existe.");
+                return NotFound();
+            }
+            var alquileresParaDetalle = await _context.Alquileres
+                .Include(o => o.MétodoPago)
+                .Include(o => o.Usuario)
+                .Include(o => o.AlquilarItems)
+                    .ThenInclude(oi => oi.Herramienta)
+                        .ThenInclude(h => h.Fabricante)
+                .ToListAsync();
+
+
+            var alquileresParaDetalleDTO = alquileresParaDetalle.Select(o => new AlquileresParaDetalleDTO(
+                o.Usuario.Nombre,
+                o.Usuario.Apellidos,
+                o.DireccionEnvio,
+                o.FechaAlquiler,
+                o.PrecioTotal,
+                o.FechaInicio,
+                o.FechaFin,
+                o.AlquilarItems.Select(oi => new AlquilarItemsDTO(
+                    oi.Herramienta.Nombre,
+                    oi.Herramienta.Material,
+                    oi.Herramienta.Precio,
+                    oi.Cantidad
+                )).ToList()
+
+            )).ToList();
+
+            if (alquileresParaDetalle == null)
+            {
+                _logger.LogError("Error: No se encontraron alquileres.");
+                return NotFound();
+            }
+
+            return Ok(alquileresParaDetalleDTO);
+        }
     }
 
 }
