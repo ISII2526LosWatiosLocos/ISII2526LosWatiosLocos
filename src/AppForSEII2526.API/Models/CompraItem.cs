@@ -10,9 +10,11 @@
         [Required]
         public int Cantidad { get; set; }
         [Required]
-        public string Descripción { get; set; }
+        public string Descripcion { get; set; }
         [Required]
         public float Precio { get; set; }
+
+        // Relaciones
 
         public Herramienta Herramienta { get; set; }
         public Compra Compra { get; set; }
