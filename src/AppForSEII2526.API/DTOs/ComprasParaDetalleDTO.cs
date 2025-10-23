@@ -4,60 +4,35 @@
     {
         private string Nombre { get; set; }
         private string Apellidos { get; set; }
-        public string DirecciónEnvío { get; set; }
+        public string DireccionEnvio { get; set; }
         public float PrecioTotal { get; set; }
         public DateOnly FechaCompra { get; set; }
-        public string NombreHerramienta { get; set; }
-        public string MaterialHerramienta { get; set; }
-        public float PrecioHerramienta { get; set; }
-        public string DescripcionHerramienta { get; set; }
-        public int CantidadHerramienta { get; set; }
+        public List<OfertaItemsDTO> CompraItemsDTOs{ get; set; } // Lista de Items
 
-
-        public ComprasParaDetalleDTO(string Nombre, string Apellidos, string DirecciónEnvío, float PrecioTotal, DateOnly FechaCompra, string NombreHerramienta, string MaterialHerramienta, float PrecioHerramienta, string DescripcionHerramienta, int CantidadHerramienta)
+        public ComprasParaDetalleDTO(string Nombre, string Apellidos, string DireccionEnvio, float PrecioTotal, DateOnly FechaCompra, List<CompraItemsDTO> CompraItemsDTOs)
         {
             this.Nombre = Nombre;
             this.Apellidos = Apellidos;
-            this.DirecciónEnvío = DirecciónEnvío;
+            this.DireccionEnvio = DireccionEnvio;
             this.PrecioTotal = PrecioTotal;
             this.FechaCompra = FechaCompra;
-            this.NombreHerramienta = NombreHerramienta;
-            this.MaterialHerramienta = MaterialHerramienta;
-            this.PrecioHerramienta = PrecioHerramienta;
-            this.DescripcionHerramienta = DescripcionHerramienta;
-            this.CantidadHerramienta = CantidadHerramienta;
+            CompraItemsDTOs = CompraItemsDTOs;
             
         }
-
         public override bool Equals(object? obj)
         {
             return obj is ComprasParaDetalleDTO dTO &&
                    Nombre == dTO.Nombre &&
                    Apellidos == dTO.Apellidos &&
-                   DirecciónEnvío == dTO.DirecciónEnvío &&
+                   DireccionEnvio == dTO.DireccionEnvio &&
                    PrecioTotal == dTO.PrecioTotal &&
                    FechaCompra.Equals(dTO.FechaCompra) &&
-                   NombreHerramienta == dTO.NombreHerramienta &&
-                   MaterialHerramienta == dTO.MaterialHerramienta &&
-                   PrecioHerramienta == dTO.PrecioHerramienta &&
-                   DescripcionHerramienta == dTO.DescripcionHerramienta &&
-                   CantidadHerramienta == dTO.CantidadHerramienta;
+                   EqualityComparer<List<OfertaItemsDTO>>.Default.Equals(CompraItemsDTOs, dTO.CompraItemsDTOs);
         }
 
         public override int GetHashCode()
         {
-            HashCode hash = new HashCode();
-            hash.Add(Nombre);
-            hash.Add(Apellidos);
-            hash.Add(DirecciónEnvío);
-            hash.Add(PrecioTotal);
-            hash.Add(FechaCompra);
-            hash.Add(NombreHerramienta);
-            hash.Add(MaterialHerramienta);
-            hash.Add(PrecioHerramienta);
-            hash.Add(DescripcionHerramienta);
-            hash.Add(CantidadHerramienta);
-            return hash.ToHashCode();
+            return HashCode.Combine(Nombre, Apellidos, DireccionEnvio, PrecioTotal, FechaCompra, CompraItemsDTOs);
         }
     }
 }

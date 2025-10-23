@@ -27,8 +27,14 @@ namespace AppForSEII2526.API.Controllers
         [Route("Detalle-Compra")]
         // El tipo de respuesta es una lista de ComprasParaDetalleDTO
         [ProducesResponseType(typeof(IList<ComprasParaDetalleDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetDetalleHerramientasParaCompra()
         {
+            if (_context.Compras == null)
+            {
+                _logger.LogError("Error: La tabla no existe.");
+                return NotFound();
+            }
             var comprasParaDetalle = await _context.Compras
                 .Include(o => o.MétodoPago)
                 .Include(o => o.Usuario)
@@ -44,13 +50,21 @@ namespace AppForSEII2526.API.Controllers
                 o.DirecciónEnvío,
                 o.PrecioTotal,
                 o.FechaCompra,
-                o.CompraItems.Select(oi => oi.Herramienta.Nombre).FirstOrDefault()!,
-                o.CompraItems.Select(oi => oi.Herramienta.Material).FirstOrDefault()!,
-                o.CompraItems.Select(oi => oi.Herramienta.Precio).FirstOrDefault()!,
-                o.CompraItems.Select(oi => oi.Descripción).FirstOrDefault()!,
-                o.CompraItems.Select(oi => oi.Cantidad).FirstOrDefault()!
+                o.CompraItems.Select(oi => new CompraItemsDTO(
+                    oi.Herramienta.Nombre,
+                    oi.Herramienta.Material,
+                    oi.Herramienta.Precio,
+                    oi.Descripción,
+                    oi.Cantidad
+                )).ToList()
 
             )).ToList();
+
+            if (comprasParaDetalle == null)
+            {
+                _logger.LogError("Error: No se encontraron ofertas.");
+                return NotFound();
+            }
 
             return Ok(comprasParaDetalleDTO);
         }
