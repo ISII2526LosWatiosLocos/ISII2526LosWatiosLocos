@@ -7,16 +7,16 @@
         public string DireccionEnvio { get; set; }
         public float PrecioTotal { get; set; }
         public DateTime FechaCompra { get; set; }
-        public IList<CompraItemsDTO> CompraItemsDTOs{ get; set; } // Lista de Items
+        public IList<CompraItemsDTO> Items { get; set; } // Lista de Items
 
-        public ComprasParaDetalleDTO(string Nombre, string Apellidos, string DireccionEnvio, float PrecioTotal, DateTime FechaCompra, IList<CompraItemsDTO> CompraItemsDTOs)
+        public ComprasParaDetalleDTO(string Nombre, string Apellidos, string DireccionEnvio, float PrecioTotal, DateTime FechaCompra, IList<CompraItemsDTO> Items)
         {
             this.Nombre = Nombre;
             this.Apellidos = Apellidos;
             this.DireccionEnvio = DireccionEnvio;
             this.PrecioTotal = PrecioTotal;
             this.FechaCompra = FechaCompra;
-            CompraItemsDTOs = CompraItemsDTOs;
+            Items = Items;
             
         }
         public override bool Equals(object? obj)
@@ -27,12 +27,12 @@
                    DireccionEnvio == dTO.DireccionEnvio &&
                    PrecioTotal == dTO.PrecioTotal &&
                    FechaCompra.Equals(dTO.FechaCompra) &&
-                   EqualityComparer<IList<CompraItemsDTO>>.Default.Equals(CompraItemsDTOs, dTO.CompraItemsDTOs);
+                   EqualityComparer<IList<CompraItemsDTO>>.Default.Equals(Items, dTO.Items);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Nombre, Apellidos, DireccionEnvio, PrecioTotal, FechaCompra, CompraItemsDTOs);
+            return HashCode.Combine(Nombre, Apellidos, DireccionEnvio, PrecioTotal, FechaCompra, Items);
         }
     }
 }

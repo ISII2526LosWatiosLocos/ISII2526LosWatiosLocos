@@ -73,7 +73,7 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(ComprasParaDetalleDTO), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
-        public async Task<IActionResult> CrearCompra([FromBody] CrearCompraDTO crearCompraDTO)
+        public async Task<IActionResult> CrearCompra([FromBody] CrearCompraDTO CrearCompraDTO)
         {
             // --- 1. VALIDACIONES DE LÓGICA (Patrón del ejemplo) ---
 
@@ -84,25 +84,25 @@ namespace AppForSEII2526.API.Controllers
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
-            if (crearCompraDTO.CrearCompraItemDTOs == null || !crearCompraDTO.CrearCompraItemDTOs.Any())
-                ModelState.AddModelError(nameof(crearCompraDTO.CrearCompraItemDTOs), "La compra debe incluir al menos una herramienta.");
+            if (CrearCompraDTO.Items == null || !CrearCompraDTO.Items.Any())
+                ModelState.AddModelError(nameof(CrearCompraDTO.Items), "La compra debe incluir al menos una herramienta.");
 
             // --- 2. VALIDAR ENTIDADES RELACIONADAS (Patrón del ejemplo) ---
 
             // a. Buscar Método de Pago
-            var metodoPago = await _context.MetodosPagos.FindAsync(crearCompraDTO.MetodoPagoId);
+            var metodoPago = await _context.MetodosPagos.FindAsync(CrearCompraDTO.MetodoPagoId);
             if (metodoPago == null)
-                ModelState.AddModelError(nameof(crearCompraDTO.MetodoPagoId), $"El MetodoPagoId {crearCompraDTO.MetodoPagoId} no existe.");
+                ModelState.AddModelError(nameof(CrearCompraDTO.MetodoPagoId), $"El MetodoPagoId {CrearCompraDTO.MetodoPagoId} no existe.");
 
             // b. Buscar Usuario
-            var Usuario = await _context.MetodosPagos.FindAsync(crearCompraDTO.Usuario);
+            var Usuario = await _context.MetodosPagos.FindAsync(CrearCompraDTO.Usuario);
             if (Usuario == null)
-                ModelState.AddModelError(nameof(crearCompraDTO.Usuario), $"El Usuario {crearCompraDTO.Usuario} no existe.");
+                ModelState.AddModelError(nameof(CrearCompraDTO.Usuario), $"El Usuario {CrearCompraDTO.Usuario} no existe.");
 
             // c. Buscar CrearCompraItemDTOs
-            var CrearCompraItemDTOs = await _context.MetodosPagos.FindAsync(crearCompraDTO.CrearCompraItemDTOs);
+            var CrearCompraItemDTOs = await _context.MetodosPagos.FindAsync(CrearCompraDTO.Items);
             if (CrearCompraItemDTOs == null)
-                ModelState.AddModelError(nameof(crearCompraDTO.CrearCompraItemDTOs), $"Los CrearCompraItemDTOs {crearCompraDTO.CrearCompraItemDTOs} no existen.");
+                ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"Los CrearCompraItemDTOs {CrearCompraDTO.Items} no existen.");
 
             // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
             if (ModelState.ErrorCount > 0)
@@ -111,7 +111,7 @@ namespace AppForSEII2526.API.Controllers
             // --- 3. CONSULTA ÚNICA (Patrón del ejemplo) ---
 
             // a. Coger todos los IDs del DTO
-            var herramientaIds = crearCompraDTO.CrearCompraItemDTOs.Select(i => i.HerramientaId).Distinct().ToList();
+            var herramientaIds = CrearCompraDTO.Items.Select(i => i.HerramientaId).Distinct().ToList();
 
             // b. Hacer UNA sola llamada a la BBDD para traer todas las herramientas
             //    e incluir su Fabricante (para construir el DTO de respuesta después)
@@ -124,22 +124,22 @@ namespace AppForSEII2526.API.Controllers
 
             var nuevaCompra = new Compra
             {
-                DireccionEnvio = crearCompraDTO.DireccionEnvio,
+                DireccionEnvio = CrearCompraDTO.DireccionEnvio,
                 FechaCompra = DateTime.UtcNow,
-                PrecioTotal = crearCompraDTO.PrecioTotal,
+                PrecioTotal = CrearCompraDTO.PrecioTotal,
                 CompraItems = new List<CompraItem>(),
                 MetodoPago = metodoPago!, // Sabemos que no es null por la validación anterior
-                Usuario = crearCompraDTO.Usuario
+                Usuario = CrearCompraDTO.Usuario
             };
 
             // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
-            foreach (var CrearCompraItemsDTO in crearCompraDTO.CrearCompraItemDTOs)
+            foreach (var itemDTO in CrearCompraDTO.Items)
             {
                 // Buscar la herramienta en la lista local (el Diccionario)
-                if (!herramientasEnDB.TryGetValue(CrearCompraItemsDTO.HerramientaId, out var herramienta))
+                if (!herramientasEnDB.TryGetValue(itemDTO.HerramientaId, out var herramienta))
                 {
                     // La herramienta no se encontró en nuestra consulta
-                    ModelState.AddModelError(nameof(crearCompraDTO.CrearCompraItemDTOs), $"La HerramientaId {CrearCompraItemsDTO.HerramientaId} no existe.");
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {itemDTO.HerramientaId} no existe.");
                 }
                 else
                 {
@@ -149,9 +149,9 @@ namespace AppForSEII2526.API.Controllers
                     {
                         Herramienta = herramienta,
                         Compra = nuevaCompra,
-                        Cantidad = CrearCompraItemDTOs.CantidadHerramienta,
-                        Descripcion = Descripcion,
-                        Precio = Precio
+                        Cantidad = itemDTO.Cantidad,
+                        Descripcion = itemDTO.Descripcion,
+                        Precio = itemDTO.Precio
                     };
                     nuevaCompra.CompraItems.Add(nuevoItem);
                 }
@@ -179,20 +179,19 @@ namespace AppForSEII2526.API.Controllers
             // Construimos el DTO de detalle con los objetos que ya tenemos
 
             var compraDTORespuesta = new ComprasParaDetalleDTO(
-                nuevaCompra.FechaFinal,
-                nuevaCompra.FechaInicio,
-                nuevaCompra.FechaOferta,
-                nuevaCompra.TipoDirigida.ToString(),
-                // El tipo de MetodoPago (ej. "PayPal", "TarjetaCredito")
-                nuevaCompra.MetodosPago.GetType().Name,
+                nuevaCompra.Usuario.Nombre,
+                nuevaCompra.Usuario.Apellidos,
+                nuevaCompra.DireccionEnvio,
+                nuevaCompra.PrecioTotal,
+                nuevaCompra.FechaCompra,
 
                 // Mapeamos los items desde los objetos en memoria
                 nuevaCompra.CompraItems.Select(oi => new CompraItemsDTO(
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
-                    oi.Herramienta.Fabricante.Nombre, // Esto funciona gracias al .Include() que hicimos
-                    oi.Herramienta.Precio,
-                    oi.PrecioFinal
+                    oi.Precio,
+                    oi.Descripcion,
+                    oi.Cantidad
                 )).ToList()
             );
 
