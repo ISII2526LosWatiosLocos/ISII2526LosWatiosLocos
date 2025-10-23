@@ -7,9 +7,9 @@
         public string DireccionEnvio { get; set; }
         public float PrecioTotal { get; set; }
         public DateOnly FechaCompra { get; set; }
-        public List<OfertaItemsDTO> CompraItemsDTOs{ get; set; } // Lista de Items
+        public IList<CompraItemsDTO> CompraItemsDTOs{ get; set; } // Lista de Items
 
-        public ComprasParaDetalleDTO(string Nombre, string Apellidos, string DireccionEnvio, float PrecioTotal, DateOnly FechaCompra, List<CompraItemsDTO> CompraItemsDTOs)
+        public ComprasParaDetalleDTO(string Nombre, string Apellidos, string DireccionEnvio, float PrecioTotal, DateOnly FechaCompra, IList<CompraItemsDTO> CompraItemsDTOs)
         {
             this.Nombre = Nombre;
             this.Apellidos = Apellidos;
@@ -27,7 +27,7 @@
                    DireccionEnvio == dTO.DireccionEnvio &&
                    PrecioTotal == dTO.PrecioTotal &&
                    FechaCompra.Equals(dTO.FechaCompra) &&
-                   EqualityComparer<List<OfertaItemsDTO>>.Default.Equals(CompraItemsDTOs, dTO.CompraItemsDTOs);
+                   EqualityComparer<IList<CompraItemsDTO>>.Default.Equals(CompraItemsDTOs, dTO.CompraItemsDTOs);
         }
 
         public override int GetHashCode()

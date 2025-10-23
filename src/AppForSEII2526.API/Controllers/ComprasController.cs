@@ -62,7 +62,7 @@ namespace AppForSEII2526.API.Controllers
 
             if (comprasParaDetalle == null)
             {
-                _logger.LogError("Error: No se encontraron ofertas.");
+                _logger.LogError("Error: No se encontraron compras.");
                 return NotFound();
             }
 
