@@ -36,7 +36,7 @@ namespace AppForSEII2526.API.Controllers
                 return NotFound();
             }
             var comprasParaDetalle = await _context.Compras
-                .Include(o => o.MétodoPago)
+                .Include(o => o.MetodoPago)
                 .Include(o => o.Usuario)
                 .Include(o => o.CompraItems)
                     .ThenInclude(oi => oi.Herramienta)
@@ -47,14 +47,14 @@ namespace AppForSEII2526.API.Controllers
             var comprasParaDetalleDTO = comprasParaDetalle.Select(o => new ComprasParaDetalleDTO(
                 o.Usuario.Nombre,
                 o.Usuario.Apellidos,
-                o.DirecciónEnvío,
+                o.DireccionEnvio,
                 o.PrecioTotal,
                 o.FechaCompra,
                 o.CompraItems.Select(oi => new CompraItemsDTO(
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
-                    oi.Descripción,
+                    oi.Descripcion,
                     oi.Cantidad
                 )).ToList()
 
@@ -62,11 +62,144 @@ namespace AppForSEII2526.API.Controllers
 
             if (comprasParaDetalle == null)
             {
-                _logger.LogError("Error: No se encontraron ofertas.");
+                _logger.LogError("Error: No se encontraron compras.");
                 return NotFound();
             }
 
             return Ok(comprasParaDetalleDTO);
+        }
+        [HttpPost]
+        [Route("Crear-Compra")]
+        [ProducesResponseType(typeof(ComprasParaDetalleDTO), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
+        public async Task<IActionResult> CrearCompra([FromBody] CrearCompraDTO CrearCompraDTO)
+        {
+            // --- 1. VALIDACIONES DE LÓGICA (Patrón del ejemplo) ---
+
+            if (_context.Compras == null || _context.Herramientas == null || _context.MetodosPagos == null)
+            {
+                // Este es un error 500
+                _logger.LogError("Error: Faltan DbSets (Compras, Herramientas o MetodosPagos) en el DbContext.");
+                return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
+            }
+
+            if (CrearCompraDTO.Items == null || !CrearCompraDTO.Items.Any())
+                ModelState.AddModelError(nameof(CrearCompraDTO.Items), "La compra debe incluir al menos una herramienta.");
+
+            // --- 2. VALIDAR ENTIDADES RELACIONADAS (Patrón del ejemplo) ---
+
+            // a. Buscar Método de Pago
+            var metodoPago = await _context.MetodosPagos.FindAsync(CrearCompraDTO.MetodoPagoId);
+            if (metodoPago == null)
+                ModelState.AddModelError(nameof(CrearCompraDTO.MetodoPagoId), $"El MetodoPagoId {CrearCompraDTO.MetodoPagoId} no existe.");
+
+            // b. Buscar Usuario
+            var Usuario = await _context.MetodosPagos.FindAsync(CrearCompraDTO.Usuario);
+            if (Usuario == null)
+                ModelState.AddModelError(nameof(CrearCompraDTO.Usuario), $"El Usuario {CrearCompraDTO.Usuario} no existe.");
+
+            // c. Buscar CrearCompraItemDTOs
+            var CrearCompraItemDTOs = await _context.MetodosPagos.FindAsync(CrearCompraDTO.Items);
+            if (CrearCompraItemDTOs == null)
+                ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"Los CrearCompraItemDTOs {CrearCompraDTO.Items} no existen.");
+
+            // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+            // --- 3. CONSULTA ÚNICA (Patrón del ejemplo) ---
+
+            // a. Coger todos los IDs del DTO
+            var herramientaIds = CrearCompraDTO.Items.Select(i => i.HerramientaId).Distinct().ToList();
+
+            // b. Hacer UNA sola llamada a la BBDD para traer todas las herramientas
+            //    e incluir su Fabricante (para construir el DTO de respuesta después)
+            var herramientasEnDB = await _context.Herramientas
+                .Include(h => h.Fabricante)
+                .Where(h => herramientaIds.Contains(h.Id))
+                .ToDictionaryAsync(h => h.Id); // Convertir a Diccionario para búsquedas rápidas en memoria
+
+            // --- 4. CONSTRUCCIÓN EN MEMORIA (Patrón del ejemplo) ---
+
+            var nuevaCompra = new Compra
+            {
+                DireccionEnvio = CrearCompraDTO.DireccionEnvio,
+                FechaCompra = DateTime.UtcNow,
+                PrecioTotal = CrearCompraDTO.PrecioTotal,
+                CompraItems = new List<CompraItem>(),
+                MetodoPago = metodoPago!, // Sabemos que no es null por la validación anterior
+                Usuario = CrearCompraDTO.Usuario
+            };
+
+            // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
+            foreach (var itemDTO in CrearCompraDTO.Items)
+            {
+                // Buscar la herramienta en la lista local (el Diccionario)
+                if (!herramientasEnDB.TryGetValue(itemDTO.HerramientaId, out var herramienta))
+                {
+                    // La herramienta no se encontró en nuestra consulta
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {itemDTO.HerramientaId} no existe.");
+                }
+                else
+                {
+                    // Todo correcto para este item
+
+                    var nuevoItem = new CompraItem
+                    {
+                        Herramienta = herramienta,
+                        Compra = nuevaCompra,
+                        Cantidad = itemDTO.Cantidad,
+                        Descripcion = itemDTO.Descripcion,
+                        Precio = itemDTO.Precio
+                    };
+                    nuevaCompra.CompraItems.Add(nuevoItem);
+                }
+            }
+
+            // --- 6. VALIDACIÓN FINAL (Patrón del ejemplo) ---
+            // Comprobar si se añadieron errores *dentro* del bucle
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+            // --- 7. GUARDADO ÚNICO (Patrón del ejemplo) ---
+            _context.Compras.Add(nuevaCompra);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al guardar la nueva compra en la base de datos.");
+                return Conflict($"Ocurrió un error al guardar la compra: {ex.Message}");
+            }
+
+            // --- 8. RESPUESTA SIN RECARGAR (Patrón del ejemplo) ---
+            // Construimos el DTO de detalle con los objetos que ya tenemos
+
+            var compraDTORespuesta = new ComprasParaDetalleDTO(
+                nuevaCompra.Usuario.Nombre,
+                nuevaCompra.Usuario.Apellidos,
+                nuevaCompra.DireccionEnvio,
+                nuevaCompra.PrecioTotal,
+                nuevaCompra.FechaCompra,
+
+                // Mapeamos los items desde los objetos en memoria
+                nuevaCompra.CompraItems.Select(oi => new CompraItemsDTO(
+                    oi.Herramienta.Nombre,
+                    oi.Herramienta.Material,
+                    oi.Precio,
+                    oi.Descripcion,
+                    oi.Cantidad
+                )).ToList()
+            );
+
+            // Devolvemos el DTO de detalle
+            return CreatedAtAction(
+                nameof(GetDetalleHerramientasParaCompra), // Nombre del método GET
+                new { id = nuevaCompra.Id }, // Parámetro de ruta para el método GET
+                compraDTORespuesta); // El cuerpo de la respuesta
         }
     }
 }
