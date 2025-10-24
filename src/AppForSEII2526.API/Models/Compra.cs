@@ -10,17 +10,17 @@ namespace AppForSEII2526.API.Models
         // Campos obligatorios
 
         [Required]
-        public string DirecciónEnvío { get; set; }
+        public string DireccionEnvio { get; set; }
         [Required]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateOnly FechaCompra { get; set; }
+        public DateTime FechaCompra { get; set; }
         [Required]
         public float PrecioTotal { get; set; }
 
         // Relaciones
 
         public List<CompraItem> CompraItems { get; set; }
-        public MetodosPago MétodoPago { get; set; }
+        public MetodosPago MetodoPago { get; set; }
         public ApplicationUser Usuario { get; set; }
     }
 }
