@@ -10,30 +10,25 @@ namespace AppForSEII2526.API.DTOs
         public DateTime FechaRecogida { get; set; }
         public float PrecioTotal { get; set; }
         public MetodosPago MétodoPago { get; set; }
-        public List<ReparaciónItem> ReparaciónItems { get; set; }
       
 
 
-        private string nombre { get; set; } 
-        private string apellidos { get; set; }
 
-        public string NombreHerramienta { get; set; }
-        public string DescripcionHerramienta { get; set; }
-        public int CantidadHerramienta { get; set; }
-        public float PrecioHerramienta { get; set; }
+        public string nombre { get; set; }
+        public string apellidos { get; set; }
 
-        public ReparacionesDTO(string nombre, string apellidos, DateTime FechaEntrega, DateTime FechaRecogida, float PrecioTotal, String NombreHerramienta,  float PrecioHerramienta, string DescripcionHerramienta, int CantidadHerramienta)
+
+        public IList<ReparacionesItemDTO> ReparacionesItems { get; set; }
+        public ReparacionesDTO(string nombre, string apellidos, DateTime FechaEntrega, DateTime FechaRecogida, float PrecioTotal, IList<ReparacionesItemDTO> ReparacionesItems)
         {
             this.nombre = nombre;
             this.apellidos = apellidos;
             this.FechaEntrega = FechaEntrega;
             this.FechaRecogida = FechaRecogida;
             this.PrecioTotal = PrecioTotal;
-            this.NombreHerramienta= NombreHerramienta;
-            this.PrecioHerramienta = PrecioHerramienta;
-            this.DescripcionHerramienta = DescripcionHerramienta;
-            this.CantidadHerramienta = CantidadHerramienta; 
-                 }
+            this.ReparacionesItems = ReparacionesItems;
+
+        }
 
         public override bool Equals(object? obj)
         {
@@ -42,31 +37,14 @@ namespace AppForSEII2526.API.DTOs
                    FechaRecogida == dTO.FechaRecogida &&
                    PrecioTotal == dTO.PrecioTotal &&
                    EqualityComparer<MetodosPago>.Default.Equals(MétodoPago, dTO.MétodoPago) &&
-                   EqualityComparer<List<ReparaciónItem>>.Default.Equals(ReparaciónItems, dTO.ReparaciónItems) &&
                    nombre == dTO.nombre &&
                    apellidos == dTO.apellidos &&
-                   DescripcionHerramienta == dTO.DescripcionHerramienta &&
-                   CantidadHerramienta == dTO.CantidadHerramienta &&
-                   PrecioHerramienta == dTO.PrecioHerramienta;
+                   EqualityComparer<IList<ReparacionesItemDTO>>.Default.Equals(ReparacionesItems, dTO.ReparacionesItems);
         }
 
         public override int GetHashCode()
         {
-            HashCode hash = new HashCode();
-            hash.Add(FechaEntrega);
-            hash.Add(FechaRecogida);
-            hash.Add(PrecioTotal);
-            hash.Add(MétodoPago);
-            hash.Add(ReparaciónItems);
-            hash.Add(nombre);
-            hash.Add(apellidos);
-            hash.Add(DescripcionHerramienta);
-            hash.Add(CantidadHerramienta);
-            hash.Add(PrecioHerramienta);
-            return hash.ToHashCode();
+            return HashCode.Combine(FechaEntrega, FechaRecogida, PrecioTotal, MétodoPago, nombre, apellidos, ReparacionesItems);
         }
     }
 }
-
-
-
