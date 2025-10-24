@@ -247,10 +247,10 @@ namespace AppForSEII2526.API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DirecciónEnvío = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FechaCompra = table.Column<DateOnly>(type: "date", nullable: false),
+                    DireccionEnvio = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaCompra = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PrecioTotal = table.Column<float>(type: "real", nullable: false),
-                    MétodoPagoId = table.Column<int>(type: "int", nullable: false),
+                    MetodoPagoId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -262,8 +262,8 @@ namespace AppForSEII2526.API.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Compras_MetodosPagos_MétodoPagoId",
-                        column: x => x.MétodoPagoId,
+                        name: "FK_Compras_MetodosPagos_MetodoPagoId",
+                        column: x => x.MetodoPagoId,
                         principalTable: "MetodosPagos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -353,7 +353,7 @@ namespace AppForSEII2526.API.Migrations
                     CompraId = table.Column<int>(type: "int", nullable: false),
                     HerramientaId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
-                    Descripción = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Precio = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
@@ -486,9 +486,9 @@ namespace AppForSEII2526.API.Migrations
                 column: "HerramientaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Compras_MétodoPagoId",
+                name: "IX_Compras_MetodoPagoId",
                 table: "Compras",
-                column: "MétodoPagoId");
+                column: "MetodoPagoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Compras_UsuarioId",

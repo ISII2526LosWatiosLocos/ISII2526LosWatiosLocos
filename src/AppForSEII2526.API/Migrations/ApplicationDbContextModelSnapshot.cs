@@ -176,14 +176,14 @@ namespace AppForSEII2526.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DirecciónEnvío")
+                    b.Property<string>("DireccionEnvio")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("FechaCompra")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("FechaCompra")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("MétodoPagoId")
+                    b.Property<int>("MetodoPagoId")
                         .HasColumnType("int");
 
                     b.Property<float>("PrecioTotal")
@@ -194,7 +194,7 @@ namespace AppForSEII2526.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MétodoPagoId");
+                    b.HasIndex("MetodoPagoId");
 
                     b.HasIndex("UsuarioId");
 
@@ -212,7 +212,7 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
-                    b.Property<string>("Descripción")
+                    b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -603,9 +603,9 @@ namespace AppForSEII2526.API.Migrations
 
             modelBuilder.Entity("AppForSEII2526.API.Models.Compra", b =>
                 {
-                    b.HasOne("AppForSEII2526.API.Models.MetodosPago", "MétodoPago")
+                    b.HasOne("AppForSEII2526.API.Models.MetodosPago", "MetodoPago")
                         .WithMany()
-                        .HasForeignKey("MétodoPagoId")
+                        .HasForeignKey("MetodoPagoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -613,7 +613,7 @@ namespace AppForSEII2526.API.Migrations
                         .WithMany("Compras")
                         .HasForeignKey("UsuarioId");
 
-                    b.Navigation("MétodoPago");
+                    b.Navigation("MetodoPago");
 
                     b.Navigation("Usuario");
                 });
