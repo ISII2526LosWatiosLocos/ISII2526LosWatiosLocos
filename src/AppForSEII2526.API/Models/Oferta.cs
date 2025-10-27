@@ -22,12 +22,26 @@ namespace AppForSEII2526.API.Models
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime FechaOferta { get; set; }
 
-        public tipoDirigidaOferta ?TipoDirigida { get; set; }
+        public tipoDirigidaOferta? TipoDirigida { get; set; }
 
         public List<OfertaItem> Items { get; set; }
 
         public MetodosPago MetodosPago { get; set; }
 
+        public Oferta(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, tipoDirigidaOferta? tipoDirigida, List<OfertaItem> items, MetodosPago metodosPago)
+        {
+            FechaFinal = fechaFinal;
+            FechaInicio = fechaInicio;
+            FechaOferta = fechaOferta;
+            TipoDirigida = tipoDirigida;
+            Items = items;
+            MetodosPago = metodosPago;
+        }
 
+        public Oferta()
+        {
+        }
+
+        public ApplicationUser Usuario { get; set; }
     }
 }
