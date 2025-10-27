@@ -10,5 +10,15 @@
 
         public List<Herramienta> Herramientas { get; set; }
 
-    }
+
+        public Fabricante(int id, string nombre, List<Herramienta> herramientas)
+        {
+            Id = id;
+            Nombre = nombre;
+            Herramientas = herramientas;
+        }
+
+        public Fabricante()
+        {
+        }
 }

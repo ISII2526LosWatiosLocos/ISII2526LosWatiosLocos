@@ -26,10 +26,38 @@ namespace AppForSEII2526.API.Models
 
             [Required]
             public MetodosPago MétodoPago { get; set; }
+
+        
         //Relaciones 
         public List<ReparaciónItem> ReparaciónItems { get; set; }
         public ApplicationUser Usuario { get; set; }
 
+        public Reparación(DateTime fechaEntrega, DateTime fechaRecogida, float precioTotal, MetodosPago Metodopago,List<ReparaciónItem> reparaciónItems)
+        {
+            FechaEntrega = fechaEntrega;
+            FechaRecogida = fechaRecogida;
+            PrecioTotal = precioTotal;
+            MétodoPago = Metodopago;
+            ReparaciónItems = reparaciónItems;
+           
+        }
+
+        public Reparación(int id, DateTime fechaEntrega, DateTime fechaRecogida, float precioTotal, MetodosPago métodoPago, List<ReparaciónItem> reparaciónItems, ApplicationUser usuario)
+        {
+            Id = id;
+            FechaEntrega = fechaEntrega;
+            FechaRecogida = fechaRecogida;
+            PrecioTotal = precioTotal;
+            MétodoPago = métodoPago;
+            ReparaciónItems = reparaciónItems;
+         
+        }
+
+        public Reparación()
+        {
+        }
+
+       
 
     }
 }
