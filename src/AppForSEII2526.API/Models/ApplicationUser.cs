@@ -38,4 +38,6 @@ public class ApplicationUser : IdentityUser {
         Reparaciones = reparaciones;
         Alquileres = alquileres;
     }
+    // Constructor vacío
+    public ApplicationUser() { }
 }

@@ -39,5 +39,7 @@
             Herramienta = herramienta;
             Compra = compra;
         }
+        // Constructor vacío
+        public CompraItem() { }
     }
 }

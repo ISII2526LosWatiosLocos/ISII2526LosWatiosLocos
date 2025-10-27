@@ -45,5 +45,7 @@ namespace AppForSEII2526.API.Models
             MetodoPago = metodoPago;
             Usuario = usuario;
         }
+        // Constructor vacío
+        public Compra() { }
     }
 }

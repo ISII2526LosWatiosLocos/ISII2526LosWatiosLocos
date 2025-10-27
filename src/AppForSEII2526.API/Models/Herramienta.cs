@@ -50,5 +50,7 @@
             ReparaciónItems = reparacionItems;
             Fabricante = fabricante;
         }
+        // Constructor vacío
+        public Herramienta() { }
     }
 }

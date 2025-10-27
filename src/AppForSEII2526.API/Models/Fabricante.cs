@@ -24,5 +24,8 @@
             Nombre = nombre;
             Herramientas = herramientas;
         }
+
+        // Constructor vacío
+        public Fabricante() { }
     }
 }
