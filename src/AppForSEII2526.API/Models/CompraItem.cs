@@ -30,10 +30,9 @@
             Herramienta = herramienta;
             Compra = compra;
         }
-        // Constructor sin el ID para las pruebas
-        public CompraItem(int herramientaId, int cantidad, string descripcion, float precio, Herramienta herramienta, Compra compra)
+        // Constructor sin los IDs para las pruebas
+        public CompraItem(int cantidad, string descripcion, float precio, Herramienta herramienta, Compra compra)
         {
-            HerramientaId = herramientaId;
             Cantidad = cantidad;
             Descripcion = descripcion;
             Precio = precio;

@@ -19,7 +19,7 @@
         }
 
         // Constructor sin el ID para las pruebas
-        public Fabricante(string nombre)
+        public Fabricante(string nombre, List<Herramienta> herramientas)
         {
             Nombre = nombre;
             Herramientas = herramientas;
