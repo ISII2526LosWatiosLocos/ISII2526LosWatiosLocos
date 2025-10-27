@@ -18,5 +18,17 @@
 
         public Oferta Oferta { get; set; }
         public Herramienta Herramienta { get; set; }
+
+        public OfertaItem(int porcentaje, float precioFinal, Oferta oferta, Herramienta herramienta)
+        {
+            Porcentaje = porcentaje;
+            PrecioFinal = precioFinal;
+            Oferta = oferta;
+            Herramienta = herramienta;
+        }
+
+        public OfertaItem()
+        {
+        }
     }
 }

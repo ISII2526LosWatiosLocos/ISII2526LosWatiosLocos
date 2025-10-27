@@ -52,5 +52,16 @@
         }
         // Constructor vacío
         public Herramienta() { }
+            TiempoReparacion = tiempoReparacion;
+            CompraItems = compraItems;
+            AlquilarItems = alquilarItems;
+            OfertaItems = ofertaItems;
+            ReparaciónItems = reparaciónItems;
+            Fabricante = fabricante;
+        }
+
+        public Herramienta()
+        {
+        }
     }
 }

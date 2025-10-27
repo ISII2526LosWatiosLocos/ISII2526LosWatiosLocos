@@ -125,15 +125,15 @@ namespace AppForSEII2526.API.Controllers
 
             // --- 4. CONSTRUCCIÓN EN MEMORIA (Patrón del ejemplo) ---
 
-            var nuevaOferta = new Oferta
-            {
-                FechaInicio = crearOfertaDTO.FechaInicio,
-                FechaFinal = crearOfertaDTO.FechaFinal,
-                FechaOferta = DateTime.UtcNow,
-                MetodosPago = metodoPago!, // Sabemos que no es null por la validación anterior
-                TipoDirigida = tipoDirigido,
-                Items = new List<OfertaItem>()
-            };
+          
+            var nuevaOferta = new Oferta(
+                crearOfertaDTO.FechaFinal,
+                crearOfertaDTO.FechaInicio,
+                DateTime.UtcNow,
+                tipoDirigido,
+                new List<OfertaItem>(),
+                metodoPago!
+            );
 
             // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
             foreach (var itemDTO in crearOfertaDTO.Items)
@@ -153,13 +153,12 @@ namespace AppForSEII2526.API.Controllers
                     // Todo correcto para este item
                     float precioFinal = herramienta.Precio * (1 - (itemDTO.PorcentajeDescuento / 100.0f));
 
-                    var nuevoItem = new OfertaItem
-                    {
-                        Herramienta = herramienta,
-                        Oferta = nuevaOferta,
-                        Porcentaje = itemDTO.PorcentajeDescuento,
-                        PrecioFinal = precioFinal
-                    };
+                    var nuevoItem = new OfertaItem(
+                        itemDTO.PorcentajeDescuento,
+                        precioFinal,
+                        nuevaOferta,
+                        herramienta
+                    );
                     nuevaOferta.Items.Add(nuevoItem);
                 }
             }
