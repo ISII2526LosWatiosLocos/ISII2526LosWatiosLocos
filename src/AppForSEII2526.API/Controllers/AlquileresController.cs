@@ -67,6 +67,65 @@ namespace AppForSEII2526.API.Controllers
 
             return Ok(alquileresParaDetalleDTO);
         }
+
+        [HttpPost]
+        [Route("Crear-Alquiler")]
+        [ProducesResponseType(typeof(AlquileresParaDetalleDTO), 201)] // Created
+        [ProducesResponseType(typeof(ValidationProblemDetails),400)] // Bad Request
+        [ProducesResponseType(typeof(string), 409)] // Conflict
+        public async Task<ActionResult> CreateAlquiler([FromBody] CrearAlquilerDTO alquilerCreate)
+        {
+            if (_context.Alquileres == null || _context.Herramientas == null || _context.MetodosPagos == null)
+            {
+                _logger.LogError("Error: Faltan DbSets (Alquileres, Herramientas o MetodosPagos) en el DbContext.");
+                return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
+            }
+
+            // AÑADIR VALIDACIONES !!!!
+            
+
+            // Si hay errores, retornar
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+            // Hacer una sola llamada a la BBDD para traer todas las herramientas
+            var herramientaNombres = alquilerCreate.Items.Select(i => i.HerramientaId).Distinct().ToList();
+            var herramientasEnDB = await _context.Herramientas
+                .Include(h => h.Fabricante)
+                .Where(h => herramientaNombres.Contains(h.Id))
+                .ToDictionaryAsync(h => h.Nombre);
+
+            // Validar que todas las herramientas existen
+            foreach (var item in alquilerCreate.Items)
+            {
+                if (!herramientasEnDB.ContainsKey(item.HerramientaId)) // ?????????????????
+                {
+                    ModelState.AddModelError("AlquilerItems", $"Error: la herramienta '{item.HerramientaId}' no existe");
+                }
+            }
+
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+            // Construir DTO de respuesta con la información de los objetos Herramienta
+            var alquilerDetalle = new AlquileresParaDetalleDTO(
+               
+                // ARREGLAR CONSTRUCTOOOR !!!!!!!!!!
+                alquilerCreate.ReparacionesItems.Select(ri =>
+                {
+                    var herramienta = herramientasEnDB[ri.HerramientaNombre];
+                    return new AlquilarItemsDTO(
+                        herramienta.Nombre,
+                        ri.HerramientaDescripcion,
+                        ri.HerramientaCantidad,
+                        ri.HerramientaPrecio
+                    );
+                }).ToList()
+            );
+
+            // Devolver el DTO simulado
+            return CreatedAtAction("GetDetalleHerramientasParaAlquiler", new { }, alquilerDetalle);
+        }
     }
 
 }
