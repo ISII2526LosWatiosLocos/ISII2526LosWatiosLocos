@@ -22,12 +22,36 @@
         public List<ReparaciónItem> ReparaciónItems { get; set; }
         public Fabricante Fabricante { get; set; }
 
-        public Herramienta(int id, string nombre, string material, float precio, int tiempoReparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaItems, List<ReparaciónItem> reparaciónItems, Fabricante fabricante)
+        // Constructor completo
+        public Herramienta(int id, string nombre, string material, float precio, int tiemporeparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaitems, List<ReparaciónItem> reparacionItems, Fabricante fabricante)
         {
             Id = id;
             Nombre = nombre;
             Material = material;
             Precio = precio;
+            TiempoReparacion = tiemporeparacion;
+            CompraItems = compraItems;
+            AlquilarItems = alquilarItems;
+            OfertaItems = ofertaitems;
+            ReparaciónItems = reparacionItems;
+            Fabricante = fabricante;
+        }
+
+        // Constructor sin el ID para las pruebas
+        public Herramienta(string nombre, string material, float precio, int tiemporeparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaitems, List<ReparaciónItem> reparacionItems, Fabricante fabricante)
+        {
+            Nombre = nombre;
+            Material = material;
+            Precio = precio;
+            TiempoReparacion = tiemporeparacion;
+            CompraItems = compraItems;
+            AlquilarItems = alquilarItems;
+            OfertaItems = ofertaitems;
+            ReparaciónItems = reparacionItems;
+            Fabricante = fabricante;
+        }
+        // Constructor vacío
+        public Herramienta() { }
             TiempoReparacion = tiempoReparacion;
             CompraItems = compraItems;
             AlquilarItems = alquilarItems;

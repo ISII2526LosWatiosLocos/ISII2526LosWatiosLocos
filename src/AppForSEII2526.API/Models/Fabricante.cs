@@ -10,6 +10,7 @@
 
         public List<Herramienta> Herramientas { get; set; }
 
+        // Constructor completo
         public Fabricante(int id, string nombre, List<Herramienta> herramientas)
         {
             Id = id;
@@ -17,9 +18,14 @@
             Herramientas = herramientas;
         }
 
-        public Fabricante()
+        // Constructor sin el ID para las pruebas
+        public Fabricante(string nombre, List<Herramienta> herramientas)
         {
-            
+            Nombre = nombre;
+            Herramientas = herramientas;
         }
+
+        // Constructor vacío
+        public Fabricante() { }
     }
 }
