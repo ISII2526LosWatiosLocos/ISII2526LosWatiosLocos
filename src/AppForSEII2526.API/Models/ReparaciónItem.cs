@@ -1,10 +1,10 @@
 ﻿namespace AppForSEII2526.API.Models
 {
-    [PrimaryKey(nameof(ReparaciónId), nameof(HerramientaId))]
+    [PrimaryKey(nameof(ReparacionId), nameof(HerramientaId))]
     public class ReparaciónItem
     {
 
-        public int ReparaciónId { get; set; }
+        public int ReparacionId { get; set; }
         public int HerramientaId { get; set; }
   
         [Required]
@@ -25,6 +25,32 @@
         {
             get; set;
 
+        }
+
+        public ReparaciónItem(int reparacionId, int cantidad, string? descripción, float precio, Reparación reparación, Herramienta herramienta)
+        {
+            ReparacionId = reparacionId;
+           
+            this.cantidad = cantidad;
+            Descripción = descripción;
+            Precio = precio;
+            Reparación = reparación;
+            Herramienta = herramienta;
+        }
+        public ReparaciónItem( int cantidad, string? descripción, float precio, Reparación reparación, Herramienta herramienta)
+        {
+           
+            this.cantidad = cantidad;
+            Descripción = descripción;
+            Precio = precio;
+            Reparación = reparación;
+            Herramienta = herramienta;
+        }
+
+
+
+        public ReparaciónItem()
+        {
         }
     }
 }
