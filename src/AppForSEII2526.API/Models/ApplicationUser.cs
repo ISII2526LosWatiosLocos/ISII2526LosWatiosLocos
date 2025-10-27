@@ -26,4 +26,8 @@ public class ApplicationUser : IdentityUser {
     public List<Compra> Compras {  get; set; }
     public List<Reparación> Reparaciones { get; set; }
     public List<Alquiler> Alquileres { get; set; }
+
+    public List<Oferta> Ofertas { get; set; }
+
+   
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppForSEII2526.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251024073353_CreateIdentitySchema")]
+    [Migration("20251027121211_CreateIdentitySchema")]
     partial class CreateIdentitySchema
     {
         /// <inheritdoc />
@@ -330,9 +330,14 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<int?>("TipoDirigida")
                         .HasColumnType("int");
 
+                    b.Property<string>("UsuarioId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MetodosPagoId");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Ofertas");
                 });
@@ -659,7 +664,13 @@ namespace AppForSEII2526.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AppForSEII2526.API.Models.ApplicationUser", "Usuario")
+                        .WithMany("Ofertas")
+                        .HasForeignKey("UsuarioId");
+
                     b.Navigation("MetodosPago");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("AppForSEII2526.API.Models.OfertaItem", b =>
@@ -778,6 +789,8 @@ namespace AppForSEII2526.API.Migrations
                     b.Navigation("Alquileres");
 
                     b.Navigation("Compras");
+
+                    b.Navigation("Ofertas");
 
                     b.Navigation("Reparaciones");
                 });
