@@ -18,5 +18,27 @@
 
         public Herramienta Herramienta { get; set; }
         public Compra Compra { get; set; }
+
+        // Constructor completo
+        public CompraItem(int compraId, int herramientaId, int cantidad, string descripcion, float precio, Herramienta herramienta, Compra compra)
+        {
+            CompraId = compraId;
+            HerramientaId = herramientaId;
+            Cantidad = cantidad;
+            Descripcion = descripcion;
+            Precio = precio;
+            Herramienta = herramienta;
+            Compra = compra;
+        }
+        // Constructor sin el ID para las pruebas
+        public CompraItem(int herramientaId, int cantidad, string descripcion, float precio, Herramienta herramienta, Compra compra)
+        {
+            HerramientaId = herramientaId;
+            Cantidad = cantidad;
+            Descripcion = descripcion;
+            Precio = precio;
+            Herramienta = herramienta;
+            Compra = compra;
+        }
     }
 }
