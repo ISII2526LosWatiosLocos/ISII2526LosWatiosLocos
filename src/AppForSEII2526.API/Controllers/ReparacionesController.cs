@@ -138,8 +138,7 @@ namespace AppForSEII2526.API.Controllers
                 }
                 else
                 {
-                    // Para reparaciones, normalmente no hay porcentaje de descuento
-                    // Si necesitas validar algo específico de las reparaciones, lo agregas aquí
+                   
 
                     var nuevoItem = new ReparaciónItem
                     {
@@ -152,7 +151,7 @@ namespace AppForSEII2526.API.Controllers
 
                     nuevaReparacion.ReparaciónItems.Add(nuevoItem);
 
-                    // Calcular precio total (ajusta según tu lógica de negocio)
+                    // Calcular precio total 
                     nuevaReparacion.PrecioTotal += herramienta.Precio * itemDTO.HerramientaCantidad;
                 }
             }

@@ -26,4 +26,21 @@ public class ApplicationUser : IdentityUser {
     public List<Compra> Compras {  get; set; }
     public List<Reparación> Reparaciones { get; set; }
     public List<Alquiler> Alquileres { get; set; }
+    public List<Oferta> Ofertas { get; set; }
+
+    // Constructor completo, se usa el mismo para las pruebas
+    public ApplicationUser(string nombre, string apellidos, string? correoElectrónico, string? numeroTelefono, List<Compra> compras, List<Reparación> reparaciones, List<Alquiler> alquileres)
+    {
+        Nombre = nombre;
+        Apellidos = apellidos;
+        CorreoElectrónico = correoElectrónico;
+        NumeroTelefono = numeroTelefono;
+        Compras = compras;
+        Reparaciones = reparaciones;
+        Alquileres = alquileres;
+    }
+    // Constructor vacío
+    public ApplicationUser() { }
+
+   
 }
