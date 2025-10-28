@@ -125,7 +125,6 @@ namespace AppForSEII2526.API.Controllers
             {
                 DireccionEnvio = CrearCompraDTO.DireccionEnvio,
                 FechaCompra = DateTime.UtcNow,
-                PrecioTotal = CrearCompraDTO.PrecioTotal,
                 CompraItems = new List<CompraItem>(),
                 MetodoPago = metodoPago!, // Sabemos que no es null por la validación anterior
                 Usuario = Usuario
