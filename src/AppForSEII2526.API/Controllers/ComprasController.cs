@@ -99,9 +99,22 @@ namespace AppForSEII2526.API.Controllers
             if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El Usuario {CrearCompraDTO.Nombre} {CrearCompraDTO.Apellidos} no existe.");
 
             // c. Buscar CrearCompraItemDTOs
-            var CrearCompraItemDTOs = await _context.CompraItems.FindAsync(CrearCompraDTO.Items);
-            if (CrearCompraItemDTOs == null)
-                ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"Los CrearCompraItemDTOs {CrearCompraDTO.Items} no existen.");
+            var crearCompraItemDTOs = new List<CompraItem>();
+
+            foreach (var item in CrearCompraDTO.Items)
+            {
+                var entity = await _context.CompraItems.FindAsync(item.CompraId, item.HerramientaId);
+
+                if (entity == null)
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items),
+                        $"El item con CompraId={item.CompraId} y HerramientaId={item.HerramientaId} no existe.");
+                }
+                else
+                {
+                    crearCompraItemDTOs.Add(entity);
+                }
+            }
 
             // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
             if (ModelState.ErrorCount > 0)
