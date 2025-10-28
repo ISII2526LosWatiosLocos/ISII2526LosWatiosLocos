@@ -15,9 +15,9 @@ namespace AppForSEII2526.API.Controllers
         private readonly ApplicationDbContext _context;
 
         //used to log any information when your system is running
-        private readonly ILogger<HerramientasController> _logger;
+        private readonly ILogger<ComprasController> _logger;
 
-        public ComprasController(ApplicationDbContext context, ILogger<HerramientasController> logger)
+        public ComprasController(ApplicationDbContext context, ILogger<ComprasController> logger)
         {
             _context = context;
             _logger = logger;
@@ -95,25 +95,20 @@ namespace AppForSEII2526.API.Controllers
                 ModelState.AddModelError(nameof(CrearCompraDTO.MetodoPagoId), $"El MetodoPagoId {CrearCompraDTO.MetodoPagoId} no existe.");
 
             // b. Buscar Usuario
-            var Usuario = _context.Users.FirstOrDefault(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos);
+            var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos);
             if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El Usuario {CrearCompraDTO.Nombre} {CrearCompraDTO.Apellidos} no existe.");
 
-            // c. Buscar CrearCompraItemDTOs
-            var crearCompraItemDTOs = new List<CompraItem>();
+            // c. Validar items del dto (que no tengan valores imposibles)
+            if (CrearCompraDTO.Items == null || !CrearCompraDTO.Items.Any())
+                ModelState.AddModelError(nameof(CrearCompraDTO.Items), "La compra debe incluir al menos una herramienta.");
 
-            foreach (var item in CrearCompraDTO.Items)
+            foreach (var itemDto in CrearCompraDTO.Items)
             {
-                var entity = await _context.CompraItems.FindAsync(item.CompraId, item.HerramientaId);
+                if (itemDto.HerramientaId <= 0)
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"HerramientaId inválido: {itemDto.HerramientaId}.");
 
-                if (entity == null)
-                {
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items),
-                        $"El item con CompraId={item.CompraId} y HerramientaId={item.HerramientaId} no existe.");
-                }
-                else
-                {
-                    crearCompraItemDTOs.Add(entity);
-                }
+                if (itemDto.Cantidad <= 0)
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La cantidad para la HerramientaId {itemDto.HerramientaId} debe ser mayor que 0.");
             }
 
             // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
@@ -167,12 +162,19 @@ namespace AppForSEII2526.API.Controllers
                 }
             }
 
-            // --- 6. VALIDACIÓN FINAL (Patrón del ejemplo) ---
+            // --- 6. CALCULO PRECIOTOTAL ---
+            // convertimos a float solo por compatibilidad con el modelo, aunque decimal sería más adecuado
+            // dos decimales para moneda (2)
+            // opción recomendada para cálculos financieros (MidpointRounding.AwayFromZero)
+            nuevaCompra.PrecioTotal = (float)Math.Round(nuevaCompra.CompraItems.Sum(i => (decimal)i.Herramienta.Precio * i.Cantidad), 2, MidpointRounding.AwayFromZero);
+
+
+            // --- 7. VALIDACIÓN FINAL (Patrón del ejemplo) ---
             // Comprobar si se añadieron errores *dentro* del bucle
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
-            // --- 7. GUARDADO ÚNICO (Patrón del ejemplo) ---
+            // --- 8. GUARDADO ÚNICO (Patrón del ejemplo) ---
             _context.Compras.Add(nuevaCompra);
 
             try
@@ -185,7 +187,7 @@ namespace AppForSEII2526.API.Controllers
                 return Conflict($"Ocurrió un error al guardar la compra: {ex.Message}");
             }
 
-            // --- 8. RESPUESTA SIN RECARGAR (Patrón del ejemplo) ---
+            // --- 9. RESPUESTA SIN RECARGAR (Patrón del ejemplo) ---
             // Construimos el DTO de detalle con los objetos que ya tenemos
 
             var compraDTORespuesta = new ComprasParaDetalleDTO(
@@ -199,7 +201,7 @@ namespace AppForSEII2526.API.Controllers
                 nuevaCompra.CompraItems.Select(oi => new CompraItemsDTO(
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
-                    oi.Precio,
+                    oi.Herramienta.Precio,
                     oi.Descripcion,
                     oi.Cantidad
                 )).ToList()
