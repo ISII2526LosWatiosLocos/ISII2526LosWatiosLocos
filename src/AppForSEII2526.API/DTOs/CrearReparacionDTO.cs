@@ -5,9 +5,11 @@
         public string Nombre { get; set; }
         public string Apellidos { get; set; }
         public DateTime FechaEntrega { get; set; }
-        public DateTime FechaFinal { get; set; }
-        public float Precio { get; set; }
-        
+        public DateTime FechaRecogida { get; set; }
+        public float PrecioTotal { get; set; }
+        public int MetodoPagoId { get; set; }
+        public ApplicationUser Usuario { get; set; }
+
         public List<CrearReparacionItemDTO> ReparacionesItems { get; set; }
 
         public CrearReparacionDTO()

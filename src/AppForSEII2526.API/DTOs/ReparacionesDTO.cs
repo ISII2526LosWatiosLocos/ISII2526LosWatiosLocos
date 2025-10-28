@@ -9,7 +9,7 @@ namespace AppForSEII2526.API.DTOs
         public DateTime FechaEntrega { get; set; }
         public DateTime FechaRecogida { get; set; }
         public float PrecioTotal { get; set; }
-        public MetodosPago MétodoPago { get; set; }
+
       
 
 
@@ -36,7 +36,6 @@ namespace AppForSEII2526.API.DTOs
                    FechaEntrega == dTO.FechaEntrega &&
                    FechaRecogida == dTO.FechaRecogida &&
                    PrecioTotal == dTO.PrecioTotal &&
-                   EqualityComparer<MetodosPago>.Default.Equals(MétodoPago, dTO.MétodoPago) &&
                    nombre == dTO.nombre &&
                    apellidos == dTO.apellidos &&
                    EqualityComparer<IList<ReparacionesItemDTO>>.Default.Equals(ReparacionesItems, dTO.ReparacionesItems);
@@ -44,7 +43,7 @@ namespace AppForSEII2526.API.DTOs
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(FechaEntrega, FechaRecogida, PrecioTotal, MétodoPago, nombre, apellidos, ReparacionesItems);
+            return HashCode.Combine(FechaEntrega, FechaRecogida, PrecioTotal, nombre, apellidos, ReparacionesItems);
         }
     }
 }
