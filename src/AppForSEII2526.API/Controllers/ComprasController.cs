@@ -95,12 +95,11 @@ namespace AppForSEII2526.API.Controllers
                 ModelState.AddModelError(nameof(CrearCompraDTO.MetodoPagoId), $"El MetodoPagoId {CrearCompraDTO.MetodoPagoId} no existe.");
 
             // b. Buscar Usuario
-            var Usuario = await _context.MetodosPagos.FindAsync(CrearCompraDTO.Usuario);
-            if (Usuario == null)
-                ModelState.AddModelError(nameof(CrearCompraDTO.Usuario), $"El Usuario {CrearCompraDTO.Usuario} no existe.");
+            var Usuario = _context.Users.FirstOrDefault(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos);
+            if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El Usuario {CrearCompraDTO.Nombre} {CrearCompraDTO.Apellidos} no existe.");
 
             // c. Buscar CrearCompraItemDTOs
-            var CrearCompraItemDTOs = await _context.MetodosPagos.FindAsync(CrearCompraDTO.Items);
+            var CrearCompraItemDTOs = await _context.CompraItems.FindAsync(CrearCompraDTO.Items);
             if (CrearCompraItemDTOs == null)
                 ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"Los CrearCompraItemDTOs {CrearCompraDTO.Items} no existen.");
 
@@ -129,7 +128,7 @@ namespace AppForSEII2526.API.Controllers
                 PrecioTotal = CrearCompraDTO.PrecioTotal,
                 CompraItems = new List<CompraItem>(),
                 MetodoPago = metodoPago!, // Sabemos que no es null por la validación anterior
-                Usuario = CrearCompraDTO.Usuario
+                Usuario = Usuario
             };
 
             // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
@@ -151,7 +150,6 @@ namespace AppForSEII2526.API.Controllers
                         Compra = nuevaCompra,
                         Cantidad = itemDTO.Cantidad,
                         Descripcion = itemDTO.Descripcion,
-                        Precio = itemDTO.Precio
                     };
                     nuevaCompra.CompraItems.Add(nuevoItem);
                 }

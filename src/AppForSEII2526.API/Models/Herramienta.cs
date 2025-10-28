@@ -51,29 +51,6 @@
             Fabricante = fabricante;
         }
         // Constructor vacío
-        public Herramienta() { }
-            TiempoReparacion = tiempoReparacion;
-            CompraItems = compraItems;
-            AlquilarItems = alquilarItems;
-            OfertaItems = ofertaItems;
-            ReparaciónItems = reparaciónItems;
-            Fabricante = fabricante;
-        }
-
-        public Herramienta(int id, string nombre, string material, float precio, int tiempoReparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaItems, List<ReparaciónItem> reparaciónItems, Fabricante fabricante)
-        {
-            Id = id;
-            Nombre = nombre;
-            Material = material;
-            Precio = precio;
-            TiempoReparacion = tiempoReparacion;
-            CompraItems = compraItems;
-            AlquilarItems = alquilarItems;
-            OfertaItems = ofertaItems;
-            ReparaciónItems = reparaciónItems;
-            Fabricante = fabricante;
-        }
-
         public Herramienta()
         {
         }
