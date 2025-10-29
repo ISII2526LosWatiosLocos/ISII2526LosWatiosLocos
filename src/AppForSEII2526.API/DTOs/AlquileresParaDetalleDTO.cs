@@ -5,13 +5,13 @@
         public String Nombre {  get; set; }
         public String Apellidos { get; set; }
         public String Direccion {  get; set; }
-        public DateTime FechaAlquiler { get; set; }
+        public DateOnly FechaAlquiler { get; set; }
         public float PrecioTotal { get; set; }
-        public DateTime FechaInicio { get; set; }
-        public DateTime FechaFinal {  get; set; }
+        public DateOnly FechaInicio { get; set; }
+        public DateOnly FechaFinal {  get; set; }
         public List<AlquilarItemsDTO> Items { get; set; }
 
-        public AlquileresParaDetalleDTO(string nombre, string apellidos, string direccion, DateTime fechaAlquiler, float precioTotal, DateTime fechaInicio, DateTime fechaFinal, List<AlquilarItemsDTO> items)
+        public AlquileresParaDetalleDTO(string nombre, string apellidos, string direccion, DateOnly fechaAlquiler, float precioTotal, DateOnly fechaInicio, DateOnly fechaFinal, List<AlquilarItemsDTO> items)
         {
             Nombre = nombre;
             Apellidos = apellidos;

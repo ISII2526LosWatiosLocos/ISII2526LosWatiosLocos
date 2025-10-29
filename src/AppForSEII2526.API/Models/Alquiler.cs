@@ -7,7 +7,7 @@ namespace AppForSEII2526.API.Models
     {
         public Alquiler() { }
 
-        public Alquiler(string direccionEnvio, DateTime fechaAlquiler, DateTime fechaInicio, DateTime fechaFin, float precioTotal, List<AlquilarItem> alquilarItems, MetodosPago métodoPago, ApplicationUser usuario)
+        public Alquiler(string direccionEnvio, DateOnly fechaAlquiler, DateOnly fechaInicio, DateOnly fechaFin, float precioTotal, List<AlquilarItem> alquilarItems, MetodosPago métodoPago, ApplicationUser usuario)
         {
             DireccionEnvio = direccionEnvio;
             FechaAlquiler = fechaAlquiler;
@@ -30,21 +30,20 @@ namespace AppForSEII2526.API.Models
         [Required]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date), Display(Name = "Fecha de Alquiler")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime FechaAlquiler { get; set; }
+        public DateOnly FechaAlquiler { get; set; }
 
         [Required]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date), Display(Name = "Fecha de Inicio")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime FechaInicio { get; set; }
+        public DateOnly FechaInicio { get; set; }
 
         [Required]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date), Display(Name = "Fecha de Fin")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime FechaFin { get; set; }
+        public DateOnly FechaFin { get; set; }
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Text), Display(Name = "Período")]
-        public int Periodo => (FechaFin - FechaInicio).Days;
-
+        public int Periodo => FechaFin.DayNumber - FechaInicio.DayNumber;
 
         [Required]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency), Display(Name = "Precio Total")]
