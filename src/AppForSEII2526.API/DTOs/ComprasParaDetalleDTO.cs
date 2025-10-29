@@ -16,7 +16,7 @@
             this.DireccionEnvio = DireccionEnvio;
             this.PrecioTotal = PrecioTotal;
             this.FechaCompra = FechaCompra;
-            Items = Items;
+            this.Items = Items;
             
         }
         public override bool Equals(object? obj)
