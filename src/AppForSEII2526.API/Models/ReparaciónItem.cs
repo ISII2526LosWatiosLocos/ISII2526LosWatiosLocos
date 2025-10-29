@@ -19,7 +19,7 @@
 
         //Relaciones
 
-        public Reparación Reparación { get; set; }
+        public Reparación Reparacion { get; set; }
 
         public Herramienta Herramienta
         {
@@ -27,23 +27,24 @@
 
         }
 
-        public ReparaciónItem(int reparacionId, int cantidad, string? descripción, float precio, Reparación reparación, Herramienta herramienta)
+        public ReparaciónItem(int reparacionId, int herramientaId, int cantidad, string? descripción, float precio, Reparación reparacion, Herramienta herramienta)
         {
             ReparacionId = reparacionId;
-           
+            HerramientaId = herramientaId;
             this.cantidad = cantidad;
             Descripción = descripción;
             Precio = precio;
-            Reparación = reparación;
+            Reparacion = reparacion;
             Herramienta = herramienta;
         }
+
         public ReparaciónItem( int cantidad, string? descripción, float precio, Reparación reparación, Herramienta herramienta)
         {
            
             this.cantidad = cantidad;
             Descripción = descripción;
             Precio = precio;
-            Reparación = reparación;
+            Reparacion = reparación;
             Herramienta = herramienta;
         }
 
