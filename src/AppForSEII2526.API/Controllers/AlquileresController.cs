@@ -135,7 +135,6 @@ namespace AppForSEII2526.API.Controllers
                // Aplicar logica de negociooo (flujos alterrnativos) !!!!!
                 else
                 {
-
                     var nuevoItem = new AlquilarItem(
                         nuevoAlquiler.PrecioTotal,
                         itemDTO.HerramientaCantidad,

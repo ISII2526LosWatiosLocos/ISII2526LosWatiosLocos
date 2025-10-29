@@ -2,7 +2,7 @@
 
 namespace AppForSEII2526.API.DTOs
 {
-    public class CrearAlquilerDTO
+    public class CrearAlquilerDTO 
     {
         public CrearAlquilerDTO(string nombre, string apellidos, int metodoPagoId, string direccion, string telefono, string? correo, List<CrearAlquilerItemDTO> items)
         {
