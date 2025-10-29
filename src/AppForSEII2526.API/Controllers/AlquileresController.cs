@@ -108,8 +108,18 @@ namespace AppForSEII2526.API.Controllers
 
             var nuevoAlquiler = new Alquiler
             {
-                Usuario = crearAlquilerDTO.
-            };
+                DireccionEnvio = crearAlquilerDTO.Direccion,
+                MétodoPago = metodoPago,
+                AlquilarItems = new List<AlquilarItem>(),
+                Usuario = new ApplicationUser
+                {
+                    Nombre = crearAlquilerDTO.Nombre,
+                    Apellidos = crearAlquilerDTO.Apellidos,
+                    NumeroTelefono = crearAlquilerDTO.telefono,
+                    CorreoElectrónico = crearAlquilerDTO.correo,
+                    
+                }
+            }; 
                 
 
 
@@ -125,12 +135,13 @@ namespace AppForSEII2526.API.Controllers
                // Aplicar logica de negociooo (flujos alterrnativos) !!!!!
                 else
                 {
+
                     var nuevoItem = new AlquilarItem(
                         nuevoAlquiler.PrecioTotal,
-                        nuevoAlquiler.Cantidad,
+                        itemDTO.HerramientaCantidad,
                         nuevoAlquiler,
                         herramienta);
-                    nuevoAlquiler.Items.Add(nuevoItem);
+                    nuevoAlquiler.AlquilarItems.Add(nuevoItem);
                 }
             }
             // Validación final
@@ -154,9 +165,9 @@ namespace AppForSEII2526.API.Controllers
             // Respuesta sin recargar
             // Construir DTO de respuesta con la información de los objetos Herramienta
             var alquilerDTORespuesta = new AlquileresParaDetalleDTO(
-                nuevoAlquiler.Nombre,
-                nuevoAlquiler.Apellidos,
-                nuevoAlquiler.Direccion,
+                nuevoAlquiler.Usuario.Nombre,
+                nuevoAlquiler.Usuario.Apellidos,
+                nuevoAlquiler.DireccionEnvio,
                 nuevoAlquiler.FechaAlquiler,
                 nuevoAlquiler.PrecioTotal,
                 nuevoAlquiler.FechaInicio,
