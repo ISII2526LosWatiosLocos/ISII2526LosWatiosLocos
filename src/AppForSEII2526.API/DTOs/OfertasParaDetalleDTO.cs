@@ -2,16 +2,16 @@
 {
     public class OfertasParaDetalleDTO
     {
-        public DateTime FechaFinal { get; set; }
-        public DateTime FechaInicio { get; set; }
-        public DateTime FechaOferta { get; set; }
+        public DateOnly FechaFinal { get; set; }
+        public DateOnly FechaInicio { get; set; }
+        public DateOnly FechaOferta { get; set; }
         public string TipoDirigida { get; set; }
         public string MetodoPago { get; set; }
 
         //Lista de items
         public IList<OfertaItemsDTO> Items { get; set; }
 
-        public OfertasParaDetalleDTO(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, string tipoDirigida, string metodoPago, IList<OfertaItemsDTO> items)
+        public OfertasParaDetalleDTO(DateOnly fechaFinal, DateOnly fechaInicio, DateOnly fechaOferta, string tipoDirigida, string metodoPago, IList<OfertaItemsDTO> items)
 
         {
             FechaFinal = fechaFinal;

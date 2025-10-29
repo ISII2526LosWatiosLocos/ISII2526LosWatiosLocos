@@ -83,7 +83,7 @@ namespace AppForSEII2526.API.Controllers
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
-            if (crearOfertaDTO.FechaInicio <= DateTime.Today)
+            if (crearOfertaDTO.FechaInicio <= DateOnly.FromDateTime(DateTime.Today))
                 ModelState.AddModelError(nameof(crearOfertaDTO.FechaInicio), "La fecha de inicio debe ser posterior a hoy.");
 
             if (crearOfertaDTO.FechaInicio >= crearOfertaDTO.FechaFinal)
@@ -129,7 +129,7 @@ namespace AppForSEII2526.API.Controllers
             var nuevaOferta = new Oferta(
                 crearOfertaDTO.FechaFinal,
                 crearOfertaDTO.FechaInicio,
-                DateTime.UtcNow,
+                DateOnly.FromDateTime(DateTime.UtcNow),
                 tipoDirigido,
                 new List<OfertaItem>(),
                 metodoPago!
