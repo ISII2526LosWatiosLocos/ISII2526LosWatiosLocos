@@ -13,6 +13,7 @@ namespace AppForSEII2526.API.DTOs
         public string DescripcionHerramienta { get; set; }
         public int CantidadHerramienta { get; set; }
 
+        // Constructor completo para el Details
         public CompraItemsDTO(int idHerramienta, string nombreHerramienta, string materialHerramienta, float precioHerramienta, string descripcionHerramienta, int cantidadHerramienta)
         {
             IdHerramienta = idHerramienta;
@@ -22,6 +23,16 @@ namespace AppForSEII2526.API.DTOs
             DescripcionHerramienta = descripcionHerramienta;
             CantidadHerramienta = cantidadHerramienta;
         }
+
+        // Constructor solo con lo necesario para el Post
+        public CompraItemsDTO(string descripcionHerramienta, int cantidadHerramienta)
+        {
+            DescripcionHerramienta = descripcionHerramienta;
+            CantidadHerramienta = cantidadHerramienta;
+        }
+
+        // Constructor vacío para que el Json lo use por defecto al serializar (sino, al haber más de uno no sabe cual usar y peta)
+        public CompraItemsDTO() { }
 
         public override bool Equals(object? obj)
         {

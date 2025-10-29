@@ -200,10 +200,6 @@ namespace AppForSEII2526.API.Controllers
 
                 // Mapeamos los items desde los objetos en memoria
                 nuevaCompra.CompraItems.Select(oi => new CompraItemsDTO(
-                    oi.Herramienta.Id,
-                    oi.Herramienta.Nombre,
-                    oi.Herramienta.Material,
-                    oi.Herramienta.Precio,
                     oi.Descripcion,
                     oi.Cantidad
                 )).ToList()
