@@ -10,17 +10,17 @@ namespace AppForSEII2526.API.Models
         [Required]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date), Display(Name = "Fecha final")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime FechaFinal { get; set; }
+        public DateOnly FechaFinal { get; set; }
 
         [Required]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date), Display(Name = "Fecha inicio")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime FechaInicio { get; set; }
+        public DateOnly FechaInicio { get; set; }
 
         [Required]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date), Display(Name = "Fecha oferta")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime FechaOferta { get; set; }
+        public DateOnly FechaOferta { get; set; }
 
         public tipoDirigidaOferta? TipoDirigida { get; set; }
 
@@ -28,7 +28,7 @@ namespace AppForSEII2526.API.Models
 
         public MetodosPago MetodosPago { get; set; }
 
-        public Oferta(DateTime fechaFinal, DateTime fechaInicio, DateTime fechaOferta, tipoDirigidaOferta? tipoDirigida, List<OfertaItem> items, MetodosPago metodosPago)
+        public Oferta(DateOnly fechaFinal, DateOnly fechaInicio, DateOnly fechaOferta, tipoDirigidaOferta? tipoDirigida, List<OfertaItem> items, MetodosPago metodosPago)
         {
             FechaFinal = fechaFinal;
             FechaInicio = fechaInicio;
