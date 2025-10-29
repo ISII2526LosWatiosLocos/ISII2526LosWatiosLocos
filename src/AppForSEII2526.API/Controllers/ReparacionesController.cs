@@ -85,9 +85,8 @@ namespace AppForSEII2526.API.Controllers
                 ModelState.AddModelError("ReparacionItems", "Error: debe incluir al menos una herramienta para reparación");
 
             // Buscar usuario
-            var usuario = await _context.Users.FirstOrDefaultAsync(u => u.Nombre == reparacionCreate.Nombre);
-            if (usuario == null)
-                ModelState.AddModelError("Usuario", "Error: el nombre de usuario no está registrado");
+           var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == reparacionCreate.Nombre && u.Apellidos == reparacionCreate.Apellidos);
+            if (Usuario == null) ModelState.AddModelError(nameof(reparacionCreate.Nombre), $"El Usuario {reparacionCreate.Nombre} {reparacionCreate.Apellidos} no existe.");
 
             // Si hay errores, retornar
             if (ModelState.ErrorCount > 0)
@@ -110,7 +109,8 @@ namespace AppForSEII2526.API.Controllers
                 PrecioTotal = reparacionCreate.PrecioTotal,
                ReparaciónItems= new List<ReparaciónItem>(),
                 MétodoPago = metodoPago!, // Sabemos que no es null por la validación anterior
-               
+                Usuario = Usuario
+
             };
 
 
@@ -175,8 +175,8 @@ namespace AppForSEII2526.API.Controllers
 
             // Construir DTO de respuesta con la información de los objetos Herramienta
             var reparacionDetalle = new ReparacionesDTO(
-                usuario.Nombre,
-                usuario.Apellidos,
+                nuevaReparacion.Usuario.Nombre,
+                nuevaReparacion.Usuario.Apellidos,
                 nuevaReparacion.FechaEntrega,
                 nuevaReparacion.FechaRecogida,
                 nuevaReparacion.PrecioTotal,

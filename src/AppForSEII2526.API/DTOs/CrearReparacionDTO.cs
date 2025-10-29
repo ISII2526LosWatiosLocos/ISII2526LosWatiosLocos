@@ -4,8 +4,8 @@
     {
         public string Nombre { get; set; }
         public string Apellidos { get; set; }
-        public DateTime FechaEntrega { get; set; }
-        public DateTime FechaRecogida { get; set; }
+        public DateOnly FechaEntrega { get; set; }
+        public DateOnly FechaRecogida { get; set; }
         public float PrecioTotal { get; set; }
         public int MetodoPagoId { get; set; }
         public ApplicationUser Usuario { get; set; }
