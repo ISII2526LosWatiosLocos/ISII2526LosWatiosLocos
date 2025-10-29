@@ -73,58 +73,122 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(AlquileresParaDetalleDTO), 201)] // Created
         [ProducesResponseType(typeof(ValidationProblemDetails),400)] // Bad Request
         [ProducesResponseType(typeof(string), 409)] // Conflict
-        public async Task<ActionResult> CreateAlquiler([FromBody] CrearAlquilerDTO alquilerCreate)
+        public async Task<ActionResult> CreateAlquiler([FromBody] CrearAlquilerDTO crearAlquilerDTO)
         {
+            // Validaciones de lógica
             if (_context.Alquileres == null || _context.Herramientas == null || _context.MetodosPagos == null)
             {
                 _logger.LogError("Error: Faltan DbSets (Alquileres, Herramientas o MetodosPagos) en el DbContext.");
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
-            // AÑADIR VALIDACIONES !!!!
-            
+            // Flujo alternativo 2, 4, y 5 ???
+
+            if (crearAlquilerDTO.FechaInicio <= DateTime.Today)
+                ModelState.AddModelError(nameof(crearAlquilerDTO.FechaInicio), "La fecha de inicio debe ser posterior a hoy.");
+
+            if (crearAlquilerDTO.FechaInicio >= crearAlquilerDTO.FechaFinal)
+                ModelState.AddModelError(nameof(crearAlquilerDTO.FechaFinal), "La fecha final debe ser posterior a la fecha de inicio.");
+
+            if (crearAlquilerDTO.Items == null || !crearAlquilerDTO.Items.Any())
+                ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "El alquiler debe incluir al menos una herramienta.");
+
+
+            // Validar entidades
+            var metodoPago = await _context.MetodosPagos.FindAsync(crearAlquilerDTO.MetodoPagoId);
+            if (metodoPago == null)
+                ModelState.AddModelError(nameof(crearAlquilerDTO.MetodoPagoId), $"El MetodoPagoId {crearAlquilerDTO.MetodoPagoId} no existe.");
+
+            // Alguna validación más ???
 
             // Si hay errores, retornar
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
+            // Consulta única
+
             // Hacer una sola llamada a la BBDD para traer todas las herramientas
-            var herramientaNombres = alquilerCreate.Items.Select(i => i.HerramientaId).Distinct().ToList();
+            var herramientaIds = crearAlquilerDTO.Items.Select(i => i.HerramientaId).Distinct().ToList();
             var herramientasEnDB = await _context.Herramientas
                 .Include(h => h.Fabricante)
-                .Where(h => herramientaNombres.Contains(h.Id))
-                .ToDictionaryAsync(h => h.Nombre);
+                .Where(h => herramientaIds.Contains(h.Id))
+                .ToDictionaryAsync(h => h.Id);
+
+            //Construccion en memoria
+
+            var nuevoAlquiler = new Alquiler(crearAlquilerDTO.Direccion,
+                crearAlquilerDTO.FechaAlquiler,
+                crearAlquilerDTO.FechaInicio,
+                crearAlquilerDTO.FechaFinal,
+                crearAlquilerDTO.PrecioTotal,
+                crearAlquilerDTO.correo,
+                new List<AlquilarItem>
+
+                );
+
 
             // Validar que todas las herramientas existen
-            foreach (var item in alquilerCreate.Items)
+            foreach (var itemDTO in crearAlquilerDTO.Items)
             {
-                if (!herramientasEnDB.ContainsKey(item.HerramientaId)) // ?????????????????
+                // Buscar la herramienta en la lista local (el Diccionario)
+                if (!herramientasEnDB.TryGetValue(itemDTO.HerramientaId, out var herramienta))
                 {
-                    ModelState.AddModelError("AlquilerItems", $"Error: la herramienta '{item.HerramientaId}' no existe");
+                    // La herramienta no se encontró en nuestra consulta
+                    ModelState.AddModelError(nameof(CrearAlquilerDTO.Items), $"La HerramientaId {itemDTO.HerramientaId} no existe.");
+                }
+               // Aplicar logica de negociooo (flujos alterrnativos) !!!!!
+                else
+                {
+                    var nuevoItem = new AlquilarItem(
+                        nuevoAlquiler.PrecioTotal,
+                        nuevoAlquiler.Cantidad,
+                        nuevoAlquiler,
+                        herramienta);
+                    nuevoAlquiler.Items.Add(nuevoItem);
                 }
             }
-
+            // Validación final
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
+            // Guardado único
+
+            _context.Alquileres.Add(nuevoAlquiler);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al guardar el nuevo alquiler en la base de datos.");
+                return Conflict($"Ocurrió un error al guardar el alquiler: {ex.Message}");
+            }
+
+            // Respuesta sin recargar
             // Construir DTO de respuesta con la información de los objetos Herramienta
-            var alquilerDetalle = new AlquileresParaDetalleDTO(
-               
-                // ARREGLAR CONSTRUCTOOOR !!!!!!!!!!
-                alquilerCreate.ReparacionesItems.Select(ri =>
-                {
-                    var herramienta = herramientasEnDB[ri.HerramientaNombre];
-                    return new AlquilarItemsDTO(
-                        herramienta.Nombre,
-                        ri.HerramientaDescripcion,
-                        ri.HerramientaCantidad,
-                        ri.HerramientaPrecio
-                    );
-                }).ToList()
+            var alquilerDTORespuesta = new AlquileresParaDetalleDTO(
+                nuevoAlquiler.Nombre,
+                nuevoAlquiler.Apellidos,
+                nuevoAlquiler.Direccion,
+                nuevoAlquiler.FechaAlquiler,
+                nuevoAlquiler.PrecioTotal,
+                nuevoAlquiler.FechaInicio,
+                nuevoAlquiler.FechaFin,
+                // Mapeamos los items desde los objetos en memoria
+                nuevoAlquiler.AlquilarItems.Select(oi => new AlquilarItemsDTO(
+                    oi.Herramienta.Nombre,
+                    oi.Herramienta.Material,
+                    oi.Herramienta.Precio,
+                    oi.Cantidad
+                )).ToList()
             );
 
-            // Devolver el DTO simulado
-            return CreatedAtAction("GetDetalleHerramientasParaAlquiler", new { }, alquilerDetalle);
+            // Devolvemos el DTO de detalle
+            return CreatedAtAction(
+                nameof(GetDetalleHerramientasParaAlquiler), // Nombre del método GET
+                new { id = nuevoAlquiler.Id }, // Parámetro de ruta para el método GET
+                alquilerDTORespuesta); // El cuerpo de la respuesta
         }
     }
 
