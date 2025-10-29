@@ -1,9 +1,19 @@
-﻿INSERT INTO [dbo].[AspNetUsers] ([Id], [Nombre], [Apellidos], [CorreoElectrónico], [NumeroTelefono], [UserName], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) VALUES (N'1', N'Yoel', N'CS', N'Hola@gmail.com', N'000000000', N'YS', N'YS', N'Hola@gmail.com', N'Hola@gmail.com', 0, N'0', N'0', N'0', N'0', 0, 0, N'10/10/2020 0:00:00 +02:00', 0, 1)
+﻿/*
+update-database -migration 0
+borras la base de datos marcando la casilla de cerrar conexiones (click derecho y eliminar "aspnet-AppForSEII2526.Web..." que está en la carpeta "Bases de datos")
+remove-migration
+add-migration CreateIdentitySchema
+update-database
+ejecutar SQL
+*/
+
+INSERT INTO [dbo].[AspNetUsers] ([Id], [Nombre], [Apellidos], [CorreoElectrónico], [NumeroTelefono], [UserName], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) VALUES (N'1', N'Yoel', N'CS', N'Hola@gmail.com', N'000000000', N'YS', N'YS', N'Hola@gmail.com', N'Hola@gmail.com', 0, N'0', N'0', N'0', N'0', 0, 0, N'10/10/2020 0:00:00 +02:00', 0, 1)
 
 SET IDENTITY_INSERT [dbo].[Fabricantes] ON
 INSERT INTO [dbo].[Fabricantes] ([Id], [Nombre]) VALUES (1, N'EMPRESA1')
 INSERT INTO [dbo].[Fabricantes] ([Id], [Nombre]) VALUES (2, N'EMPRESA2')
 INSERT INTO [dbo].[Fabricantes] ([Id], [Nombre]) VALUES (3, N'EMPRESA3')
+INSERT INTO [dbo].[Fabricantes] ([Id], [Nombre]) VALUES (3, N'LWL')
 SET IDENTITY_INSERT [dbo].[Fabricantes] OFF
 
 SET IDENTITY_INSERT [dbo].[Herramientas] ON
