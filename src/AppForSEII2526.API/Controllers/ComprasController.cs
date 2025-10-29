@@ -51,6 +51,7 @@ namespace AppForSEII2526.API.Controllers
                 o.PrecioTotal,
                 o.FechaCompra,
                 o.CompraItems.Select(oi => new CompraItemsDTO(
+                    oi.Herramienta.Id,
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
@@ -104,11 +105,11 @@ namespace AppForSEII2526.API.Controllers
 
             foreach (var itemDto in CrearCompraDTO.Items)
             {
-                if (itemDto.HerramientaId <= 0)
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"HerramientaId inválido: {itemDto.HerramientaId}.");
+                if (itemDto.IdHerramienta <= 0)
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"IdHerramienta inválido: {itemDto.IdHerramienta}.");
 
-                if (itemDto.Cantidad <= 0)
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La cantidad para la HerramientaId {itemDto.HerramientaId} debe ser mayor que 0.");
+                if (itemDto.CantidadHerramienta <= 0)
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La cantidad para la IdHerramienta {itemDto.IdHerramienta} debe ser mayor que 0.");
             }
 
             // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
@@ -118,7 +119,7 @@ namespace AppForSEII2526.API.Controllers
             // --- 3. CONSULTA ÚNICA (Patrón del ejemplo) ---
 
             // a. Coger todos los IDs del DTO
-            var herramientaIds = CrearCompraDTO.Items.Select(i => i.HerramientaId).Distinct().ToList();
+            var herramientaIds = CrearCompraDTO.Items.Select(i => i.IdHerramienta).Distinct().ToList();
 
             // b. Hacer UNA sola llamada a la BBDD para traer todas las herramientas
             //    e incluir su Fabricante (para construir el DTO de respuesta después)
@@ -132,7 +133,7 @@ namespace AppForSEII2526.API.Controllers
             var nuevaCompra = new Compra
             {
                 DireccionEnvio = CrearCompraDTO.DireccionEnvio,
-                FechaCompra = DateTime.UtcNow,
+                FechaCompra = DateOnly.FromDateTime(DateTime.UtcNow),
                 CompraItems = new List<CompraItem>(),
                 MetodoPago = metodoPago!, // Sabemos que no es null por la validación anterior
                 Usuario = Usuario
@@ -142,10 +143,10 @@ namespace AppForSEII2526.API.Controllers
             foreach (var itemDTO in CrearCompraDTO.Items)
             {
                 // Buscar la herramienta en la lista local (el Diccionario)
-                if (!herramientasEnDB.TryGetValue(itemDTO.HerramientaId, out var herramienta))
+                if (!herramientasEnDB.TryGetValue(itemDTO.IdHerramienta, out var herramienta))
                 {
                     // La herramienta no se encontró en nuestra consulta
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {itemDTO.HerramientaId} no existe.");
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {itemDTO.IdHerramienta} no existe.");
                 }
                 else
                 {
@@ -155,8 +156,8 @@ namespace AppForSEII2526.API.Controllers
                     {
                         Herramienta = herramienta,
                         Compra = nuevaCompra,
-                        Cantidad = itemDTO.Cantidad,
-                        Descripcion = itemDTO.Descripcion,
+                        Cantidad = itemDTO.CantidadHerramienta,
+                        Descripcion = itemDTO.DescripcionHerramienta,
                     };
                     nuevaCompra.CompraItems.Add(nuevoItem);
                 }
@@ -199,6 +200,7 @@ namespace AppForSEII2526.API.Controllers
 
                 // Mapeamos los items desde los objetos en memoria
                 nuevaCompra.CompraItems.Select(oi => new CompraItemsDTO(
+                    oi.Herramienta.Id,
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
