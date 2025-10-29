@@ -31,6 +31,9 @@ namespace AppForSEII2526.API.DTOs
             CantidadHerramienta = cantidadHerramienta;
         }
 
+        // Constructor vacío para que el Json lo use por defecto al serializar (sino, al haber más de uno no sabe cual usar y peta)
+        public CompraItemsDTO() { }
+
         public override bool Equals(object? obj)
         {
             return obj is CompraItemsDTO dTO &&
