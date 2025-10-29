@@ -42,5 +42,15 @@ public class ApplicationUser : IdentityUser {
     // Constructor vacío
     public ApplicationUser() { }
 
-   
+    public ApplicationUser(string id, string nombre, string apellidos, string email, string direccion)
+    {
+        Id = id;
+        Nombre = nombre;
+        Apellidos = apellidos;
+        Email = email;
+        UserName = email;
+        PhoneNumber = direccion;
+    }
+
+
 }
