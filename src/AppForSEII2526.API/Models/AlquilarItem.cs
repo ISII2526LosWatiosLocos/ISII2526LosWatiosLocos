@@ -3,6 +3,14 @@
     [PrimaryKey(nameof(AlquilerId), nameof(HerramientaId))]
     public class AlquilarItem
     {
+        public AlquilarItem() {}
+        public AlquilarItem(float precio, int cantidad, Alquiler alquiler, Herramienta herramienta)
+        {
+            Precio = precio;
+            Cantidad = cantidad;
+            Alquiler = alquiler;
+            Herramienta = herramienta;
+        }
         public int AlquilerId { get; set; }
 
         public int HerramientaId { get; set; }

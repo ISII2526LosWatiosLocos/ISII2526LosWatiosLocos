@@ -5,6 +5,20 @@ namespace AppForSEII2526.API.Models
 {
     public class Alquiler
     {
+        public Alquiler() { }
+
+        public Alquiler(string direccionEnvio, DateTime fechaAlquiler, DateTime fechaInicio, DateTime fechaFin, float precioTotal, List<AlquilarItem> alquilarItems, MetodosPago métodoPago, ApplicationUser usuario)
+        {
+            DireccionEnvio = direccionEnvio;
+            FechaAlquiler = fechaAlquiler;
+            FechaInicio = fechaInicio;
+            FechaFin = fechaFin;
+            PrecioTotal = precioTotal;
+            AlquilarItems = alquilarItems;
+            MétodoPago = métodoPago;
+            Usuario = usuario;
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -35,11 +49,6 @@ namespace AppForSEII2526.API.Models
         [Required]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency), Display(Name = "Precio Total")]
         public float PrecioTotal { get; set; }
-
-        // Campos opcionales
-
-        [DataType(System.ComponentModel.DataAnnotations.DataType.EmailAddress), Display(Name = "Correo Electrónico")]
-        public string ?Correo { get; set; }
 
         // Relaciones
         public List<AlquilarItem> AlquilarItems { get; set; }
