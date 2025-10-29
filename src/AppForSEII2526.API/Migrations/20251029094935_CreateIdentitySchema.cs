@@ -248,7 +248,7 @@ namespace AppForSEII2526.API.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DireccionEnvio = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FechaCompra = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaCompra = table.Column<DateOnly>(type: "date", nullable: false),
                     PrecioTotal = table.Column<float>(type: "real", nullable: false),
                     MetodoPagoId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: true)
@@ -409,15 +409,16 @@ namespace AppForSEII2526.API.Migrations
                 name: "ReparaciónItems",
                 columns: table => new
                 {
-                    ReparaciónId = table.Column<int>(type: "int", nullable: false),
+                    ReparacionId = table.Column<int>(type: "int", nullable: false),
                     HerramientaId = table.Column<int>(type: "int", nullable: false),
                     cantidad = table.Column<int>(type: "int", nullable: false),
                     Descripción = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Precio = table.Column<float>(type: "real", nullable: false)
+                    Precio = table.Column<float>(type: "real", nullable: false),
+                    ReparaciónId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReparaciónItems", x => new { x.ReparaciónId, x.HerramientaId });
+                    table.PrimaryKey("PK_ReparaciónItems", x => new { x.ReparacionId, x.HerramientaId });
                     table.ForeignKey(
                         name: "FK_ReparaciónItems_Herramientas_HerramientaId",
                         column: x => x.HerramientaId,
@@ -535,6 +536,11 @@ namespace AppForSEII2526.API.Migrations
                 name: "IX_ReparaciónItems_HerramientaId",
                 table: "ReparaciónItems",
                 column: "HerramientaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReparaciónItems_ReparaciónId",
+                table: "ReparaciónItems",
+                column: "ReparaciónId");
         }
 
         /// <inheritdoc />

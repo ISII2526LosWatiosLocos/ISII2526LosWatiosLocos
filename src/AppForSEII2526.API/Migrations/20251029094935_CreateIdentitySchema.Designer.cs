@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppForSEII2526.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251027121211_CreateIdentitySchema")]
+    [Migration("20251029094935_CreateIdentitySchema")]
     partial class CreateIdentitySchema
     {
         /// <inheritdoc />
@@ -183,8 +183,8 @@ namespace AppForSEII2526.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("FechaCompra")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaCompra")
+                        .HasColumnType("date");
 
                     b.Property<int>("MetodoPagoId")
                         .HasColumnType("int");
@@ -397,7 +397,7 @@ namespace AppForSEII2526.API.Migrations
 
             modelBuilder.Entity("AppForSEII2526.API.Models.ReparaciónItem", b =>
                 {
-                    b.Property<int>("ReparaciónId")
+                    b.Property<int>("ReparacionId")
                         .HasColumnType("int");
 
                     b.Property<int>("HerramientaId")
@@ -409,12 +409,17 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<float>("Precio")
                         .HasColumnType("real");
 
+                    b.Property<int>("ReparaciónId")
+                        .HasColumnType("int");
+
                     b.Property<int>("cantidad")
                         .HasColumnType("int");
 
-                    b.HasKey("ReparaciónId", "HerramientaId");
+                    b.HasKey("ReparacionId", "HerramientaId");
 
                     b.HasIndex("HerramientaId");
+
+                    b.HasIndex("ReparaciónId");
 
                     b.ToTable("ReparaciónItems");
                 });
