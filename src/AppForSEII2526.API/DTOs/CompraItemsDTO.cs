@@ -13,12 +13,20 @@ namespace AppForSEII2526.API.DTOs
         public string DescripcionHerramienta { get; set; }
         public int CantidadHerramienta { get; set; }
 
+        // Constructor completo para el Details
         public CompraItemsDTO(int idHerramienta, string nombreHerramienta, string materialHerramienta, float precioHerramienta, string descripcionHerramienta, int cantidadHerramienta)
         {
             IdHerramienta = idHerramienta;
             NombreHerramienta = nombreHerramienta;
             MaterialHerramienta = materialHerramienta;
             PrecioHerramienta = precioHerramienta;
+            DescripcionHerramienta = descripcionHerramienta;
+            CantidadHerramienta = cantidadHerramienta;
+        }
+
+        // Constructor solo con lo necesario para el Post
+        public CompraItemsDTO(string descripcionHerramienta, int cantidadHerramienta)
+        {
             DescripcionHerramienta = descripcionHerramienta;
             CantidadHerramienta = cantidadHerramienta;
         }
