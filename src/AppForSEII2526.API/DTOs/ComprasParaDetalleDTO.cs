@@ -6,10 +6,10 @@
         private string Apellidos { get; set; }
         public string DireccionEnvio { get; set; }
         public float PrecioTotal { get; set; }
-        public DateTime FechaCompra { get; set; }
+        public DateOnly FechaCompra { get; set; }
         public IList<CompraItemsDTO> Items { get; set; } // Lista de Items
 
-        public ComprasParaDetalleDTO(string Nombre, string Apellidos, string DireccionEnvio, float PrecioTotal, DateTime FechaCompra, IList<CompraItemsDTO> Items)
+        public ComprasParaDetalleDTO(string Nombre, string Apellidos, string DireccionEnvio, float PrecioTotal, DateOnly FechaCompra, IList<CompraItemsDTO> Items)
         {
             this.Nombre = Nombre;
             this.Apellidos = Apellidos;

@@ -13,7 +13,7 @@ namespace AppForSEII2526.API.Models
         public string DireccionEnvio { get; set; }
         [Required]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime FechaCompra { get; set; }
+        public DateOnly FechaCompra { get; set; }
         [Required]
         public float PrecioTotal { get; set; }
 
@@ -24,7 +24,7 @@ namespace AppForSEII2526.API.Models
         public ApplicationUser Usuario { get; set; }
 
         // Constructor completo
-        public Compra(int id, string direccionEnvio, DateTime fechaCompra, float precioTotal, List<CompraItem> compraItems, MetodosPago metodoPago, ApplicationUser usuario)
+        public Compra(int id, string direccionEnvio, DateOnly fechaCompra, float precioTotal, List<CompraItem> compraItems, MetodosPago metodoPago, ApplicationUser usuario)
         {
             Id = id;
             DireccionEnvio = direccionEnvio;
@@ -36,7 +36,7 @@ namespace AppForSEII2526.API.Models
         }
 
         // Constructor sin el ID para las pruebas
-        public Compra(string direccionEnvio, DateTime fechaCompra, float precioTotal, List<CompraItem> compraItems, MetodosPago metodoPago, ApplicationUser usuario)
+        public Compra(string direccionEnvio, DateOnly fechaCompra, float precioTotal, List<CompraItem> compraItems, MetodosPago metodoPago, ApplicationUser usuario)
         {
             DireccionEnvio = direccionEnvio;
             FechaCompra = fechaCompra;

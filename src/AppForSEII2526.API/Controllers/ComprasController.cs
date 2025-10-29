@@ -132,7 +132,7 @@ namespace AppForSEII2526.API.Controllers
             var nuevaCompra = new Compra
             {
                 DireccionEnvio = CrearCompraDTO.DireccionEnvio,
-                FechaCompra = DateTime.UtcNow,
+                FechaCompra = DateOnly.FromDateTime(DateTime.UtcNow),
                 CompraItems = new List<CompraItem>(),
                 MetodoPago = metodoPago!, // Sabemos que no es null por la validación anterior
                 Usuario = Usuario
