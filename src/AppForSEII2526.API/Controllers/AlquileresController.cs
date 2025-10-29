@@ -82,17 +82,7 @@ namespace AppForSEII2526.API.Controllers
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
-            // Flujo alternativo 2, 4, y 5 ???
-
-            if (crearAlquilerDTO.FechaInicio <= DateTime.Today)
-                ModelState.AddModelError(nameof(crearAlquilerDTO.FechaInicio), "La fecha de inicio debe ser posterior a hoy.");
-
-            if (crearAlquilerDTO.FechaInicio >= crearAlquilerDTO.FechaFinal)
-                ModelState.AddModelError(nameof(crearAlquilerDTO.FechaFinal), "La fecha final debe ser posterior a la fecha de inicio.");
-
-            if (crearAlquilerDTO.Items == null || !crearAlquilerDTO.Items.Any())
-                ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "El alquiler debe incluir al menos una herramienta.");
-
+            // Flujos alternativos ???
 
             // Validar entidades
             var metodoPago = await _context.MetodosPagos.FindAsync(crearAlquilerDTO.MetodoPagoId);
@@ -116,15 +106,11 @@ namespace AppForSEII2526.API.Controllers
 
             //Construccion en memoria
 
-            var nuevoAlquiler = new Alquiler(crearAlquilerDTO.Direccion,
-                crearAlquilerDTO.FechaAlquiler,
-                crearAlquilerDTO.FechaInicio,
-                crearAlquilerDTO.FechaFinal,
-                crearAlquilerDTO.PrecioTotal,
-                crearAlquilerDTO.correo,
-                new List<AlquilarItem>
-
-                );
+            var nuevoAlquiler = new Alquiler
+            {
+                Usuario = crearAlquilerDTO.
+            };
+                
 
 
             // Validar que todas las herramientas existen
