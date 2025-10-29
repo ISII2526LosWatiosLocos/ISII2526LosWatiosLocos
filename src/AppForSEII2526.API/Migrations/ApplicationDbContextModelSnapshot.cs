@@ -51,22 +51,19 @@ namespace AppForSEII2526.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Correo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DireccionEnvio")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime>("FechaAlquiler")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaAlquiler")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("FechaFin")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaFin")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaInicio")
+                        .HasColumnType("date");
 
                     b.Property<int>("MétodoPagoId")
                         .HasColumnType("int");
@@ -180,8 +177,8 @@ namespace AppForSEII2526.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("FechaCompra")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaCompra")
+                        .HasColumnType("date");
 
                     b.Property<int>("MetodoPagoId")
                         .HasColumnType("int");
@@ -312,14 +309,14 @@ namespace AppForSEII2526.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("FechaFinal")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaFinal")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaInicio")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("FechaOferta")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaOferta")
+                        .HasColumnType("date");
 
                     b.Property<int>("MetodosPagoId")
                         .HasColumnType("int");
@@ -368,11 +365,11 @@ namespace AppForSEII2526.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("FechaEntrega")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaEntrega")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("FechaRecogida")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaRecogida")
+                        .HasColumnType("date");
 
                     b.Property<int>("MétodoPagoId")
                         .HasColumnType("int");
@@ -394,7 +391,7 @@ namespace AppForSEII2526.API.Migrations
 
             modelBuilder.Entity("AppForSEII2526.API.Models.ReparaciónItem", b =>
                 {
-                    b.Property<int>("ReparaciónId")
+                    b.Property<int>("ReparacionId")
                         .HasColumnType("int");
 
                     b.Property<int>("HerramientaId")
@@ -409,7 +406,7 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<int>("cantidad")
                         .HasColumnType("int");
 
-                    b.HasKey("ReparaciónId", "HerramientaId");
+                    b.HasKey("ReparacionId", "HerramientaId");
 
                     b.HasIndex("HerramientaId");
 
@@ -714,15 +711,15 @@ namespace AppForSEII2526.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AppForSEII2526.API.Models.Reparación", "Reparación")
+                    b.HasOne("AppForSEII2526.API.Models.Reparación", "Reparacion")
                         .WithMany("ReparaciónItems")
-                        .HasForeignKey("ReparaciónId")
+                        .HasForeignKey("ReparacionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Herramienta");
 
-                    b.Navigation("Reparación");
+                    b.Navigation("Reparacion");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
