@@ -6,8 +6,8 @@ namespace AppForSEII2526.API.DTOs
     {
 
 
-        public DateTime FechaEntrega { get; set; }
-        public DateTime FechaRecogida { get; set; }
+        public DateOnly FechaEntrega { get; set; }
+        public DateOnly FechaRecogida { get; set; }
         public float PrecioTotal { get; set; }
 
       
@@ -19,7 +19,7 @@ namespace AppForSEII2526.API.DTOs
 
 
         public IList<ReparacionesItemDTO> ReparacionesItems { get; set; }
-        public ReparacionesDTO(string nombre, string apellidos, DateTime FechaEntrega, DateTime FechaRecogida, float PrecioTotal, IList<ReparacionesItemDTO> ReparacionesItems)
+        public ReparacionesDTO(string nombre, string apellidos, DateOnly FechaEntrega, DateOnly FechaRecogida, float PrecioTotal, IList<ReparacionesItemDTO> ReparacionesItems)
         {
             this.nombre = nombre;
             this.apellidos = apellidos;

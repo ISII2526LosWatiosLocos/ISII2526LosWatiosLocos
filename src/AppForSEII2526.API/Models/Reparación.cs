@@ -10,12 +10,12 @@ namespace AppForSEII2526.API.Models
             [Required]
             [DataType(System.ComponentModel.DataAnnotations.DataType.Date), Display(Name = "Fecha Entrega")]
             [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-            public DateTime FechaEntrega { get; set; }
+            public DateOnly FechaEntrega { get; set; }
 
             [Required]
             [DataType(System.ComponentModel.DataAnnotations.DataType.Date), Display(Name = "Fecha Recogida")]
             [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-            public DateTime FechaRecogida { get; set; }
+            public DateOnly FechaRecogida { get; set; }
 
 
 
@@ -32,7 +32,7 @@ namespace AppForSEII2526.API.Models
         public List<ReparaciónItem> ReparaciónItems { get; set; }
         public ApplicationUser Usuario { get; set; }
 
-        public Reparación(DateTime fechaEntrega, DateTime fechaRecogida, float precioTotal, MetodosPago Metodopago,List<ReparaciónItem> reparaciónItems)
+        public Reparación(DateOnly fechaEntrega, DateOnly fechaRecogida, float precioTotal, MetodosPago Metodopago,List<ReparaciónItem> reparaciónItems)
         {
             FechaEntrega = fechaEntrega;
             FechaRecogida = fechaRecogida;
@@ -42,7 +42,7 @@ namespace AppForSEII2526.API.Models
            
         }
 
-        public Reparación(int id, DateTime fechaEntrega, DateTime fechaRecogida, float precioTotal, MetodosPago métodoPago, List<ReparaciónItem> reparaciónItems, ApplicationUser usuario)
+        public Reparación(int id, DateOnly fechaEntrega, DateOnly fechaRecogida, float precioTotal, MetodosPago métodoPago, List<ReparaciónItem> reparaciónItems, ApplicationUser usuario)
         {
             Id = id;
             FechaEntrega = fechaEntrega;

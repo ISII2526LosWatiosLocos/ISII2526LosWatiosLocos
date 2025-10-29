@@ -73,7 +73,7 @@ namespace AppForSEII2526.API.Controllers
             if (metodoPago == null)
                 ModelState.AddModelError(nameof(reparacionCreate.MetodoPagoId), $"El MetodoPagoId {reparacionCreate.MetodoPagoId} no existe.");
             // Validacion FechaEntrega > hoy
-            if (reparacionCreate.FechaEntrega <= DateTime.Today)
+            if (reparacionCreate.FechaEntrega <= reparacionCreate.FechaRecogida)
                 ModelState.AddModelError("FechaEntrega", "Error: la fecha de entrega debe ser posterior a hoy");
 
             // Validacion FechaRecogida > FechaEntrega
