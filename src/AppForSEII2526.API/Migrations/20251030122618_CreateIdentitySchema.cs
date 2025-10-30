@@ -32,7 +32,7 @@ namespace AppForSEII2526.API.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Apellidos = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CorreoElectrónico = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    CorreoElectronico = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     NumeroTelefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -221,7 +221,7 @@ namespace AppForSEII2526.API.Migrations
                     FechaInicio = table.Column<DateOnly>(type: "date", nullable: false),
                     FechaFin = table.Column<DateOnly>(type: "date", nullable: false),
                     PrecioTotal = table.Column<float>(type: "real", nullable: false),
-                    MétodoPagoId = table.Column<int>(type: "int", nullable: false),
+                    MetodoPagoId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -233,8 +233,8 @@ namespace AppForSEII2526.API.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Alquileres_MetodosPagos_MétodoPagoId",
-                        column: x => x.MétodoPagoId,
+                        name: "FK_Alquileres_MetodosPagos_MetodoPagoId",
+                        column: x => x.MetodoPagoId,
                         principalTable: "MetodosPagos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -437,9 +437,9 @@ namespace AppForSEII2526.API.Migrations
                 column: "HerramientaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Alquileres_MétodoPagoId",
+                name: "IX_Alquileres_MetodoPagoId",
                 table: "Alquileres",
-                column: "MétodoPagoId");
+                column: "MetodoPagoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Alquileres_UsuarioId",

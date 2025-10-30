@@ -7,7 +7,7 @@ namespace AppForSEII2526.API.Models
     {
         public Alquiler() { }
 
-        public Alquiler(string direccionEnvio, DateOnly fechaAlquiler, DateOnly fechaInicio, DateOnly fechaFin, float precioTotal, List<AlquilarItem> alquilarItems, MetodosPago métodoPago, ApplicationUser usuario)
+        public Alquiler(string direccionEnvio, DateOnly fechaAlquiler, DateOnly fechaInicio, DateOnly fechaFin, float precioTotal, List<AlquilarItem> alquilarItems, MetodosPago metodoPago, ApplicationUser usuario)
         {
             DireccionEnvio = direccionEnvio;
             FechaAlquiler = fechaAlquiler;
@@ -15,7 +15,7 @@ namespace AppForSEII2526.API.Models
             FechaFin = fechaFin;
             PrecioTotal = precioTotal;
             AlquilarItems = alquilarItems;
-            MétodoPago = métodoPago;
+            MetodoPago = metodoPago;
             Usuario = usuario;
         }
 
@@ -51,7 +51,7 @@ namespace AppForSEII2526.API.Models
 
         // Relaciones
         public List<AlquilarItem> AlquilarItems { get; set; }
-        public MetodosPago MétodoPago { get; set; }
+        public MetodosPago MetodoPago { get; set; }
         public ApplicationUser Usuario { get; set; }
 
     }

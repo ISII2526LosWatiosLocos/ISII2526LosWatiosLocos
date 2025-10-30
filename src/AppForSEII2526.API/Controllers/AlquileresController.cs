@@ -34,7 +34,7 @@ namespace AppForSEII2526.API.Controllers
                 return NotFound();
             }
             var alquileresParaDetalle = await _context.Alquileres
-                .Include(o => o.MétodoPago)
+                .Include(o => o.MetodoPago)
                 .Include(o => o.Usuario)
                 .Include(o => o.AlquilarItems)
                     .ThenInclude(oi => oi.Herramienta)
@@ -109,14 +109,14 @@ namespace AppForSEII2526.API.Controllers
             var nuevoAlquiler = new Alquiler
             {
                 DireccionEnvio = crearAlquilerDTO.Direccion,
-                MétodoPago = metodoPago,
+                MetodoPago = metodoPago,
                 AlquilarItems = new List<AlquilarItem>(),
                 Usuario = new ApplicationUser
                 {
                     Nombre = crearAlquilerDTO.Nombre,
                     Apellidos = crearAlquilerDTO.Apellidos,
                     NumeroTelefono = crearAlquilerDTO.telefono,
-                    CorreoElectrónico = crearAlquilerDTO.correo,
+                    CorreoElectronico = crearAlquilerDTO.correo,
                     
                 }
             }; 
