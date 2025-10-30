@@ -16,7 +16,7 @@ public class ApplicationUser : IdentityUser {
     // Campos opcionales
 
     [StringLength(20, ErrorMessage = "Numero de caracteres excedido. No se puede más de 20 caracteres")]
-    public string? CorreoElectrónico { get; set; }
+    public string? CorreoElectronico { get; set; }
 
     [DataType(System.ComponentModel.DataAnnotations.DataType.PhoneNumber), Display(Name = "Número de Teléfono")]
     public string? NumeroTelefono { get; set; }
@@ -29,11 +29,11 @@ public class ApplicationUser : IdentityUser {
     public List<Oferta> Ofertas { get; set; }
 
     // Constructor completo, se usa el mismo para las pruebas
-    public ApplicationUser(string nombre, string apellidos, string? correoElectrónico, string? numeroTelefono, List<Compra> compras, List<Reparación> reparaciones, List<Alquiler> alquileres)
+    public ApplicationUser(string nombre, string apellidos, string? correoElectronico, string? numeroTelefono, List<Compra> compras, List<Reparación> reparaciones, List<Alquiler> alquileres)
     {
         Nombre = nombre;
         Apellidos = apellidos;
-        CorreoElectrónico = correoElectrónico;
+        CorreoElectronico = correoElectronico;
         NumeroTelefono = numeroTelefono;
         Compras = compras;
         Reparaciones = reparaciones;
@@ -49,7 +49,7 @@ public class ApplicationUser : IdentityUser {
         Apellidos = apellidos;
         Email = email;
         UserName = email;
-        CorreoElectrónico = direccion;
+        CorreoElectronico = direccion;
         NumeroTelefono = telefono;
     }
 

@@ -65,7 +65,7 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<DateOnly>("FechaInicio")
                         .HasColumnType("date");
 
-                    b.Property<int>("MétodoPagoId")
+                    b.Property<int>("MetodoPagoId")
                         .HasColumnType("int");
 
                     b.Property<float>("PrecioTotal")
@@ -76,7 +76,7 @@ namespace AppForSEII2526.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MétodoPagoId");
+                    b.HasIndex("MetodoPagoId");
 
                     b.HasIndex("UsuarioId");
 
@@ -100,7 +100,7 @@ namespace AppForSEII2526.API.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CorreoElectrónico")
+                    b.Property<string>("CorreoElectronico")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -588,9 +588,9 @@ namespace AppForSEII2526.API.Migrations
 
             modelBuilder.Entity("AppForSEII2526.API.Models.Alquiler", b =>
                 {
-                    b.HasOne("AppForSEII2526.API.Models.MetodosPago", "MétodoPago")
+                    b.HasOne("AppForSEII2526.API.Models.MetodosPago", "MetodoPago")
                         .WithMany()
-                        .HasForeignKey("MétodoPagoId")
+                        .HasForeignKey("MetodoPagoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -598,7 +598,7 @@ namespace AppForSEII2526.API.Migrations
                         .WithMany("Alquileres")
                         .HasForeignKey("UsuarioId");
 
-                    b.Navigation("MétodoPago");
+                    b.Navigation("MetodoPago");
 
                     b.Navigation("Usuario");
                 });
