@@ -1,7 +1,7 @@
 ﻿
 namespace AppForSEII2526.API.DTOs
 {
-    public class HerramientasParaOfertarDTO
+    public class HerramientasParaOfertarDTO 
     {
         public string Nombre { get; set; }
         public string Material { get; set; }
