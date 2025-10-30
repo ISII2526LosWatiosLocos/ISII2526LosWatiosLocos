@@ -50,6 +50,15 @@
             ReparaciónItems = reparacionItems;
             Fabricante = fabricante;
         }
+
+        public Herramienta(string nombre, string material, float precio, int tiemporeparacion, Fabricante fabricante)
+        {
+            Nombre = nombre;
+            Material = material;
+            Precio = precio;
+            TiempoReparacion = tiemporeparacion;
+            Fabricante = fabricante;
+        }
         // Constructor vacío
         public Herramienta()
         {
