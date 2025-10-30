@@ -82,7 +82,12 @@ namespace AppForSEII2526.API.Controllers
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
+
+            if (crearAlquilerDTO.Items == null || !crearAlquilerDTO.Items.Any())
+                ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "El alquiler debe incluir al menos una herramienta.");
+
             // Flujos alternativos ???
+
 
             // Validar entidades
             var metodoPago = await _context.MetodosPagos.FindAsync(crearAlquilerDTO.MetodoPagoId);
