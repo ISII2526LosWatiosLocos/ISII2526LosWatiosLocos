@@ -94,6 +94,13 @@ namespace AppForSEII2526.API.Controllers
             if (metodoPago == null)
                 ModelState.AddModelError(nameof(crearAlquilerDTO.MetodoPagoId), $"El MetodoPagoId {crearAlquilerDTO.MetodoPagoId} no existe.");
 
+            var usuario = await _context.Users.FirstOrDefaultAsync(
+                u => u.Nombre == crearAlquilerDTO.Nombre &&
+                u.Apellidos == crearAlquilerDTO.Apellidos &&
+                u.CorreoElectronico == crearAlquilerDTO.correo &&
+                u.NumeroTelefono == crearAlquilerDTO.telefono);
+            if (usuario == null) ModelState.AddModelError(nameof(crearAlquilerDTO.Nombre), $"El Usuario {crearAlquilerDTO.Nombre} {crearAlquilerDTO.Apellidos} no existe.");
+
             // Alguna validación más ???
 
             // Si hay errores, retornar
@@ -116,14 +123,7 @@ namespace AppForSEII2526.API.Controllers
                 DireccionEnvio = crearAlquilerDTO.Direccion,
                 MetodoPago = metodoPago,
                 AlquilarItems = new List<AlquilarItem>(),
-                Usuario = new ApplicationUser
-                {
-                    Nombre = crearAlquilerDTO.Nombre,
-                    Apellidos = crearAlquilerDTO.Apellidos,
-                    NumeroTelefono = crearAlquilerDTO.telefono,
-                    CorreoElectronico = crearAlquilerDTO.correo,
-                    
-                }
+                Usuario = usuario,
             }; 
                 
 
