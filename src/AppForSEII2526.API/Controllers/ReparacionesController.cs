@@ -30,6 +30,7 @@ namespace AppForSEII2526.API.Controllers
         {
             var reparaciones = await _context.Reparaciones
                 .Include(r => r.MétodoPago)
+                 .Include(r => r.Usuario)
                 .Include(r => r.ReparaciónItems)
                     .ThenInclude(ri => ri.Herramienta)
                         .ThenInclude(h => h.Fabricante)
@@ -193,7 +194,10 @@ namespace AppForSEII2526.API.Controllers
             );
 
             // Devolver el DTO simulado
-            return CreatedAtAction("GetDetalleHerramientasParaReparación", new { }, nuevaReparacion.Id);
+            return CreatedAtAction(
+     nameof(GetDetalleHerramientasParaReparación), // Nombre del método GET
+     new { id = nuevaReparacion.Id }, // Parámetro de ruta para el método GET  
+     reparacionDetalle); // El cuerpo de la respuesta (tu DTO)
         }
 
     }

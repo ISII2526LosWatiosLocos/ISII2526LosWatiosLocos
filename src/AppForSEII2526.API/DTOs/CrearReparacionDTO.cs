@@ -8,8 +8,7 @@
         public DateOnly FechaRecogida { get; set; }
         public float PrecioTotal { get; set; }
         public int MetodoPagoId { get; set; }
-        public ApplicationUser Usuario { get; set; }
-
+      
         public List<CrearReparacionItemDTO> ReparacionesItems { get; set; }
 
         public CrearReparacionDTO()
