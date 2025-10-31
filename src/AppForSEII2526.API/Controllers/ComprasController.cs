@@ -85,9 +85,6 @@ namespace AppForSEII2526.API.Controllers
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
-            if (CrearCompraDTO.Items == null || !CrearCompraDTO.Items.Any())
-                ModelState.AddModelError(nameof(CrearCompraDTO.Items), "La compra debe incluir al menos una herramienta.");
-
             // --- 2. VALIDAR ENTIDADES RELACIONADAS (Patrón del ejemplo) ---
 
             // a. Buscar Método de Pago
