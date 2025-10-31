@@ -17,7 +17,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
     {
         public GetSeleccionParaCompra_test()
         {
-            // Seed de datos en la BBDD de prueba:
+            // Seed de datos en la BBDD de prueba (sigo el orden de dbo.Global.data.sql):
+
+            ApplicationUser Usuario = new ApplicationUser("Fulanito", "De Tal", "fulanitodetal@uclm.es", "111222333", new List<Compra>(), new List<Reparación>(), new List<Alquiler>());
 
             var Fabricantes = new List<Fabricante>()
             {
@@ -32,18 +34,16 @@ namespace AppForSEII2526.UT.HerramientasController_test
                 new Herramienta("Nombre - Herramienta3", "Material - Herramienta3", (float)3.99, 300, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
             };
 
-            var Items = new List<CompraItem>(){
-                new CompraItem(1, "Descripción - CompraItem1", (float)1.99, null, null),
-                new CompraItem(2, "Descripción - CompraItem2", (float)2.99, null, null),
-                new CompraItem(3, "Descripción - CompraItem3", (float)3.99, null, null),
-            };
-
             var Compras = new List<Compra>() {
                 new Compra("DireccionEnvio - Compra1", DateOnly.FromDateTime(DateTime.UtcNow), (float)100.99, new List<CompraItem>(), new Efectivo(), null),
                 new Compra("DireccionEnvio - Compra2", DateOnly.FromDateTime(DateTime.UtcNow), (float)200.99, new List<CompraItem>(), new TarjetaCredito(), null),
             };
 
-            ApplicationUser Usuario = new ApplicationUser("Fulanito", "De Tal", "fulanitodetal@uclm.es", "111222333", new List<Compra>(), new List<Reparación>(), new List<Alquiler>());
+            var Items = new List<CompraItem>(){
+                new CompraItem(1, "Descripción - CompraItem1", (float)1.99, null, null),
+                new CompraItem(2, "Descripción - CompraItem2", (float)2.99, null, null),
+                new CompraItem(3, "Descripción - CompraItem3", (float)3.99, null, null),
+            };
 
             // Entrelazar los datos:
 
@@ -77,11 +77,11 @@ namespace AppForSEII2526.UT.HerramientasController_test
             Compras[1].Usuario = Usuario;
 
             // Añado los datos a la BBDD
+            _context.Users.Add(Usuario);
             _context.AddRange(Fabricantes);
             _context.AddRange(Herramientas);
             _context.AddRange(Compras);
             _context.AddRange(Items);
-            _context.Users.Add(Usuario);
             _context.SaveChanges();
         }
 
