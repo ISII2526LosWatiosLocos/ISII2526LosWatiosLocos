@@ -96,9 +96,7 @@ namespace AppForSEII2526.API.Controllers
 
             var usuario = await _context.Users.FirstOrDefaultAsync(
                 u => u.Nombre == crearAlquilerDTO.Nombre &&
-                u.Apellidos == crearAlquilerDTO.Apellidos &&
-                u.CorreoElectronico == crearAlquilerDTO.correo &&
-                u.NumeroTelefono == crearAlquilerDTO.telefono);
+                u.Apellidos == crearAlquilerDTO.Apellidos);
             if (usuario == null) ModelState.AddModelError(nameof(crearAlquilerDTO.Nombre), $"El Usuario {crearAlquilerDTO.Nombre} {crearAlquilerDTO.Apellidos} no existe.");
 
             // Alguna validación más ???
