@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AppForSEII2526.API.Models;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 using System.Linq; 
 
 namespace AppForSEII2526.API.Controllers
@@ -26,7 +26,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("Detalle-Oferta")]
         [ProducesResponseType(typeof(IList<OfertasParaDetalleDTO>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetDetalleHerramientasParaOferta()
+        public async Task<IActionResult> GetDetalleHerramientasParaOferta(int id)
         {
 
             if (_context.Ofertas == null)
@@ -40,6 +40,7 @@ namespace AppForSEII2526.API.Controllers
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
+                .Where(o=> o.Id == id)
                 .ToListAsync();
 
 
@@ -56,7 +57,7 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Precio,
                     oi.Herramienta.Precio * (100f - oi.Porcentaje) / 100
                 )).ToList()
-            )).ToList();
+            )).FirstOrDefault();
 
             if (ofertas == null)
             {

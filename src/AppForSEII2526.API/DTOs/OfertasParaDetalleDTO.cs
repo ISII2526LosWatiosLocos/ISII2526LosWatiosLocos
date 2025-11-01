@@ -24,13 +24,28 @@
 
         public override bool Equals(object? obj)
         {
-            return obj is OfertasParaDetalleDTO dTO &&
-                   FechaFinal == dTO.FechaFinal &&
-                   FechaInicio == dTO.FechaInicio &&
-                   FechaOferta == dTO.FechaOferta &&
-                   TipoDirigida == dTO.TipoDirigida &&
-                   MetodoPago == dTO.MetodoPago &&
-                   EqualityComparer<IList<OfertaItemsDTO>>.Default.Equals(Items, dTO.Items);
+            if (obj is not OfertasParaDetalleDTO dto)
+                return false;
+
+            // Comparación de las propiedades simples
+            bool basicasIguales =
+                FechaFinal == dto.FechaFinal &&
+                FechaInicio == dto.FechaInicio &&
+                FechaOferta == dto.FechaOferta &&
+                TipoDirigida == dto.TipoDirigida &&
+                MetodoPago == dto.MetodoPago;
+
+            // Si alguna de las listas es null
+            if (Items == null && dto.Items == null)
+                return basicasIguales;
+
+            if (Items == null || dto.Items == null)
+                return false;
+
+            // Comparar el contenido (no solo la referencia)
+            bool listasIguales = Items.SequenceEqual(dto.Items);
+
+            return basicasIguales && listasIguales;
         }
 
         public override int GetHashCode()
