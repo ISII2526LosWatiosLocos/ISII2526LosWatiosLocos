@@ -82,12 +82,22 @@ namespace AppForSEII2526.API.Controllers
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
+
+            if (crearAlquilerDTO.Items == null || !crearAlquilerDTO.Items.Any())
+                ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "El alquiler debe incluir al menos una herramienta.");
+
             // Flujos alternativos ???
+
 
             // Validar entidades
             var metodoPago = await _context.MetodosPagos.FindAsync(crearAlquilerDTO.MetodoPagoId);
             if (metodoPago == null)
                 ModelState.AddModelError(nameof(crearAlquilerDTO.MetodoPagoId), $"El MetodoPagoId {crearAlquilerDTO.MetodoPagoId} no existe.");
+
+            var usuario = await _context.Users.FirstOrDefaultAsync(
+                u => u.Nombre == crearAlquilerDTO.Nombre &&
+                u.Apellidos == crearAlquilerDTO.Apellidos);
+            if (usuario == null) ModelState.AddModelError(nameof(crearAlquilerDTO.Nombre), $"El Usuario {crearAlquilerDTO.Nombre} {crearAlquilerDTO.Apellidos} no existe.");
 
             // Alguna validación más ???
 
@@ -111,14 +121,7 @@ namespace AppForSEII2526.API.Controllers
                 DireccionEnvio = crearAlquilerDTO.Direccion,
                 MetodoPago = metodoPago,
                 AlquilarItems = new List<AlquilarItem>(),
-                Usuario = new ApplicationUser
-                {
-                    Nombre = crearAlquilerDTO.Nombre,
-                    Apellidos = crearAlquilerDTO.Apellidos,
-                    NumeroTelefono = crearAlquilerDTO.telefono,
-                    CorreoElectronico = crearAlquilerDTO.correo,
-                    
-                }
+                Usuario = usuario,
             }; 
                 
 
