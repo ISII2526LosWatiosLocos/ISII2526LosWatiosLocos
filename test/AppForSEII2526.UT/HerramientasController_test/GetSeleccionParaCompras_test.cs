@@ -34,9 +34,15 @@ namespace AppForSEII2526.UT.HerramientasController_test
                 new Herramienta("Nombre - Herramienta3", "Material - Herramienta3", (float)3.99, 300, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
             };
 
+            // El nombre de un método de pago no puede ser null en la bbdd
+            Efectivo efectivo = new Efectivo();
+            efectivo.Nombre = "Efectivo";
+            TarjetaCredito tarjetaCredito = new TarjetaCredito();
+            tarjetaCredito.Nombre = "TarjetaCredito";
+
             var Compras = new List<Compra>() {
-                new Compra("DireccionEnvio - Compra1", DateOnly.FromDateTime(DateTime.UtcNow), (float)100.99, new List<CompraItem>(), new Efectivo(), null),
-                new Compra("DireccionEnvio - Compra2", DateOnly.FromDateTime(DateTime.UtcNow), (float)200.99, new List<CompraItem>(), new TarjetaCredito(), null),
+                new Compra("DireccionEnvio - Compra1", DateOnly.FromDateTime(DateTime.UtcNow), (float)100.99, new List<CompraItem>(), efectivo, null),
+                new Compra("DireccionEnvio - Compra2", DateOnly.FromDateTime(DateTime.UtcNow), (float)200.99, new List<CompraItem>(), tarjetaCredito, null),
             };
 
             var Items = new List<CompraItem>(){
