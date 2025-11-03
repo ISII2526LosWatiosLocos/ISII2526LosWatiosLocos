@@ -4,7 +4,7 @@ borras la base de datos marcando la casilla de cerrar conexiones (click derecho 
 remove-migration
 add-migration CreateIdentitySchema
 update-database
-ejecutar SQL
+ejecutar SQL (Local -> MSSQLLocalDB, nombre de la base de datos -> "aspnet-AppForSEII2526.Web...")
 */
 
 INSERT INTO [dbo].[AspNetUsers] ([Id], [Nombre], [Apellidos], [CorreoElectronico], [NumeroTelefono], [UserName], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) VALUES (N'1', N'Yoel', N'CS', N'Hola@gmail.com', N'000000000', N'YS', N'YS', N'Hola@gmail.com', N'Hola@gmail.com', 0, N'0', N'0', N'0', N'0', 0, 0, N'10/10/2020 0:00:00 +02:00', 0, 1)
