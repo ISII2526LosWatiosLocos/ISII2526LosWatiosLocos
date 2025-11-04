@@ -37,6 +37,7 @@ namespace AppForSEII2526.API.Controllers
 
             var ofertas = await _context.Ofertas
                 .Include(o => o.MetodosPago)
+                .Include(o => o.Usuario)
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
@@ -56,7 +57,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Fabricante.Nombre,
                     oi.Herramienta.Precio,
                     oi.Herramienta.Precio * (100f - oi.Porcentaje) / 100
-                )).ToList()
+                )).ToList(),
+                o.Usuario.Nombre
             )).FirstOrDefault();
 
             if (ofertasDTO == null)
@@ -108,7 +110,13 @@ namespace AppForSEII2526.API.Controllers
                     ModelState.AddModelError(nameof(crearOfertaDTO.TipoDirigida), $"El valor '{crearOfertaDTO.TipoDirigida}' no es válido. Use 'Socio' o 'Cliente'.");
             }
 
-            // c. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
+            //c. Validar Usuario
+            var usuario = await _context.Users
+                .FirstOrDefaultAsync(u => u.Nombre == crearOfertaDTO.nombreUsuario);
+            if (usuario == null)
+                ModelState.AddModelError(nameof(crearOfertaDTO.nombreUsuario), $"El usuario '{crearOfertaDTO.nombreUsuario}' no existe.");
+
+            // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
@@ -133,7 +141,8 @@ namespace AppForSEII2526.API.Controllers
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 tipoDirigido,
                 new List<OfertaItem>(),
-                metodoPago!
+                metodoPago!,
+                usuario
             );
 
             // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
@@ -200,7 +209,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Fabricante.Nombre, // Esto funciona gracias al .Include() que hicimos
                     oi.Herramienta.Precio,
                     oi.PrecioFinal
-                )).ToList()
+                )).ToList(),
+                nuevaOferta.Usuario.Nombre
             );
 
             // Devolvemos el DTO de detalle

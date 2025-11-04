@@ -8,10 +8,12 @@
         public string TipoDirigida { get; set; }
         public string MetodoPago { get; set; }
 
+        public string nombreUsuario { get; set; }
+
         //Lista de items
         public IList<OfertaItemsDTO> Items { get; set; }
 
-        public OfertasParaDetalleDTO(DateOnly fechaFinal, DateOnly fechaInicio, DateOnly fechaOferta, string tipoDirigida, string metodoPago, IList<OfertaItemsDTO> items)
+        public OfertasParaDetalleDTO(DateOnly fechaFinal, DateOnly fechaInicio, DateOnly fechaOferta, string tipoDirigida, string metodoPago, IList<OfertaItemsDTO> items, string nombreUsuario)
 
         {
             FechaFinal = fechaFinal;
@@ -20,6 +22,7 @@
             TipoDirigida = tipoDirigida;
             MetodoPago = metodoPago;
             Items = items;
+            this.nombreUsuario = nombreUsuario;
         }
 
         public override bool Equals(object? obj)
@@ -33,6 +36,7 @@
                 FechaInicio == dto.FechaInicio &&
                 FechaOferta == dto.FechaOferta &&
                 TipoDirigida == dto.TipoDirigida &&
+                nombreUsuario == dto.nombreUsuario &&
                 MetodoPago == dto.MetodoPago;
 
             // Si alguna de las listas es null
@@ -50,7 +54,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(FechaFinal, FechaInicio, FechaOferta, TipoDirigida, MetodoPago, Items);
+            return HashCode.Combine(FechaFinal, FechaInicio, FechaOferta, TipoDirigida, MetodoPago, Items, nombreUsuario);
         }
     }
 }

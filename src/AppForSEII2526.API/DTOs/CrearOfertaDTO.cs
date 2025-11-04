@@ -6,6 +6,8 @@
         public DateOnly FechaFinal { get; set; }
         public string? TipoDirigida { get; set; }
         public int MetodoPagoId { get; set; }
+
+        public string nombreUsuario { get; set; }   
         public List<CrearOfertaItemDTO> Items { get; set; }
 
         public CrearOfertaDTO()
