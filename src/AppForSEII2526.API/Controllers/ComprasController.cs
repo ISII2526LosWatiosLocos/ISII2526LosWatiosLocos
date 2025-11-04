@@ -28,7 +28,7 @@ namespace AppForSEII2526.API.Controllers
         // El tipo de respuesta es una lista de ComprasParaDetalleDTO
         [ProducesResponseType(typeof(IList<ComprasParaDetalleDTO>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetDetalleHerramientasParaCompra()
+        public async Task<IActionResult> GetDetalleHerramientasParaCompra(int id)
         {
             if (_context.Compras == null)
             {
@@ -41,6 +41,7 @@ namespace AppForSEII2526.API.Controllers
                 .Include(o => o.CompraItems)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
+                .Where(o => o.Id == id)
                 .ToListAsync();
 
 
@@ -61,7 +62,7 @@ namespace AppForSEII2526.API.Controllers
 
             )).ToList();
 
-            if (comprasParaDetalle == null)
+            if (comprasParaDetalleDTO == null)
             {
                 _logger.LogError("Error: No se encontraron compras.");
                 return NotFound();
