@@ -37,6 +37,7 @@ namespace AppForSEII2526.API.Controllers
 
             var ofertas = await _context.Ofertas
                 .Include(o => o.MetodosPago)
+                .Include(o => o.Usuario)
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
