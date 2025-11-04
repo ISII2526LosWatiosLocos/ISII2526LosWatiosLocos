@@ -41,8 +41,8 @@ namespace AppForSEII2526.UT.HerramientasController_test
             tarjetaCredito.Nombre = "TarjetaCredito";
 
             var Compras = new List<Compra>() {
-                new Compra("DireccionEnvio - Compra1", DateOnly.FromDateTime(DateTime.UtcNow), (float)100.99, new List<CompraItem>(), efectivo, null),
-                new Compra("DireccionEnvio - Compra2", DateOnly.FromDateTime(DateTime.UtcNow), (float)200.99, new List<CompraItem>(), tarjetaCredito, null),
+                new Compra("DireccionEnvio - Compra1", DateOnly.FromDateTime(DateTime.UtcNow), (float)10.99, new List<CompraItem>(), efectivo, null),
+                new Compra("DireccionEnvio - Compra2", DateOnly.FromDateTime(DateTime.UtcNow), (float)6.98, new List<CompraItem>(), tarjetaCredito, null),
             };
 
             var Items = new List<CompraItem>(){

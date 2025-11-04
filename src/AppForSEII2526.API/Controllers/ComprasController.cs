@@ -41,9 +41,14 @@ namespace AppForSEII2526.API.Controllers
                 .Include(o => o.CompraItems)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
-                .Where(o => o.Id == id)
+                .Where(o=> o.Id == id)
                 .ToListAsync();
 
+            if (comprasParaDetalle == null)
+            {
+                _logger.LogInformation("No se encontró la compra con id {id}", id);
+                return NotFound();
+            }
 
             var comprasParaDetalleDTO = comprasParaDetalle.Select(o => new ComprasParaDetalleDTO(
                 o.Usuario.Nombre,
