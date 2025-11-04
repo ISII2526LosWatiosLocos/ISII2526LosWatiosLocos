@@ -1,5 +1,6 @@
 ﻿using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +32,6 @@ namespace AppForSEII2526.UT.OfertasController_test
             var ofertaItem = new List<OfertaItem>()
             {
                 new OfertaItem(10, 13.95f, null, herramienta[0]),
-                new OfertaItem(20, 5.6f, null, herramienta[1]),
-                new OfertaItem(15, 4.25f, null, herramienta[2]),
             };
 
             var metodoPago = new Efectivo()
@@ -58,45 +57,62 @@ namespace AppForSEII2526.UT.OfertasController_test
             _context.SaveChanges();
         }
 
-        public static IEnumerable<object[]> TestCasesFor_GetDetalleParaOferta_Ok()
-        {
-            var ofertaItemsDTO = new List<OfertaItemsDTO>()
-            {
-                new OfertaItemsDTO ( "Martillo", "Acero", "Herramientas SA", 15.5f, 13.95f),
-                new OfertaItemsDTO ( "Destornillador", "Acero", "Utensilios y Más", 7.0f, 5.6f),
-                new OfertaItemsDTO ( "Taladro", "Plástico", "Todo para Construcción", 5.0f, 4.25f)
-            };
 
-            var ofertasParaDetalleDTO_TC1 = new OfertasParaDetalleDTO(
+        [Fact]
+        [Trait("Database", "WithoutFixture")]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetDetalleParaOferta_NotFound()
+        {
+            //Arrange
+            var mock = new Mock<ILogger<OfertasController>>();
+            ILogger<OfertasController> logger = mock.Object;
+
+            var controller = new OfertasController(_context, logger);
+
+            //Act
+            var result = await controller.GetDetalleHerramientasParaOferta(999); // ID de oferta que no existe (999)
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetDetalleParaOferta_Found_test()
+        {
+            //Arrange
+            var mock = new Mock<ILogger<OfertasController>>();
+            ILogger<OfertasController> logger = mock.Object;
+            var controller = new OfertasController(_context, logger);
+
+            var expectedOferta = new OfertasParaDetalleDTO(
                 DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 "Cliente",
                 "Efectivo",
-                new List<OfertaItemsDTO> { ofertaItemsDTO[0], ofertaItemsDTO[1], ofertaItemsDTO[2] }
+                new List<OfertaItemsDTO>()
             );
+            expectedOferta.Items.Add(new OfertaItemsDTO
+            (
+                "Martillo",
+                "Acero",
+                "Herramientas SA",
+                15.5f,
+                13.95f
+            ));
 
-            var allTest = new List<object[]> {
-                new object[] {1, ofertasParaDetalleDTO_TC1 }
-            };
+            //Act
+            var result = await controller.GetDetalleHerramientasParaOferta(1);
 
-            return allTest;
-        }
+            //Assert 
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var ofertaDTOActual = Assert.IsType<OfertasParaDetalleDTO>(okResult.Value);
+            var eq = expectedOferta.Equals(ofertaDTOActual);
 
-        [Theory]
-        [MemberData(nameof(TestCasesFor_GetDetalleParaOferta_Ok))]
-        public async Task GetDetalleParaOferta_Ok(int ofertaId, OfertasParaDetalleDTO expectedDTO)
-        {
-            // Arrange
-            var controller = new OfertasController(_context, null);
-            // Act
-            var actionResult = await controller.GetDetalleHerramientasParaOferta(ofertaId);
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(actionResult);
-            var actualDTO = Assert.IsType<OfertasParaDetalleDTO>(okResult.Value);
-            Assert.Equal(expectedDTO, actualDTO);
-
-
+            Assert.Equal(expectedOferta, ofertaDTOActual);
         }
     }
 }

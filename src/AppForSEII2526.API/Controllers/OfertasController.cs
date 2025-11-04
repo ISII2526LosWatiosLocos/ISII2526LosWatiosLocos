@@ -15,9 +15,9 @@ namespace AppForSEII2526.API.Controllers
         private readonly ApplicationDbContext _context;
 
         //used to log any information when your system is running
-        private readonly ILogger<HerramientasController> _logger;
+        private readonly ILogger<OfertasController> _logger;
 
-        public OfertasController(ApplicationDbContext context, ILogger<HerramientasController> logger)
+        public OfertasController(ApplicationDbContext context, ILogger<OfertasController> logger)
         {
             _context = context;
             _logger = logger;
@@ -59,7 +59,7 @@ namespace AppForSEII2526.API.Controllers
                 )).ToList()
             )).FirstOrDefault();
 
-            if (ofertas == null)
+            if (ofertasDTO == null)
             {
                 _logger.LogError("Error: No se encontraron ofertas.");
                 return NotFound();
