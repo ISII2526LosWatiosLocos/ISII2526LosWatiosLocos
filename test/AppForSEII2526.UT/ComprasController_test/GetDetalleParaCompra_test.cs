@@ -121,7 +121,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 "Fulanito",
                 "De Tal",
                 "DireccionEnvio - Compra1",
-                (float)100.99,
+                (float)10.99,
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 new List<CompraItemsDTO>()
             );
