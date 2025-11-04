@@ -57,7 +57,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Fabricante.Nombre,
                     oi.Herramienta.Precio,
                     oi.Herramienta.Precio * (100f - oi.Porcentaje) / 100
-                )).ToList()
+                )).ToList(),
+                o.Usuario.Nombre
             )).FirstOrDefault();
 
             if (ofertasDTO == null)
@@ -208,7 +209,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Fabricante.Nombre, // Esto funciona gracias al .Include() que hicimos
                     oi.Herramienta.Precio,
                     oi.PrecioFinal
-                )).ToList()
+                )).ToList(),
+                nuevaOferta.Usuario.Nombre
             );
 
             // Devolvemos el DTO de detalle

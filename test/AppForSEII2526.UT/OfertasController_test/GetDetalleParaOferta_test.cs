@@ -39,13 +39,16 @@ namespace AppForSEII2526.UT.OfertasController_test
                 Nombre = "Efectivo"
             };
 
+            ApplicationUser usuario = new ApplicationUser("5", "Jesus", "Arribas", "Jesus.Arribas@alu.uclm.es", "111111112");
+
             var oferta = new Oferta(
                 DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 tipoDirigidaOferta.Cliente,
                 ofertaItem,
-                metodoPago
+                metodoPago,
+                usuario
             );
 
             //Añadimos a la bbdd los datos de prueba
@@ -93,7 +96,8 @@ namespace AppForSEII2526.UT.OfertasController_test
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 "Cliente",
                 "Efectivo",
-                new List<OfertaItemsDTO>()
+                new List<OfertaItemsDTO>(),
+                "Jesus"
             );
             expectedOferta.Items.Add(new OfertaItemsDTO
             (
@@ -108,11 +112,34 @@ namespace AppForSEII2526.UT.OfertasController_test
             var result = await controller.GetDetalleHerramientasParaOferta(1);
 
             //Assert 
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var ofertaDTOActual = Assert.IsType<OfertasParaDetalleDTO>(okResult.Value);
-            var eq = expectedOferta.Equals(ofertaDTOActual);
+            // 1. Comprueba que los objetos no sean nulos
+            Assert.NotNull(result);
 
-            Assert.Equal(expectedOferta, ofertaDTOActual);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+
+            var ofertaDTOActual = Assert.IsType<OfertasParaDetalleDTO>(okResult.Value);
+
+            // 2. Comprueba las propiedades simples (string, DateOnly, int, etc.)
+            Assert.Equal(expectedOferta.FechaFinal, ofertaDTOActual.FechaFinal);
+            Assert.Equal(expectedOferta.FechaInicio, ofertaDTOActual.FechaInicio);
+            Assert.Equal(expectedOferta.TipoDirigida, ofertaDTOActual.TipoDirigida);
+            Assert.Equal(expectedOferta.MetodoPago, ofertaDTOActual.MetodoPago);
+            Assert.Equal(expectedOferta.nombreUsuario, ofertaDTOActual.nombreUsuario);
+
+            // 3. Comprueba las listas o colecciones
+            //    Primero, comprueba que tengan el mismo número de elementos
+            Assert.Equal(expectedOferta.Items.Count, ofertaDTOActual.Items.Count);
+
+            // 4. Comprueba los elementos DENTRO de las listas
+            //    (En este test, sabes que solo hay un item, en la posición [0])
+            var expectedItem = expectedOferta.Items[0];
+            var actualItem = ofertaDTOActual.Items[0];
+
+            Assert.Equal(expectedItem.NombreHerramienta, actualItem.NombreHerramienta);
+            Assert.Equal(expectedItem.MaterialHerramienta, actualItem.MaterialHerramienta);
+            Assert.Equal(expectedItem.FabricanteHerramienta, actualItem.FabricanteHerramienta);
+            Assert.Equal(expectedItem.PrecioHerramienta, actualItem.PrecioHerramienta);
+            Assert.Equal(expectedItem.PrecioFinalOferta, actualItem.PrecioFinalOferta);
         }
     }
 }
