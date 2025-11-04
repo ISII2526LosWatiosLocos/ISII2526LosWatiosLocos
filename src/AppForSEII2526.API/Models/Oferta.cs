@@ -28,7 +28,7 @@ namespace AppForSEII2526.API.Models
 
         public MetodosPago MetodosPago { get; set; }
 
-        public Oferta(DateOnly fechaFinal, DateOnly fechaInicio, DateOnly fechaOferta, tipoDirigidaOferta? tipoDirigida, List<OfertaItem> items, MetodosPago metodosPago)
+        public Oferta(DateOnly fechaFinal, DateOnly fechaInicio, DateOnly fechaOferta, tipoDirigidaOferta? tipoDirigida, List<OfertaItem> items, MetodosPago metodosPago, ApplicationUser usuario)
         {
             FechaFinal = fechaFinal;
             FechaInicio = fechaInicio;
@@ -36,6 +36,7 @@ namespace AppForSEII2526.API.Models
             TipoDirigida = tipoDirigida;
             Items = items;
             MetodosPago = metodosPago;
+            Usuario = usuario;
         }
 
         public Oferta()
