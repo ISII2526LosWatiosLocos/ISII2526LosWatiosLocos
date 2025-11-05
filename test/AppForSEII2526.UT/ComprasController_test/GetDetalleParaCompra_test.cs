@@ -1,21 +1,18 @@
 ﻿using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs;
 using AppForSEII2526.API.Models;
-using Humanizer.Localisation;
-using Microsoft.EntityFrameworkCore;
-using AppForSEII2526.UT;
-using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace AppForSEII2526.UT.HerramientasController_test
+namespace AppForSEII2526.UT.ComprasController_test
 {
-    public class GetSeleccionParaCompra_test : AppForSEII25264SqliteUT
+    public class GetDetalleParaCompra_test : AppForSEII25264SqliteUT
     {
-        public GetSeleccionParaCompra_test()
+        public GetDetalleParaCompra_test()
         {
             // Seed de datos en la BBDD de prueba (sigo el orden de dbo.Global.data.sql):
 
@@ -91,60 +88,85 @@ namespace AppForSEII2526.UT.HerramientasController_test
             _context.SaveChanges();
         }
 
-        public static IEnumerable<object[]> TestCasesFor_GetHerramientasParaComprar_Ok()
+        [Fact]
+        [Trait("Database", "WithoutFixture")]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetDetalleParaCompra_NotFound()
         {
-            // Datos esperados
-            var herramientasDTO = new List<HerramientasParaComprarDTO>()
-            {
-                new HerramientasParaComprarDTO("Nombre - Herramienta1", "Material - Herramientas1y2", "Nombre - Fabricante1", 10.99f),
-                new HerramientasParaComprarDTO("Nombre - Herramienta2", "Material - Herramientas1y2", "Nombre - Fabricante2", 2.99f),
-                new HerramientasParaComprarDTO("Nombre - Herramienta3", "Material - Herramienta3", "Nombre - Fabricante2", 3.99f)
-            };
+            //Arrange
+            var mock = new Mock<ILogger<ComprasController>>();
+            ILogger<ComprasController> logger = mock.Object;
 
-            // Casos de prueba (los defino, especificando qué herramientasDTO deben devolver según los filtros que defina acontinuación en allTest)
-            var herramientasDTO_TC1 = new List<HerramientasParaComprarDTO> { herramientasDTO[0], herramientasDTO[1], herramientasDTO[2] };
+            var controller = new ComprasController(_context, logger);
 
-            var herramientasDTO_TC2 = new List<HerramientasParaComprarDTO> { herramientasDTO[0], herramientasDTO[1] };
+            //Act
+            var result = await controller.GetDetalleHerramientasParaCompra(999); // ID de compra que no existe (999)
 
-            var herramientasDTO_TC3 = new List<HerramientasParaComprarDTO> { herramientasDTO[1], herramientasDTO[2] };
-            // Colección de todos los casos de prueba (los filtros deben proporcionar los herramientasDTO que haya especificado arriba según cada uno)
-            var allTest = new List<object[]> {
-                new object[] { null, null, herramientasDTO_TC1 }, // devuelve todas
-                new object[] { "Material - Herramientas1y2", null, herramientasDTO_TC2 }, // devuelve las dos con ese material
-                new object[] { null, 3.99f, herramientasDTO_TC3 } // devuelve las de precio igual o inferior a ese
-            };
-
-            return allTest;
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
         }
-        [Theory]
-        [MemberData(nameof(TestCasesFor_GetHerramientasParaComprar_Ok))]
-        public async Task GetHerramientasParaComprar_Ok(string? material, float? precio, List<HerramientasParaComprarDTO> expectedResult)
+
+
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetDetalleParaCompra_Found_test()
         {
-                // ARRANGE
-            var controller = new HerramientasController(_context, null);
+            //Arrange
+            var mock = new Mock<ILogger<ComprasController>>();
+            ILogger<ComprasController> logger = mock.Object;
+            var controller = new ComprasController(_context, logger);
 
-                // ACT
-            var result = await controller.GetHerramientasParaCompra(material, precio);
+            var expectedCompra = new ComprasParaDetalleDTO(
+                "Fulanito",
+                "De Tal",
+                "DireccionEnvio - Compra1",
+                (float)10.99,
+                DateOnly.FromDateTime(DateTime.UtcNow),
+                new List<CompraItemsDTO>()
+            );
+            expectedCompra.Items.Add(new CompraItemsDTO
+            (
+                100,
+                "Nombre - Herramienta1",
+                "Material - Herramientas1y2",
+                (float)10.99,
+                "Descripción - CompraItem1",
+                1
+            ));
 
-                // ASSERT
+            //Act
+            var result = await controller.GetDetalleHerramientasParaCompra(1);
+
+            //Assert 
+            // 1. Comprueba que los objetos no sean nulos
+            Assert.NotNull(result);
+
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var herramientasDTOActual = Assert.IsType<List<HerramientasParaComprarDTO>>(okResult.Value);
-            // comprueba cardinalidad
-            Assert.Equal(expectedResult.Count, herramientasDTOActual.Count);
-            // compara por propiedades, sin depender del orden
-            var expectedOrdered = expectedResult.OrderBy(h => h.Nombre).ToList();
-            var actualOrdered = herramientasDTOActual.OrderBy(h => h.Nombre).ToList();
 
-            for (int i = 0; i < expectedOrdered.Count; i++)
-            {
-                var exp = expectedOrdered[i];
-                var act = actualOrdered[i];
+            var compraDTOActual = Assert.IsType<ComprasParaDetalleDTO>(okResult.Value);
 
-                Assert.Equal(exp.Nombre, act.Nombre);
-                Assert.Equal(exp.Material, act.Material);
-                Assert.Equal(exp.Fabricante, act.Fabricante);
-                Assert.True(Math.Abs(exp.Precio - act.Precio) < 0.001f, $"Precio esperado {exp.Precio} pero fue {act.Precio} en {act.Nombre}");
-            }
+            // 2. Comprueba las propiedades simples (string, DateOnly, int, etc.)
+            Assert.Equal(expectedCompra.Nombre, compraDTOActual.Nombre);
+            Assert.Equal(expectedCompra.Apellidos, compraDTOActual.Apellidos);
+            Assert.Equal(expectedCompra.DireccionEnvio, compraDTOActual.DireccionEnvio);
+            Assert.Equal(expectedCompra.PrecioTotal, compraDTOActual.PrecioTotal);
+            Assert.Equal(expectedCompra.FechaCompra, compraDTOActual.FechaCompra);
+
+            // 3. Comprueba las listas o colecciones
+            //    Primero, comprueba que tengan el mismo número de elementos
+            Assert.Equal(expectedCompra.Items.Count, compraDTOActual.Items.Count);
+
+            // 4. Comprueba los elementos DENTRO de las listas
+            //    (En este test, sabes que solo hay un item, en la posición [0])
+            var expectedItem = expectedCompra.Items[0];
+            var actualItem = compraDTOActual.Items[0];
+
+            Assert.Equal(expectedItem.NombreHerramienta, actualItem.NombreHerramienta);
+            Assert.Equal(expectedItem.MaterialHerramienta, actualItem.MaterialHerramienta);
+            Assert.Equal(expectedItem.PrecioHerramienta, actualItem.PrecioHerramienta);
+            Assert.Equal(expectedItem.DescripcionHerramienta, actualItem.DescripcionHerramienta);
+            Assert.Equal(expectedItem.CantidadHerramienta, actualItem.CantidadHerramienta);
         }
     }
 }

@@ -28,29 +28,35 @@ namespace AppForSEII2526.API.Controllers
         // El tipo de respuesta es una lista de ComprasParaDetalleDTO
         [ProducesResponseType(typeof(IList<ComprasParaDetalleDTO>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetDetalleHerramientasParaCompra()
+        public async Task<IActionResult> GetDetalleHerramientasParaCompra(int id)
         {
             if (_context.Compras == null)
             {
-                _logger.LogError("Error: La tabla no existe.");
+                _logger.LogError("Error: La tabla Compras no existe en el DbContext.");
                 return NotFound();
             }
-            var comprasParaDetalle = await _context.Compras
+
+            var compra = await _context.Compras
                 .Include(o => o.MetodoPago)
                 .Include(o => o.Usuario)
                 .Include(o => o.CompraItems)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
-                .ToListAsync();
+                .FirstOrDefaultAsync(o => o.Id == id);
 
+            if (compra == null)
+            {
+                _logger.LogInformation("No se encontró la compra con id {Id}", id);
+                return NotFound();
+            }
 
-            var comprasParaDetalleDTO = comprasParaDetalle.Select(o => new ComprasParaDetalleDTO(
-                o.Usuario.Nombre,
-                o.Usuario.Apellidos,
-                o.DireccionEnvio,
-                o.PrecioTotal,
-                o.FechaCompra,
-                o.CompraItems.Select(oi => new CompraItemsDTO(
+            var compraDto = new ComprasParaDetalleDTO(
+                compra.Usuario?.Nombre ?? string.Empty,
+                compra.Usuario?.Apellidos ?? string.Empty,
+                compra.DireccionEnvio,
+                compra.PrecioTotal,
+                compra.FechaCompra,
+                compra.CompraItems.Select(oi => new CompraItemsDTO(
                     oi.Herramienta.Id,
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
@@ -58,17 +64,11 @@ namespace AppForSEII2526.API.Controllers
                     oi.Descripcion,
                     oi.Cantidad
                 )).ToList()
+            );
 
-            )).ToList();
-
-            if (comprasParaDetalle == null)
-            {
-                _logger.LogError("Error: No se encontraron compras.");
-                return NotFound();
-            }
-
-            return Ok(comprasParaDetalleDTO);
+            return Ok(compraDto);
         }
+
         [HttpPost]
         [Route("Crear-Compra")]
         [ProducesResponseType(typeof(ComprasParaDetalleDTO), (int)HttpStatusCode.Created)]

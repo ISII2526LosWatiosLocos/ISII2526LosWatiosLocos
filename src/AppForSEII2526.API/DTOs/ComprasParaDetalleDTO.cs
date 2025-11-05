@@ -2,8 +2,8 @@
 {
     public class ComprasParaDetalleDTO
     {
-        private string Nombre { get; set; }
-        private string Apellidos { get; set; }
+        public string Nombre { get; set; }
+        public string Apellidos { get; set; }
         public string DireccionEnvio { get; set; }
         public float PrecioTotal { get; set; }
         public DateOnly FechaCompra { get; set; }
