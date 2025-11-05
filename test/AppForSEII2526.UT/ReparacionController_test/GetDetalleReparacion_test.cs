@@ -15,6 +15,11 @@ namespace AppForSEII2526.UT.HerramientasController_test
     {
         public GetSeleccionReparacion_test()
         {
+
+
+
+            ApplicationUser usuario = new ApplicationUser("Pepe ", "Gascón Villalverde", "fulanitodetal@uclm.es", "111222333", new List<Compra>(), new List<Reparación>(), new List<Alquiler>());
+
             var herramienta = new List<Herramienta>()
             {
                 new Herramienta(1, "Martillo", "Acero", 15.5f, 5, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
@@ -32,8 +37,14 @@ namespace AppForSEII2526.UT.HerramientasController_test
                 new Fabricante("Todo para Construcción")
             };
 
-           
-            ApplicationUser usuario = new ApplicationUser("Fulanito", "De Tal", "fulanitodetal@uclm.es", "111222333", new List<Compra>(), new List<Reparación>(), new List<Alquiler>());
+
+
+            Efectivo efectivo = new Efectivo();
+            efectivo.Nombre = "Efectivo";
+            TarjetaCredito tarjetaCredito = new TarjetaCredito();
+            tarjetaCredito.Nombre = "TarjetaCredito";
+
+
 
             var Reparacion = new Reparación(
     DateOnly.FromDateTime(DateTime.Now),
@@ -51,11 +62,6 @@ namespace AppForSEII2526.UT.HerramientasController_test
 
             };
 
- var metodoPago = new Efectivo()
-            {
-                Nombre = "Efectivo"
-            }; 
-
 
             Reparacion.ReparaciónItems= ReparacionItems;
 
@@ -66,50 +72,95 @@ namespace AppForSEII2526.UT.HerramientasController_test
          
             _context.AddRange(herramienta);
             _context.AddRange(ReparacionItems);
-            _context.AddRange(metodoPago);
+          
          
             //Guardar los cambio s en la memoria de la database 
         _context.SaveChanges();
         }
 
-        public static IEnumerable<object[]> TestCasesFor_GetDetalleParaTReparacion_Ok()
+
+
+
+
+
+        [Fact]
+        [Trait("Database", "WithoutFixture")]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetDetalleParaReparacion_NotFound()
         {
-            var ReparacionesItemsDTO = new List<ReparacionesItemDTO>()
-            {
-                new ReparacionesItemDTO ( "Martillo", "de bola", 15, 40.5f),
-                new ReparacionesItemDTO ( "Destornillador", "con cabeza en forma de cruz", 7, 25.6f),
-                new ReparacionesItemDTO ( "Taladro", "de tipo percurtor", 2, 34.25f)
-            };
+            //Arrange
+            var mock = new Mock<ILogger<ReparacionesController>>();
+            ILogger<ReparacionesController> logger = mock.Object;
 
-            var ReparacionesParaDetalleDTO_TC1 = new ReparacionesDTO(
-                "Matías", "Pérez López ",
-                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
-                DateOnly.FromDateTime(DateTime.UtcNow),
-                235.57f,
-                new List<ReparacionesItemDTO> { ReparacionesItemsDTO[0],ReparacionesItemsDTO[1], ReparacionesItemsDTO[2] }
-            );
+            var controller = new ReparacionesController(_context, logger);
 
-            var allTest = new List<object[]> {
-                new object[] {1, ReparacionesParaDetalleDTO_TC1 }
-            };
+            //Act
+            var result = await controller.GetDetalleHerramientasParaReparación(999); 
 
-            return allTest;
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
         }
 
-        [Theory]
-        [MemberData(nameof(TestCasesFor_GetDetalleParaTReparacion_Ok))]
-        public async Task GetDetalleParaReparacion_Ok(int reparacionId,ReparacionesDTO expectedDTO)
+
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetDetalleParaReparacion_Found_test()
         {
-            // Arrange
-            var controller = new ReparacionesController(_context, null);
-            // Act
-            var actionResult = await controller.GetDetalleHerramientasParaReparación(reparacionId);
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(actionResult);
-            var actualDTO = Assert.IsType<ReparacionesDTO>(okResult.Value);
-            Assert.Equal(expectedDTO, actualDTO);
+            //Arrange
+            var mock = new Mock<ILogger<ReparacionesController>>();
+            ILogger<ReparacionesController> logger = mock.Object;
+            var controller = new ReparacionesController(_context, logger);
 
+            var expectedReparacion = new ReparacionesDTO(
+                "Pepe", 
+                "Gascón Villaverde",
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
+                DateOnly.FromDateTime(DateTime.UtcNow),
+                77.5f, 
+                new List<ReparacionesItemDTO>()
+               
+            );
+            expectedReparacion.ReparacionesItems.Add(new ReparacionesItemDTO
+            (
+                "Martillo",
+                "de Bola",
+                2,
+                35.95f
+            ));
 
+            //Act
+            var result = await controller.GetDetalleHerramientasParaReparación(1);
+
+            //Assert 
+            // 1. Comprueba que los objetos no sean nulos
+            Assert.NotNull(result);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+
+            var ReparacionDTOActual = Assert.IsType<ReparacionesDTO>(okResult.Value);
+
+            // 2. Comprueba las propiedades simples (string, DateOnly, int, etc.)
+            Assert.Equal(expectedReparacion.nombre, ReparacionDTOActual.nombre);
+            Assert.Equal(expectedReparacion.apellidos, ReparacionDTOActual.apellidos);
+            Assert.Equal(expectedReparacion.FechaEntrega, ReparacionDTOActual.FechaEntrega);
+            Assert.Equal(expectedReparacion.FechaRecogida, ReparacionDTOActual.FechaRecogida);
+            Assert.Equal(expectedReparacion.PrecioTotal, ReparacionDTOActual.PrecioTotal);
+
+            // 3. Comprueba las listas o colecciones
+            //    Primero, comprueba que tengan el mismo número de elementos
+            Assert.Equal(expectedReparacion.ReparacionesItems.Count, ReparacionDTOActual.ReparacionesItems.Count);
+
+            // 4. Comprueba los elementos DENTRO de las listas
+            //    (En este test, sabes que solo hay un item, en la posición [0])
+            var expectedItem = expectedReparacion.ReparacionesItems[0];
+            var actualItem = ReparacionDTOActual.ReparacionesItems[0];
+
+            Assert.Equal(expectedItem.HerramientaNombre, actualItem.HerramientaNombre);
+            Assert.Equal(expectedItem.HerramientaDescripcion, actualItem.HerramientaDescripcion);
+            Assert.Equal(expectedItem.HerramientaCantidad, actualItem.HerramientaCantidad);
+            Assert.Equal(expectedItem.HerramientaPrecio, actualItem.HerramientaPrecio);
+     
         }
     }
     }
