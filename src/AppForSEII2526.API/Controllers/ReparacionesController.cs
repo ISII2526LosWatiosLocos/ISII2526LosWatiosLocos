@@ -15,9 +15,9 @@ namespace AppForSEII2526.API.Controllers
         private readonly ApplicationDbContext _context;
 
         //used to log any information when your system is running
-        private readonly ILogger<HerramientasController> _logger;
+        private readonly ILogger<ReparacionesController> _logger;
 
-        public ReparacionesController(ApplicationDbContext context, ILogger<HerramientasController> logger)
+        public ReparacionesController(ApplicationDbContext context, ILogger<ReparacionesController> logger)
         {
             _context = context;
             _logger = logger;
