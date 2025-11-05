@@ -114,7 +114,7 @@ namespace AppForSEII2526.API.Controllers
             var usuario = await _context.Users
                 .FirstOrDefaultAsync(u => u.Nombre == crearOfertaDTO.nombreUsuario);
             if (usuario == null)
-                ModelState.AddModelError(nameof(crearOfertaDTO.nombreUsuario), $"El usuario '{crearOfertaDTO.nombreUsuario}' no existe.");
+                ModelState.AddModelError(nameof(crearOfertaDTO.nombreUsuario), "El usuario no existe.");
 
             // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
             if (ModelState.ErrorCount > 0)
