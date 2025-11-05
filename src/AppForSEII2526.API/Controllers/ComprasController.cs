@@ -51,7 +51,7 @@ namespace AppForSEII2526.API.Controllers
             }
 
             var compraDto = new ComprasParaDetalleDTO(
-                compra.Usuario?.Nombre ?? string.Empty,
+                compra.Usuario?.Nombre ?? string.Empty, // las interrogaciones y el string.Empty son por si el usuario es NULL
                 compra.Usuario?.Apellidos ?? string.Empty,
                 compra.DireccionEnvio,
                 compra.PrecioTotal,
