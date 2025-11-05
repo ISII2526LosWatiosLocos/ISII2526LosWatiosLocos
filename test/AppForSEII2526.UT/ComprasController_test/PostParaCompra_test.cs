@@ -95,6 +95,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                 new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem2", CantidadHerramienta = 2 },
                 new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem3", CantidadHerramienta = 3 }
             };
+            compraItems[0].IdHerramienta = 1;
+            compraItems[1].IdHerramienta = 2;
+            compraItems[2].IdHerramienta = 3;
+            compraItems[0].NombreHerramienta = "Nombre - Herramienta1";
+            compraItems[1].NombreHerramienta = "Nombre - Herramienta2";
+            compraItems[2].NombreHerramienta = "Nombre - Herramienta3";
 
             var compraSinUsuario = new CrearCompraDTO
             {
@@ -136,6 +142,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
             };
+            compraItemDescripcionNula.Items[0].IdHerramienta = 1;
+            compraItemDescripcionNula.Items[1].IdHerramienta = 2;
+            compraItemDescripcionNula.Items[2].IdHerramienta = 3;
+            compraItemDescripcionNula.Items[0].NombreHerramienta = "Nombre - Herramienta1";
+            compraItemDescripcionNula.Items[1].NombreHerramienta = "Nombre - Herramienta2";
+            compraItemDescripcionNula.Items[2].NombreHerramienta = "Nombre - Herramienta3";
 
             var compraItemCantidadCero = new CrearCompraDTO
             {
@@ -150,6 +162,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
             };
+            compraItemCantidadCero.Items[0].IdHerramienta = 1;
+            compraItemCantidadCero.Items[1].IdHerramienta = 2;
+            compraItemCantidadCero.Items[2].IdHerramienta = 3;
+            compraItemCantidadCero.Items[0].NombreHerramienta = "Nombre - Herramienta1";
+            compraItemCantidadCero.Items[1].NombreHerramienta = "Nombre - Herramienta2";
+            compraItemCantidadCero.Items[2].NombreHerramienta = "Nombre - Herramienta3";
 
             var compraItemCantidadNegativa = new CrearCompraDTO
             {
@@ -164,6 +182,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
             };
+            compraItemCantidadNegativa.Items[0].IdHerramienta = 1;
+            compraItemCantidadNegativa.Items[1].IdHerramienta = 2;
+            compraItemCantidadNegativa.Items[2].IdHerramienta = 3;
+            compraItemCantidadNegativa.Items[0].NombreHerramienta = "Nombre - Herramienta1";
+            compraItemCantidadNegativa.Items[1].NombreHerramienta = "Nombre - Herramienta2";
+            compraItemCantidadNegativa.Items[2].NombreHerramienta = "Nombre - Herramienta3";
 
             var allTests = new List<object[]>
             {
@@ -171,9 +195,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                 new object[] { compraMetodoPagoInvalido, "El MetodoPagoId 999 no existe." },
                 new object[] { compraNoItem, "La compra debe incluir al menos una herramienta." },
                 // Los mensajes de error de las herramientas pueden variar según el nombre de ésta:
-                new object[] { compraItemDescripcionNula, "La herramienta 'Nombre - Herramienta3' no tiene descipción." },
-                new object[] { compraItemCantidadCero, "La herramienta 'Nombre - Herramienta3' tiene cantidad cero." },
-                new object[] { compraItemCantidadNegativa, "La herramienta 'Nombre - Herramienta3' tiene cantidad negativa." },
+                new object[] { compraItemDescripcionNula, "La herramienta Nombre - Herramienta3 no tiene descipción." },
+                new object[] { compraItemCantidadCero, "La herramienta Nombre - Herramienta3 tiene cantidad cero." },
+                new object[] { compraItemCantidadNegativa, "La herramienta Nombre - Herramienta3 tiene cantidad negativa." },
             };
 
             return allTests;
@@ -219,6 +243,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                 new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem2", CantidadHerramienta = 2 },
                 new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem3", CantidadHerramienta = 3 }
             };
+            compraItems[0].IdHerramienta = 1;
+            compraItems[1].IdHerramienta = 2;
+            compraItems[2].IdHerramienta = 3;
+            compraItems[0].NombreHerramienta = "Nombre - Herramienta1";
+            compraItems[1].NombreHerramienta = "Nombre - Herramienta2";
+            compraItems[2].NombreHerramienta = "Nombre - Herramienta3";
 
             var compraDTO = new CrearCompraDTO // Compra sin errores
             {
@@ -238,7 +268,6 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             Assert.Equal(compraDTO.Nombre, createdCompraDTO.Nombre);
             Assert.Equal(compraDTO.Apellidos, createdCompraDTO.Apellidos);
-            // Assert.Equal(compraDTO.MetodoPagoId, createdCompraDTO.MetodoPago);
             Assert.Equal(compraDTO.DireccionEnvio, createdCompraDTO.DireccionEnvio);
             Assert.Equal(compraDTO.Items.Count, createdCompraDTO.Items.Count);
 

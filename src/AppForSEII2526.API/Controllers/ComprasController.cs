@@ -94,7 +94,7 @@ namespace AppForSEII2526.API.Controllers
 
             // b. Buscar Usuario
             var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos);
-            if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El Usuario {CrearCompraDTO.Nombre} {CrearCompraDTO.Apellidos} no existe.");
+            if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El usuario no existe.");
 
             // c. Validar items del dto (que no tengan valores imposibles)
             if (CrearCompraDTO.Items == null || !CrearCompraDTO.Items.Any())
@@ -106,7 +106,7 @@ namespace AppForSEII2526.API.Controllers
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"IdHerramienta inválido: {itemDto.IdHerramienta}.");
 
                 if (itemDto.CantidadHerramienta <= 0)
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La cantidad para la IdHerramienta {itemDto.IdHerramienta} debe ser mayor que 0.");
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {itemDto.NombreHerramienta} tiene cantidad cero.");
             }
 
             // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
