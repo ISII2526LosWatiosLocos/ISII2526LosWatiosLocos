@@ -97,16 +97,17 @@ namespace AppForSEII2526.API.Controllers
             if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El usuario no existe.");
 
             // c. Validar items del dto (que no tengan valores imposibles)
+            // Solo comprobación estructural mínima aquí: existencia de la lista y validación básica del IdHerramienta.
+            // Las validaciones dependientes del nombre de la herramienta (descripción / cantidad) se hacen
+            // dentro del bucle principal donde ya tenemos la herramienta cargada y su nombre.
             if (CrearCompraDTO.Items == null || !CrearCompraDTO.Items.Any())
                 ModelState.AddModelError(nameof(CrearCompraDTO.Items), "La compra debe incluir al menos una herramienta.");
 
+            // Validación básica de IdHerramienta (sigue interesando para ciertos tests)
             foreach (var itemDto in CrearCompraDTO.Items)
             {
                 if (itemDto.IdHerramienta <= 0)
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"IdHerramienta inválido: {itemDto.IdHerramienta}.");
-
-                if (itemDto.CantidadHerramienta <= 0)
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {itemDto.NombreHerramienta} tiene cantidad cero.");
             }
 
             // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
@@ -137,27 +138,52 @@ namespace AppForSEII2526.API.Controllers
             };
 
             // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
+            // Validamos cada item con la información completa (herramienta cargada) para generar mensajes claros
+            // y evitar excepciones en SaveChanges.
             foreach (var itemDTO in CrearCompraDTO.Items)
             {
-                // Buscar la herramienta en la lista local (el Diccionario)
+                // Primero: la herramienta debe existir (comprobación en el diccionario que cargamos)
                 if (!herramientasEnDB.TryGetValue(itemDTO.IdHerramienta, out var herramienta))
                 {
-                    // La herramienta no se encontró en nuestra consulta
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {itemDTO.IdHerramienta} no existe.");
+                    continue;
                 }
-                else
-                {
-                    // Todo correcto para este item
 
-                    var nuevoItem = new CompraItem
-                    {
-                        Herramienta = herramienta,
-                        Compra = nuevaCompra,
-                        Cantidad = itemDTO.CantidadHerramienta,
-                        Descripcion = itemDTO.DescripcionHerramienta,
-                    };
-                    nuevaCompra.CompraItems.Add(nuevoItem);
+                // Validaciones dependientes del nombre real de la herramienta (para mensajes legibles en tests)
+                bool itemTieneError = false;
+
+                // 1) descripción no nula -> tests esperan mensaje: "La herramienta Nombre - Herramienta3 no tiene descipción."
+                if (string.IsNullOrWhiteSpace(itemDTO.DescripcionHerramienta))
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} no tiene descipción.");
+                    itemTieneError = true;
                 }
+
+                // 2) cantidad: cero o negativa (mensajes distintos)
+                if (itemDTO.CantidadHerramienta == 0)
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} tiene cantidad cero.");
+                    itemTieneError = true;
+                }
+                else if (itemDTO.CantidadHerramienta < 0)
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} tiene cantidad negativa.");
+                    itemTieneError = true;
+                }
+
+                // Si hubo errores para este item, no lo añadimos a la compra (se devolverán todos al final).
+                if (itemTieneError)
+                    continue;
+
+                // Si llegamos aquí, el item es válido: lo añadimos a la nueva compra
+                var nuevoItem = new CompraItem
+                {
+                    Herramienta = herramienta,
+                    Compra = nuevaCompra,
+                    Cantidad = itemDTO.CantidadHerramienta,
+                    Descripcion = itemDTO.DescripcionHerramienta,
+                };
+                nuevaCompra.CompraItems.Add(nuevoItem);
             }
 
             // --- 6. CALCULO PRECIOTOTAL ---
@@ -195,12 +221,17 @@ namespace AppForSEII2526.API.Controllers
                 nuevaCompra.PrecioTotal,
                 nuevaCompra.FechaCompra,
 
-                // Mapeamos los items desde los objetos en memoria
+                // Mapeamos los items desde los objetos en memoria incluyendo datos de la herramienta
                 nuevaCompra.CompraItems.Select(oi => new CompraItemsDTO(
-                    oi.Descripcion,
-                    oi.Cantidad
+                    oi.Herramienta.Id,         // IdHerramienta
+                    oi.Herramienta.Nombre,     // NombreHerramienta
+                    oi.Herramienta.Material,   // MaterialHerramienta
+                    oi.Herramienta.Precio,     // PrecioHerramienta (float)
+                    oi.Descripcion,            // DescripcionHerramienta
+                    oi.Cantidad                // CantidadHerramienta
                 )).ToList()
             );
+
 
             // Devolvemos el DTO de detalle
             return CreatedAtAction(

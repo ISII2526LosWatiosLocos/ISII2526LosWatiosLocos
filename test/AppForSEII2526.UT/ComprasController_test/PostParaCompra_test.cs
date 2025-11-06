@@ -91,16 +91,31 @@ namespace AppForSEII2526.UT.ComprasController_test
         {
             var compraItems = new List<CompraItemsDTO> // Los valores coinciden con lo guardado anteriormente en la BBDD
             {
-                new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem1", CantidadHerramienta = 1 },
-                new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem2", CantidadHerramienta = 2 },
-                new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem3", CantidadHerramienta = 3 }
+                new CompraItemsDTO(
+                    1,                              //IdHerramienta
+                    "Nombre - Herramienta1",        //NombreHerramienta
+                    "Material - Herramienta1",      //PrecioHerramienta
+                    10.99f,                         //PrecioHerramienta
+                    "Descripción - CompraItem1",    //DescripciónHerramienta
+                    1                               //CantidadHerramienta
+                ),
+                new CompraItemsDTO(
+                    2,
+                    "Nombre - Herramienta2",
+                    "Material - Herramienta2",
+                    2.99f,
+                    "Descripción - CompraItem2",
+                    2
+                ),
+                new CompraItemsDTO(
+                    3,
+                    "Nombre - Herramienta3",
+                    "Material - Herramienta3",
+                    3.99f,
+                    "Descripción - CompraItem3",
+                    3
+                )
             };
-            compraItems[0].IdHerramienta = 1;
-            compraItems[1].IdHerramienta = 2;
-            compraItems[2].IdHerramienta = 3;
-            compraItems[0].NombreHerramienta = "Nombre - Herramienta1";
-            compraItems[1].NombreHerramienta = "Nombre - Herramienta2";
-            compraItems[2].NombreHerramienta = "Nombre - Herramienta3";
 
             var compraSinUsuario = new CrearCompraDTO
             {
@@ -136,18 +151,33 @@ namespace AppForSEII2526.UT.ComprasController_test
                 MetodoPagoId = 1,
                 Items = new List<CompraItemsDTO>
                 {
-                    new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem1", CantidadHerramienta = 1 },
-                    new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem2", CantidadHerramienta = 2 },
-                    new CompraItemsDTO { DescripcionHerramienta = null, CantidadHerramienta = 3 } // Descripcion nula
+                    new CompraItemsDTO(
+                    1,                              //IdHerramienta
+                    "Nombre - Herramienta1",        //NombreHerramienta
+                    "Material - Herramienta1",      //PrecioHerramienta
+                    10.99f,                         //PrecioHerramienta
+                    "Descripción - CompraItem1",    //DescripciónHerramienta
+                    1                               //CantidadHerramienta
+                ),
+                new CompraItemsDTO(
+                    2,
+                    "Nombre - Herramienta2",
+                    "Material - Herramienta2",
+                    2.99f,
+                    "Descripción - CompraItem2",
+                    2
+                ),
+                new CompraItemsDTO(
+                    3,
+                    "Nombre - Herramienta3",
+                    "Material - Herramienta3",
+                    3.99f,
+                    null, // Descripción nula
+                    3
+                )
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
             };
-            compraItemDescripcionNula.Items[0].IdHerramienta = 1;
-            compraItemDescripcionNula.Items[1].IdHerramienta = 2;
-            compraItemDescripcionNula.Items[2].IdHerramienta = 3;
-            compraItemDescripcionNula.Items[0].NombreHerramienta = "Nombre - Herramienta1";
-            compraItemDescripcionNula.Items[1].NombreHerramienta = "Nombre - Herramienta2";
-            compraItemDescripcionNula.Items[2].NombreHerramienta = "Nombre - Herramienta3";
 
             var compraItemCantidadCero = new CrearCompraDTO
             {
@@ -156,18 +186,33 @@ namespace AppForSEII2526.UT.ComprasController_test
                 MetodoPagoId = 1,
                 Items = new List<CompraItemsDTO>
                 {
-                    new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem1", CantidadHerramienta = 1 },
-                    new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem2", CantidadHerramienta = 2 },
-                    new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem3", CantidadHerramienta = 0 } // Cantidad cero
+                    new CompraItemsDTO(
+                    1,                              //IdHerramienta
+                    "Nombre - Herramienta1",        //NombreHerramienta
+                    "Material - Herramienta1",      //PrecioHerramienta
+                    10.99f,                         //PrecioHerramienta
+                    "Descripción - CompraItem1",    //DescripciónHerramienta
+                    1                               //CantidadHerramienta
+                ),
+                new CompraItemsDTO(
+                    2,
+                    "Nombre - Herramienta2",
+                    "Material - Herramienta2",
+                    2.99f,
+                    "Descripción - CompraItem2",
+                    2
+                ),
+                new CompraItemsDTO(
+                    3,
+                    "Nombre - Herramienta3",
+                    "Material - Herramienta3",
+                    3.99f,
+                    "Descripción - CompraItem3",
+                    0 // Cantidad cero
+                )
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
             };
-            compraItemCantidadCero.Items[0].IdHerramienta = 1;
-            compraItemCantidadCero.Items[1].IdHerramienta = 2;
-            compraItemCantidadCero.Items[2].IdHerramienta = 3;
-            compraItemCantidadCero.Items[0].NombreHerramienta = "Nombre - Herramienta1";
-            compraItemCantidadCero.Items[1].NombreHerramienta = "Nombre - Herramienta2";
-            compraItemCantidadCero.Items[2].NombreHerramienta = "Nombre - Herramienta3";
 
             var compraItemCantidadNegativa = new CrearCompraDTO
             {
@@ -176,18 +221,33 @@ namespace AppForSEII2526.UT.ComprasController_test
                 MetodoPagoId = 1,
                 Items = new List<CompraItemsDTO>
                 {
-                    new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem1", CantidadHerramienta = 1 },
-                    new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem2", CantidadHerramienta = 2 },
-                    new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem3", CantidadHerramienta = -3 } // Cantidad negativa
+                    new CompraItemsDTO(
+                    1,                              //IdHerramienta
+                    "Nombre - Herramienta1",        //NombreHerramienta
+                    "Material - Herramienta1",      //PrecioHerramienta
+                    10.99f,                         //PrecioHerramienta
+                    "Descripción - CompraItem1",    //DescripciónHerramienta
+                    1                               //CantidadHerramienta
+                ),
+                new CompraItemsDTO(
+                    2,
+                    "Nombre - Herramienta2",
+                    "Material - Herramienta2",
+                    2.99f,
+                    "Descripción - CompraItem2",
+                    2
+                ),
+                new CompraItemsDTO(
+                    3,
+                    "Nombre - Herramienta3",
+                    "Material - Herramienta3",
+                    3.99f,
+                    "Descripción - CompraItem3",
+                    -3 // Cantidad negativa
+                )
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
             };
-            compraItemCantidadNegativa.Items[0].IdHerramienta = 1;
-            compraItemCantidadNegativa.Items[1].IdHerramienta = 2;
-            compraItemCantidadNegativa.Items[2].IdHerramienta = 3;
-            compraItemCantidadNegativa.Items[0].NombreHerramienta = "Nombre - Herramienta1";
-            compraItemCantidadNegativa.Items[1].NombreHerramienta = "Nombre - Herramienta2";
-            compraItemCantidadNegativa.Items[2].NombreHerramienta = "Nombre - Herramienta3";
 
             var allTests = new List<object[]>
             {
@@ -237,18 +297,33 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             var controller = new ComprasController(_context, logger);
 
-            var compraItems = new List<CompraItemsDTO> // Los valores coinciden con lo guardado anteriormente en la BBDD
+            var compraItems = new List<CompraItemsDTO> // Los valores coinciden con lo guardado anteriormente en la BBDD, uso el constructor completo pq no puede tener nulls.
             {
-                new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem1", CantidadHerramienta = 1 },
-                new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem2", CantidadHerramienta = 2 },
-                new CompraItemsDTO { DescripcionHerramienta = "Descripción - CompraItem3", CantidadHerramienta = 3 }
+                new CompraItemsDTO(
+                    1,                              //IdHerramienta
+                    "Nombre - Herramienta1",        //NombreHerramienta
+                    "Material - Herramienta1",      //PrecioHerramienta
+                    10.99f,                         //PrecioHerramienta
+                    "Descripción - CompraItem1",    //DescripciónHerramienta
+                    1                               //CantidadHerramienta
+                ),
+                new CompraItemsDTO(
+                    2,
+                    "Nombre - Herramienta2",
+                    "Material - Herramienta2",
+                    2.99f,
+                    "Descripción - CompraItem2",
+                    2
+                ),
+                new CompraItemsDTO(
+                    3,
+                    "Nombre - Herramienta3",
+                    "Material - Herramienta3",
+                    3.99f,
+                    "Descripción - CompraItem3",
+                    3
+                )
             };
-            compraItems[0].IdHerramienta = 1;
-            compraItems[1].IdHerramienta = 2;
-            compraItems[2].IdHerramienta = 3;
-            compraItems[0].NombreHerramienta = "Nombre - Herramienta1";
-            compraItems[1].NombreHerramienta = "Nombre - Herramienta2";
-            compraItems[2].NombreHerramienta = "Nombre - Herramienta3";
 
             var compraDTO = new CrearCompraDTO // Compra sin errores
             {
@@ -274,11 +349,11 @@ namespace AppForSEII2526.UT.ComprasController_test
             // --- 3. Comprobar los items del DTO (¡Importante!) ---
             var item1DTO = createdCompraDTO.Items.FirstOrDefault(i => i.NombreHerramienta == "Nombre - Herramienta1");
             Assert.NotNull(item1DTO);
-            Assert.Equal(10.99, item1DTO.PrecioHerramienta);
+            Assert.InRange(item1DTO.PrecioHerramienta, 10.989f, 10.991f); // Añadimos un pequeño rango de tolerancia para que no pegue el petardazo
 
             var item2DTO = createdCompraDTO.Items.FirstOrDefault(i => i.NombreHerramienta == "Nombre - Herramienta2");
             Assert.NotNull(item2DTO);
-            Assert.Equal(2.99, item2DTO.PrecioHerramienta);
+            Assert.InRange(item2DTO.PrecioHerramienta, 2.989f, 2.991f); // Añadimos un pequeño rango de tolerancia para que no pegue el petardazo
         }
     }
 }
