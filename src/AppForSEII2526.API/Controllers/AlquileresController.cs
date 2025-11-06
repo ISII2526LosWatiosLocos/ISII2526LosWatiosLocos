@@ -138,11 +138,15 @@ namespace AppForSEII2526.API.Controllers
                // Aplicar logica de negociooo (flujos alterrnativos) !!!!!
                 else
                 {
+                    // calcula si necesitas el total en algún lado, pero no lo almacenes en AlquilarItem.Precio
+                    float precioTotal = itemDTO.HerramientaCantidad * herramienta.Precio;
+
                     var nuevoItem = new AlquilarItem(
-                        nuevoAlquiler.PrecioTotal,
+                        herramienta.Precio,               // <-- usar precio unitario
                         itemDTO.HerramientaCantidad,
                         nuevoAlquiler,
                         herramienta);
+
                     nuevoAlquiler.AlquilarItems.Add(nuevoItem);
                 }
             }
