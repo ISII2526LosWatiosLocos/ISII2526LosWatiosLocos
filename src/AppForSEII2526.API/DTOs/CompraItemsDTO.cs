@@ -24,13 +24,6 @@ namespace AppForSEII2526.API.DTOs
             CantidadHerramienta = cantidadHerramienta;
         }
 
-        // Constructor solo con lo necesario para el Post
-        public CompraItemsDTO(string descripcionHerramienta, int cantidadHerramienta)
-        {
-            DescripcionHerramienta = descripcionHerramienta;
-            CantidadHerramienta = cantidadHerramienta;
-        }
-
         // Constructor vacío para que el Json lo use por defecto al serializar (sino, al haber más de uno no sabe cual usar y peta)
         public CompraItemsDTO() { }
 
