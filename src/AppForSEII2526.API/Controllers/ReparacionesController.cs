@@ -34,6 +34,7 @@ namespace AppForSEII2526.API.Controllers
                 .Include(r => r.ReparaciónItems)
                     .ThenInclude(ri => ri.Herramienta)
                         .ThenInclude(h => h.Fabricante)
+                             .Where(r => r.Id == id)
                 .ToListAsync();
 
 
@@ -53,6 +54,10 @@ namespace AppForSEII2526.API.Controllers
 
 
             )).ToList();
+
+            if (reparacionesDTO == null || reparacionesDTO.Count == 0)
+                return NotFound();
+
 
             return Ok(reparacionesDTO);
         }
