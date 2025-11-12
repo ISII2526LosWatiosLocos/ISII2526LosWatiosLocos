@@ -5,6 +5,52 @@ using AppForSEII2526.API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
+/*
+Sistema 1. Ferretería: Caso de uso 1. Comprar herramientas
+
+Flujo Básico:
+    1. El cliente selecciona Comprar Herramientas en el menú principal.
+    2. El Sistema muestra la lista de herramientas disponibles para comprar, indicando su NOMBRE, MATERIAL, FABRICANTE y PRECIO.    [GET]
+    3. El cliente selecciona las herramientas que desea comprar, y estas se añaden al carrito de compras, actualizando el precio 
+    total de acuerdo con el precio de compra de las herramientas seleccionadas.
+    4. El cliente selecciona Comprar Herramientas.
+    5. El sistema muestra la lista de herramientas seleccionadas incluyendo su NOMBRE, MATERIAL y PRECIO, y pide al cliente que     [POST]
+    introduzca su NOMBRE, APELLIDOS, DIRECCIÓN DE ENVÍO y MÉTODO DE PAGO (tarjeta de crédito, PayPal o metálico), siendo todos
+    ellos campos obligatorios, y de manera opcional un NÚMERO DE TELÉFONO y CORREO ELECTRÓNICO. De forma obligatoria, para cada
+    herramienta seleccionada se pedirá la CANTIDAD a comprar y una breve DESCRIPCIÓN.
+    6. El cliente rellena los datos y elige la opción Guardar.
+    7. El sistema muestra la compra realizada, indicando los datos del cliente (NOMBRE y APELLIDOS), DIRECCIÓN DE ENVÍO, su         [DETAIL]
+    PRECIO TOTAL, FECHA DE COMPRA y las herramientas compradas (NOMBRE, MATERIAL, PRECIO, DESCRIPCIÓN y CANTIDAD).
+
+Flujo Alternativo 0 - al Paso 2:
+    Si el sistema detecta que no hay herramientas disponibles para comprar se lo notificará al usuario.
+
+Flujo Alternativo 1 - al Paso 2:
+    1.1 El sistema ofrece al cliente la posibilidad de filtrar las herramientas por material y/o precio.
+    1.2 El cliente fija los filtros que le interesan.
+    1.3 El sistema muestra sólo las herramientas que cumplen los criterios de los filtros.
+
+Flujo Alternativo 2 - al Paso 5:
+    El cliente elige modificar el carrito de compras para borrar aquellas herramientas que no le interesan. Automáticamente,
+    el sistema actualiza el precio total del contenido del carrito de acuerdo con el precio de compra de las herramientas seleccionadas.
+
+Flujo Alternativo 3 - al Paso 4:
+    Si el sistema detecta que no hay en el carrito ninguna herramienta para comprar, la opción para continuar el proceso no estará activa.
+
+Flujo Alternativo 4 - al Paso 6:
+    Si el sistema detecta que algún dato obligatorio no se ha rellenado, notificará al usuario y volverá al paso 5.
+
+Flujo Alternativo 5 - al Paso 6:
+    Si el sistema detecta que la cantidad que el usuario desea comprar de cualquier herramienta es 0, la opción de continuar el proceso no estará activa.
+
+Flujo Alternativo 6 - al Paso 7:
+    El sistema detecta que no hay cantidad suficiente de herramientas, informa al usuario del problema y muestra otra vez la vista de
+    selección de herramientas volviendo al paso 4.
+
+Precondición:
+    El usuario debe estar conectado como Cliente para iniciar el caso de uso.
+ */
+
 namespace AppForSEII2526.API.Controllers
 {
     [Route("api/[controller]")]
