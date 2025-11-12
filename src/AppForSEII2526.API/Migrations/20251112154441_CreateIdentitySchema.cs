@@ -193,6 +193,7 @@ namespace AppForSEII2526.API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    FechaFabricacion = table.Column<DateOnly>(type: "date", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Material = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Precio = table.Column<float>(type: "real", nullable: false),

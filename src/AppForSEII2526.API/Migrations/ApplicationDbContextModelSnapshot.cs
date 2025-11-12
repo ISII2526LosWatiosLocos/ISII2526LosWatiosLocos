@@ -252,6 +252,9 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<int>("FabricanteId")
                         .HasColumnType("int");
 
+                    b.Property<DateOnly>("FechaFabricacion")
+                        .HasColumnType("date");
+
                     b.Property<string>("Material")
                         .IsRequired()
                         .HasMaxLength(50)

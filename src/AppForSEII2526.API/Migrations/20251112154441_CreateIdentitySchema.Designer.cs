@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppForSEII2526.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251103091442_CreateIdentitySchema")]
+    [Migration("20251112154441_CreateIdentitySchema")]
     partial class CreateIdentitySchema
     {
         /// <inheritdoc />
@@ -254,6 +254,9 @@ namespace AppForSEII2526.API.Migrations
 
                     b.Property<int>("FabricanteId")
                         .HasColumnType("int");
+
+                    b.Property<DateOnly>("FechaFabricacion")
+                        .HasColumnType("date");
 
                     b.Property<string>("Material")
                         .IsRequired()
