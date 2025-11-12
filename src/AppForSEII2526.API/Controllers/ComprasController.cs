@@ -30,7 +30,7 @@ Flujo Alternativo 1 - al Paso 2:
     1.2 El cliente fija los filtros que le interesan.
     1.3 El sistema muestra sólo las herramientas que cumplen los criterios de los filtros.
 
-Flujo Alternativo 2 - al Paso 5:
+Flujo Alternativo 2 - al Paso 5:                                                                                            [SPRINT 3]
     El cliente elige modificar el carrito de compras para borrar aquellas herramientas que no le interesan. Automáticamente,
     el sistema actualiza el precio total del contenido del carrito de acuerdo con el precio de compra de las herramientas seleccionadas.
 
@@ -69,6 +69,13 @@ namespace AppForSEII2526.API.Controllers
             _logger = logger;
         }
 
+        /*
+        Flujo Básico:
+            6. El cliente rellena los datos y elige la opción Guardar.
+            7. El sistema muestra la compra realizada, indicando los datos del cliente (NOMBRE y APELLIDOS), DIRECCIÓN DE ENVÍO, su         [DETAIL]
+               PRECIO TOTAL, FECHA DE COMPRA y las herramientas compradas (NOMBRE, MATERIAL, PRECIO, DESCRIPCIÓN y CANTIDAD).
+        */
+
         [HttpGet]
         [Route("DetalleCompra")]
         // El tipo de respuesta es una lista de ComprasParaDetalleDTO
@@ -82,13 +89,13 @@ namespace AppForSEII2526.API.Controllers
                 return NotFound();
             }
 
-            var compra = await _context.Compras
+            var compra = await _context.Compras // Busca en todas las compras
                 .Include(o => o.MetodoPago)
                 .Include(o => o.Usuario)
                 .Include(o => o.CompraItems)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
-                .FirstOrDefaultAsync(o => o.Id == id);
+                .FirstOrDefaultAsync(o => o.Id == id); // Toma solo la del id que le pasamos
 
             if (compra == null)
             {
@@ -96,7 +103,7 @@ namespace AppForSEII2526.API.Controllers
                 return NotFound();
             }
 
-            var compraDto = new ComprasParaDetalleDTO(
+            var compraDto = new ComprasParaDetalleDTO( // Construye el DTO
                 compra.Usuario?.Nombre ?? string.Empty, // las interrogaciones y el string.Empty son por si el usuario es NULL
                 compra.Usuario?.Apellidos ?? string.Empty,
                 compra.DireccionEnvio,
@@ -112,8 +119,19 @@ namespace AppForSEII2526.API.Controllers
                 )).ToList()
             );
 
-            return Ok(compraDto);
+            return Ok(compraDto); // Devuelve el DTO
         }
+
+        /*
+         Flujo Básico:
+            3. El cliente selecciona las herramientas que desea comprar, y estas se añaden al carrito de compras, actualizando el precio 
+               total de acuerdo con el precio de compra de las herramientas seleccionadas.
+            4. El cliente selecciona Comprar Herramientas.
+            5. El sistema muestra la lista de herramientas seleccionadas incluyendo su NOMBRE, MATERIAL y PRECIO, y pide al cliente que     [POST]
+               introduzca su NOMBRE, APELLIDOS, DIRECCIÓN DE ENVÍO y MÉTODO DE PAGO (tarjeta de crédito, PayPal o metálico), siendo todos
+               ellos campos obligatorios, y de manera opcional un NÚMERO DE TELÉFONO y CORREO ELECTRÓNICO. De forma obligatoria, para cada
+               herramienta seleccionada se pedirá la CANTIDAD a comprar y una breve DESCRIPCIÓN.
+        */
 
         [HttpPost]
         [Route("CrearCompra")]
@@ -131,7 +149,7 @@ namespace AppForSEII2526.API.Controllers
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
-            // --- 2. VALIDAR ENTIDADES RELACIONADAS (Patrón del ejemplo) ---
+            // --- 2. VALIDAR ENTIDADES RELACIONADAS (Patrón del ejemplo) --- (Cubro el flujo alternativo 4)
 
             // a. Buscar Método de Pago
             var metodoPago = await _context.MetodosPagos.FindAsync(CrearCompraDTO.MetodoPagoId);
@@ -142,12 +160,12 @@ namespace AppForSEII2526.API.Controllers
             var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos);
             if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El usuario no existe.");
 
-            // c. Validar items del dto (que no tengan valores imposibles)
+            // c. Validar items del DTO (que no tengan valores imposibles)
             // Solo comprobación estructural mínima aquí: existencia de la lista y validación básica del IdHerramienta.
             // Las validaciones dependientes del nombre de la herramienta (descripción / cantidad) se hacen
             // dentro del bucle principal donde ya tenemos la herramienta cargada y su nombre.
             if (CrearCompraDTO.Items == null || !CrearCompraDTO.Items.Any())
-                ModelState.AddModelError(nameof(CrearCompraDTO.Items), "La compra debe incluir al menos una herramienta.");
+                ModelState.AddModelError(nameof(CrearCompraDTO.Items), "La compra debe incluir al menos una herramienta."); // Cubro el flujo alternativo 3
 
             // Validación básica de IdHerramienta (sigue interesando para ciertos tests)
             foreach (var itemDto in CrearCompraDTO.Items)
@@ -198,17 +216,17 @@ namespace AppForSEII2526.API.Controllers
                 // Validaciones dependientes del nombre real de la herramienta (para mensajes legibles en tests)
                 bool itemTieneError = false;
 
-                // 1) descripción no nula -> tests esperan mensaje: "La herramienta Nombre - Herramienta3 no tiene descipción."
+                // a. descripción no nula, los tests esperan el mensaje: "La herramienta Nombre - Herramienta3 no tiene descipción."
                 if (string.IsNullOrWhiteSpace(itemDTO.DescripcionHerramienta))
                 {
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} no tiene descipción.");
                     itemTieneError = true;
                 }
 
-                // 2) cantidad: cero o negativa (mensajes distintos)
+                // b. cantidad cero o negativa (mensajes distintos)
                 if (itemDTO.CantidadHerramienta == 0)
                 {
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} tiene cantidad cero.");
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} tiene cantidad cero."); // Cubro el flujo alternativo 5
                     itemTieneError = true;
                 }
                 else if (itemDTO.CantidadHerramienta < 0)
@@ -232,7 +250,7 @@ namespace AppForSEII2526.API.Controllers
                 nuevaCompra.CompraItems.Add(nuevoItem);
             }
 
-            // --- 6. CALCULO PRECIOTOTAL ---
+            // --- 6. CALCULO DEL PRECIO TOTAL ---
             // convertimos a float solo por compatibilidad con el modelo, aunque decimal sería más adecuado
             // dos decimales para moneda (2)
             // opción recomendada para cálculos financieros (MidpointRounding.AwayFromZero)
