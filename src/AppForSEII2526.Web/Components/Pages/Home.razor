@@ -1,7 +1,32 @@
 ﻿@page "/"
+@using AppForSEII2526.Web.API;
+@inject AppForHerramientasAPIClient pruebaClient;
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<br />
+<br />
+
+@if (_herramientas == null)
+{
+    <p><em>Cargando...</em></p>
+
+} else foreach (var herramienta in _herramientas)
+    {
+        @herramienta.Nombre;
+        <br />
+    }
+
+
+@code {
+    private ICollection<HerramientasParaOfertarDTO> _herramientas;
+    // Se ejecutará al cargarse la página
+    protected override async Task OnInitializedAsync()
+    {
+        _herramientas = await pruebaClient.GetHerramientasParaOfertaAsync(null,null);
+    }
+}

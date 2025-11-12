@@ -22,7 +22,7 @@ namespace AppForSEII2526.API.Controllers
         }
 
         [HttpGet]
-        [Route("Detalle-Alquiler")]
+        [Route("DetalleAlquiler")]
         // El tipo de respuesta es un AlquileresParaDetalleDTO (detalle de un alquiler)
         [ProducesResponseType(typeof(AlquileresParaDetalleDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -69,7 +69,7 @@ namespace AppForSEII2526.API.Controllers
         }
 
         [HttpPost]
-        [Route("Crear-Alquiler")]
+        [Route("CrearAlquiler")]
         [ProducesResponseType(typeof(AlquileresParaDetalleDTO), 201)] // Created
         [ProducesResponseType(typeof(ValidationProblemDetails),400)] // Bad Request
         [ProducesResponseType(typeof(string), 409)] // Conflict
