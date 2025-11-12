@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppForSEII2526.UIT", "test\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppForSEII2526.Maui", "src\AppForSEII2526.Maui\AppForSEII2526.Maui.csproj", "{9A8C18DB-2D24-48C7-9EEF-9ABFFEC2A58C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogViewer", "LogViewer\LogViewer.csproj", "{6F120DBF-6683-43A5-ABEF-720C1D4901BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,18 @@ Global
 		{9A8C18DB-2D24-48C7-9EEF-9ABFFEC2A58C}.Release|x86.ActiveCfg = Release|Any CPU
 		{9A8C18DB-2D24-48C7-9EEF-9ABFFEC2A58C}.Release|x86.Build.0 = Release|Any CPU
 		{9A8C18DB-2D24-48C7-9EEF-9ABFFEC2A58C}.Release|x86.Deploy.0 = Release|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Debug|x64.Build.0 = Debug|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Debug|x86.Build.0 = Debug|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Release|x64.ActiveCfg = Release|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Release|x64.Build.0 = Release|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Release|x86.ActiveCfg = Release|Any CPU
+		{6F120DBF-6683-43A5-ABEF-720C1D4901BB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

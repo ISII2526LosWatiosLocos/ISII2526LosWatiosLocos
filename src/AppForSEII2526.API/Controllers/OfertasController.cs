@@ -32,6 +32,7 @@ namespace AppForSEII2526.API.Controllers
             if (_context.Ofertas == null)
             {
                 _logger.LogError("Error: La tabla no existe.");
+                _logger.LogWarning("Warning: La tabla Ofertas no existe en la base de datos.");
                 return NotFound();
             }
 
@@ -67,6 +68,7 @@ namespace AppForSEII2526.API.Controllers
                 return NotFound();
             }
 
+            _logger.LogInformation("Oferta obtenida correctamente.");
             return Ok(ofertasDTO);
         }
 
@@ -212,6 +214,8 @@ namespace AppForSEII2526.API.Controllers
                 )).ToList(),
                 nuevaOferta.Usuario.Nombre
             );
+
+            _logger.LogInformation($"Oferta creada con éxito. ID: {nuevaOferta.Id}");
 
             // Devolvemos el DTO de detalle
             return CreatedAtAction(

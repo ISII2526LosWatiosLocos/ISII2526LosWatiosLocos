@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using System.Data.Common;
+using AppForSEII2526.API.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +66,7 @@ builder.Services.AddSwaggerGen(options => {
     });
 
 });
+builder.Logging.AddRabbitMQ(builder.Configuration.GetSection("RabbitMQ"));
 
 
 var app = builder.Build();
@@ -105,6 +107,8 @@ if (app.Environment.IsDevelopment()) {
         c.DisplayOperationId();
     });
 }
+
+//”RabbitMQ” coincide con el nombre del bloque de propiedades en appsettings.json 
 
 app.UseHttpsRedirection();
 
