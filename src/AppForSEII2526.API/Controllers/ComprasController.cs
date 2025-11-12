@@ -24,7 +24,7 @@ namespace AppForSEII2526.API.Controllers
         }
 
         [HttpGet]
-        [Route("Detalle-Compra")]
+        [Route("DetalleCompra")]
         // El tipo de respuesta es una lista de ComprasParaDetalleDTO
         [ProducesResponseType(typeof(IList<ComprasParaDetalleDTO>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -70,7 +70,7 @@ namespace AppForSEII2526.API.Controllers
         }
 
         [HttpPost]
-        [Route("Crear-Compra")]
+        [Route("CrearCompra")]
         [ProducesResponseType(typeof(ComprasParaDetalleDTO), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]

@@ -22,7 +22,7 @@ namespace AppForSEII2526.API.Controllers
         }
 
         [HttpGet]
-        [Route("Para-Oferta")]
+        [Route("ParaOferta")]
         [ProducesResponseType(typeof(IList<HerramientasParaOfertarDTO>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetHerramientasParaOferta(string? filtroFabricante, float? filtroPrecio)
         {
