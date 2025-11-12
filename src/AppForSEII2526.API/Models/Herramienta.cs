@@ -5,6 +5,13 @@
         [Key]
         public int Id { get; set; }
 
+        // Mi enunciado para la modificación propuesta:
+        // Cada herramienta tiene una fecha de fabricación, como cliente quiero poder usarla para filtrar en el get, también quiero que se muestre en el post y el details
+        [Required]
+        [DataType(System.ComponentModel.DataAnnotations.DataType.Date), Display(Name = "Fecha de fabricación")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        public DateOnly FechaFabricacion { get; set; }
+
         [Required, StringLength(100, ErrorMessage = "No puede contener más de 100 caracteres")]
         public string Nombre { get; set; }
 
@@ -23,9 +30,10 @@
         public Fabricante Fabricante { get; set; }
 
         // Constructor completo
-        public Herramienta(int id, string nombre, string material, float precio, int tiemporeparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaitems, List<ReparaciónItem> reparacionItems, Fabricante fabricante)
+        public Herramienta(int id, DateOnly fechafabricacion, string nombre, string material, float precio, int tiemporeparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaitems, List<ReparaciónItem> reparacionItems, Fabricante fabricante)
         {
             Id = id;
+            FechaFabricacion = fechafabricacion;
             Nombre = nombre;
             Material = material;
             Precio = precio;
@@ -38,8 +46,9 @@
         }
 
         // Constructor sin el ID para las pruebas
-        public Herramienta(string nombre, string material, float precio, int tiemporeparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaitems, List<ReparaciónItem> reparacionItems, Fabricante fabricante)
+        public Herramienta(DateOnly fechafabricacion, string nombre, string material, float precio, int tiemporeparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaitems, List<ReparaciónItem> reparacionItems, Fabricante fabricante)
         {
+            FechaFabricacion = fechafabricacion;
             Nombre = nombre;
             Material = material;
             Precio = precio;
@@ -51,8 +60,9 @@
             Fabricante = fabricante;
         }
 
-        public Herramienta(string nombre, string material, float precio, int tiemporeparacion, Fabricante fabricante)
+        public Herramienta(DateOnly fechafabricacion, string nombre, string material, float precio, int tiemporeparacion, Fabricante fabricante)
         {
+            FechaFabricacion = fechafabricacion;
             Nombre = nombre;
             Material = material;
             Precio = precio;

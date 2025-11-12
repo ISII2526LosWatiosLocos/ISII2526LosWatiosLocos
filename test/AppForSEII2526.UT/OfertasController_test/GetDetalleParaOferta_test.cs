@@ -24,9 +24,9 @@ namespace AppForSEII2526.UT.OfertasController_test
 
             var herramienta = new List<Herramienta>()
             {
-                new Herramienta("Martillo", "Acero", 15.5f, 5, fabricante[0]),
-                new Herramienta("Destornillador", "Acero", 7.0f, 3, fabricante[1]),
-                new Herramienta("Taladro", "Plástico", 5.0f, 10, fabricante[2]),
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Martillo", "Acero", 15.5f, 5, fabricante[0]),
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Destornillador", "Acero", 7.0f, 3, fabricante[1]),
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Taladro", "Plástico", 5.0f, 10, fabricante[2]),
             };
 
             var ofertaItem = new List<OfertaItem>()

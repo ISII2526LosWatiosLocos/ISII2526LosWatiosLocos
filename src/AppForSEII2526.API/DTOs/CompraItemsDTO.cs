@@ -7,6 +7,7 @@ namespace AppForSEII2526.API.DTOs
     public class CompraItemsDTO
     {
         public int IdHerramienta { get; set; }
+        public DateOnly FechaFabricacionHerramienta { get; set; }
         public string NombreHerramienta { get; set; }
         public string MaterialHerramienta { get; set; }
         public float PrecioHerramienta { get; set; }
@@ -14,9 +15,10 @@ namespace AppForSEII2526.API.DTOs
         public int CantidadHerramienta { get; set; }
 
         // Constructor completo
-        public CompraItemsDTO(int idHerramienta, string nombreHerramienta, string materialHerramienta, float precioHerramienta, string descripcionHerramienta, int cantidadHerramienta)
+        public CompraItemsDTO(int idHerramienta, DateOnly fechaFabricacionHerramienta, string nombreHerramienta, string materialHerramienta, float precioHerramienta, string descripcionHerramienta, int cantidadHerramienta)
         {
             IdHerramienta = idHerramienta;
+            FechaFabricacionHerramienta = fechaFabricacionHerramienta;
             NombreHerramienta = nombreHerramienta;
             MaterialHerramienta = materialHerramienta;
             PrecioHerramienta = precioHerramienta;
@@ -31,6 +33,7 @@ namespace AppForSEII2526.API.DTOs
         {
             return obj is CompraItemsDTO dTO &&
                    IdHerramienta == dTO.IdHerramienta &&
+                   FechaFabricacionHerramienta.Equals(dTO.FechaFabricacionHerramienta) &&
                    NombreHerramienta == dTO.NombreHerramienta &&
                    MaterialHerramienta == dTO.MaterialHerramienta &&
                    PrecioHerramienta == dTO.PrecioHerramienta &&
@@ -40,7 +43,7 @@ namespace AppForSEII2526.API.DTOs
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(NombreHerramienta, MaterialHerramienta, PrecioHerramienta, DescripcionHerramienta, CantidadHerramienta);
+            return HashCode.Combine(FechaFabricacionHerramienta, NombreHerramienta, MaterialHerramienta, PrecioHerramienta, DescripcionHerramienta, CantidadHerramienta);
         }
     }
 }

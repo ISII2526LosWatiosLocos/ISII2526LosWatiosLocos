@@ -55,19 +55,21 @@ namespace AppForSEII2526.API.Controllers
         /*
         Flujo Básico:
             1. El cliente selecciona Comprar Herramientas en el menú principal.
-            2. El Sistema muestra la lista de herramientas disponibles para comprar, indicando su NOMBRE, MATERIAL, FABRICANTE y PRECIO.    [GET]
+            2. El Sistema muestra la lista de herramientas disponibles para comprar, indicando su NOMBRE, MATERIAL, FABRICANTE, PRECIO y FECHA DE FABRICACIÓN.    [GET]
         */
         [HttpGet]
         [Route("Para-Compra")]
         [ProducesResponseType(typeof(IList<HerramientasParaComprarDTO>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetHerramientasParaCompra(string? filtroMaterial, float? filtroPrecio) // Como están marcados por la ? (osea, son opcionales) si alguno de los filtros es null no pasa nada
+        public async Task<IActionResult> GetHerramientasParaCompra(string? filtroMaterial, float? filtroPrecio, DateOnly? filtroFechaFabricacionBaja, DateOnly? filtroFechaFabricacionAlta) // Como están marcados por la ? (osea, son opcionales) si alguno de los filtros es null no pasa nada
         {
             var herramientas = await _context.Herramientas // Accede al conjunto de herramientas de la BBDD y carga sus datos
                 .Include(h => h.Fabricante) // Carga también los datos relacionados al fabricante de cada herramienta
                 .Where(h => (filtroMaterial == null || h.Material == filtroMaterial) &&
-                            (filtroPrecio == null || h.Precio <= filtroPrecio)) // Filtra según los parámetros que le paso arriba, así cubro el flujo alternativo 1
+                            (filtroPrecio == null || h.Precio <= filtroPrecio) &&
+                            (filtroFechaFabricacionAlta == null || h.FechaFabricacion <= filtroFechaFabricacionAlta) &&
+                            (filtroFechaFabricacionBaja == null || h.FechaFabricacion >= filtroFechaFabricacionBaja)) // Filtra según los parámetros que le paso arriba, así cubro el flujo alternativo 1
                 .Select(h => new HerramientasParaComprarDTO(
-                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio)) // Creo un DTO para cada herramienta, así solo devuelvo los 4 campos que necesito y no todo el objeto.
+                    h.FechaFabricacion, h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio)) // Creo un DTO para cada herramienta, así solo devuelvo los 5 campos que necesito y no todo el objeto.
                 .ToListAsync(); // Consulto los datos de forma asíncrona
             if (!herramientas.Any())
                 return NoContent(); // Lanzo error 204, así cubro el flujo alternativo 0 

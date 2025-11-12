@@ -26,9 +26,9 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             var Herramientas = new List<Herramienta>()
             {
-                new Herramienta("Nombre - Herramienta1", "Material - Herramientas1y2", (float)10.99, 100, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
-                new Herramienta("Nombre - Herramienta2", "Material - Herramientas1y2", (float)2.99, 200, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
-                new Herramienta("Nombre - Herramienta3", "Material - Herramienta3", (float)3.99, 300, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Nombre - Herramienta1", "Material - Herramientas1y2", (float)10.99, 100, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-2)), "Nombre - Herramienta2", "Material - Herramientas1y2", (float)2.99, 200, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-3)), "Nombre - Herramienta3", "Material - Herramienta3", (float)3.99, 300, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
             };
 
             // El nombre de un método de pago no puede ser null en la bbdd
@@ -128,6 +128,7 @@ namespace AppForSEII2526.UT.ComprasController_test
             expectedCompra.Items.Add(new CompraItemsDTO
             (
                 100,
+                DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
                 "Nombre - Herramienta1",
                 "Material - Herramientas1y2",
                 (float)10.99,
@@ -162,6 +163,7 @@ namespace AppForSEII2526.UT.ComprasController_test
             var expectedItem = expectedCompra.Items[0];
             var actualItem = compraDTOActual.Items[0];
 
+            Assert.Equal(expectedItem.FechaFabricacionHerramienta, actualItem.FechaFabricacionHerramienta);
             Assert.Equal(expectedItem.NombreHerramienta, actualItem.NombreHerramienta);
             Assert.Equal(expectedItem.MaterialHerramienta, actualItem.MaterialHerramienta);
             Assert.Equal(expectedItem.PrecioHerramienta, actualItem.PrecioHerramienta);

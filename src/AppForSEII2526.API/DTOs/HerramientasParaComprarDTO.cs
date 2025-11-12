@@ -2,12 +2,14 @@
 {
     public class HerramientasParaComprarDTO
     {
+        public DateOnly FechaFabricacion { get; set; }
         public string Nombre { get; set; }
         public string Material { get; set; }
         public string Fabricante { get; set; }
         public float Precio { get; set; }
-        public HerramientasParaComprarDTO(string nombre, string material, string fabricante, float precio)
+        public HerramientasParaComprarDTO(DateOnly fechaFabricacion, string nombre, string material, string fabricante, float precio)
         {
+            FechaFabricacion = fechaFabricacion;
             Nombre = nombre;
             Material = material;
             Fabricante = fabricante;
@@ -17,6 +19,7 @@
         public override bool Equals(object? obj)
         {
             return obj is HerramientasParaComprarDTO dTO &&
+                   FechaFabricacion.Equals(dTO.FechaFabricacion) &&
                    Nombre == dTO.Nombre &&
                    Material == dTO.Material &&
                    Fabricante == dTO.Fabricante &&
@@ -25,7 +28,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Nombre, Material, Fabricante, Precio);
+            return HashCode.Combine(FechaFabricacion, Nombre, Material, Fabricante, Precio);
         }
     }
 }

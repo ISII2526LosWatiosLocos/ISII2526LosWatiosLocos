@@ -29,9 +29,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
 
             var Herramientas = new List<Herramienta>()
             {
-                new Herramienta("Nombre - Herramienta1", "Material - Herramientas1y2", (float)10.99, 100, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
-                new Herramienta("Nombre - Herramienta2", "Material - Herramientas1y2", (float)2.99, 200, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
-                new Herramienta("Nombre - Herramienta3", "Material - Herramienta3", (float)3.99, 300, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Nombre - Herramienta1", "Material - Herramientas1y2", (float)10.99, 100, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-2)), "Nombre - Herramienta2", "Material - Herramientas1y2", (float)2.99, 200, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-3)), "Nombre - Herramienta3", "Material - Herramienta3", (float)3.99, 300, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
             };
 
             // El nombre de un método de pago no puede ser null en la bbdd
@@ -96,9 +96,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
             // Datos esperados
             var herramientasDTO = new List<HerramientasParaComprarDTO>()
             {
-                new HerramientasParaComprarDTO("Nombre - Herramienta1", "Material - Herramientas1y2", "Nombre - Fabricante1", 10.99f),
-                new HerramientasParaComprarDTO("Nombre - Herramienta2", "Material - Herramientas1y2", "Nombre - Fabricante2", 2.99f),
-                new HerramientasParaComprarDTO("Nombre - Herramienta3", "Material - Herramienta3", "Nombre - Fabricante2", 3.99f)
+                new HerramientasParaComprarDTO(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Nombre - Herramienta1", "Material - Herramientas1y2", "Nombre - Fabricante1", 10.99f),
+                new HerramientasParaComprarDTO(DateOnly.FromDateTime(DateTime.Today.AddDays(-2)), "Nombre - Herramienta2", "Material - Herramientas1y2", "Nombre - Fabricante2", 2.99f),
+                new HerramientasParaComprarDTO(DateOnly.FromDateTime(DateTime.Today.AddDays(-3)), "Nombre - Herramienta3", "Material - Herramienta3", "Nombre - Fabricante2", 3.99f)
             };
 
             // Casos de prueba (los defino, especificando qué herramientasDTO deben devolver según los filtros que defina acontinuación en allTest)
@@ -107,24 +107,33 @@ namespace AppForSEII2526.UT.HerramientasController_test
             var herramientasDTO_TC2 = new List<HerramientasParaComprarDTO> { herramientasDTO[0], herramientasDTO[1] };
 
             var herramientasDTO_TC3 = new List<HerramientasParaComprarDTO> { herramientasDTO[1], herramientasDTO[2] };
+
+            var herramientasDTO_TC4 = new List<HerramientasParaComprarDTO> { herramientasDTO[1], herramientasDTO[2] };
+
+            var herramientasDTO_TC5 = new List<HerramientasParaComprarDTO> { herramientasDTO[1] };
+
+            var herramientasDTO_TC6 = new List<HerramientasParaComprarDTO> { herramientasDTO[0] };
             // Colección de todos los casos de prueba (los filtros deben proporcionar los herramientasDTO que haya especificado arriba según cada uno)
             var allTest = new List<object[]> {
-                new object[] { null, null, herramientasDTO_TC1 }, // devuelve todas
-                new object[] { "Material - Herramientas1y2", null, herramientasDTO_TC2 }, // devuelve las dos con ese material
-                new object[] { null, 3.99f, herramientasDTO_TC3 } // devuelve las de precio igual o inferior a ese
+                new object[] { null, null, null, null, herramientasDTO_TC1 }, // devuelve todas
+                new object[] { "Material - Herramientas1y2", null, null, null, herramientasDTO_TC2 }, // devuelve las dos con ese material
+                new object[] { null, 3.99f, null, null, herramientasDTO_TC3 }, // devuelve las de precio igual o inferior a ese
+                new object[] {null, null, DateOnly.FromDateTime(DateTime.Today.AddDays(-3)), DateOnly.FromDateTime(DateTime.Today.AddDays(-2)), herramientasDTO_TC4 },
+                new object[] {null, null, DateOnly.FromDateTime(DateTime.Today.AddDays(-2)), DateOnly.FromDateTime(DateTime.Today.AddDays(-2)), herramientasDTO_TC5 },
+                new object[] {null, null, DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), null, herramientasDTO_TC6 }
             };
 
             return allTest;
         }
         [Theory]
         [MemberData(nameof(TestCasesFor_GetHerramientasParaComprar_Ok))]
-        public async Task GetHerramientasParaComprar_Ok(string? material, float? precio, List<HerramientasParaComprarDTO> expectedResult)
+        public async Task GetHerramientasParaComprar_Ok(string? material, float? precio, DateOnly? fechaFabricacionBaja, DateOnly? fechaFabricacionAlta, List<HerramientasParaComprarDTO> expectedResult)
         {
                 // ARRANGE
             var controller = new HerramientasController(_context, null);
 
                 // ACT
-            var result = await controller.GetHerramientasParaCompra(material, precio);
+            var result = await controller.GetHerramientasParaCompra(material, precio, fechaFabricacionBaja, fechaFabricacionAlta);
 
                 // ASSERT
             var okResult = Assert.IsType<OkObjectResult>(result);

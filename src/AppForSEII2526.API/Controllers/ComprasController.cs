@@ -111,6 +111,7 @@ namespace AppForSEII2526.API.Controllers
                 compra.FechaCompra,
                 compra.CompraItems.Select(oi => new CompraItemsDTO(
                     oi.Herramienta.Id,
+                    oi.Herramienta.FechaFabricacion,
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
@@ -288,6 +289,7 @@ namespace AppForSEII2526.API.Controllers
                 // Mapeamos los items desde los objetos en memoria incluyendo datos de la herramienta
                 nuevaCompra.CompraItems.Select(oi => new CompraItemsDTO(
                     oi.Herramienta.Id,         // IdHerramienta
+                    oi.Herramienta.FechaFabricacion, // FechaFabricacionHerramienta
                     oi.Herramienta.Nombre,     // NombreHerramienta
                     oi.Herramienta.Material,   // MaterialHerramienta
                     oi.Herramienta.Precio,     // PrecioHerramienta (float)
