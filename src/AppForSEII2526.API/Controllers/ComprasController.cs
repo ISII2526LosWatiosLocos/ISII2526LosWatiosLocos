@@ -225,7 +225,7 @@ namespace AppForSEII2526.API.Controllers
                 if (herr.Stock < totalSolicitado)
                 {
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items),
-                        $"La herramienta {herr.Nombre} tiene stock insuficiente: {herr.Stock} < {totalSolicitado}.");
+                        $"La herramienta {herr.Nombre} tiene stock insuficiente: {herr.Stock} < {totalSolicitado}."); // Vubro el flujo alternativo 6
                 }
             }
 
@@ -261,7 +261,7 @@ namespace AppForSEII2526.API.Controllers
                     itemTieneError = true;
                 }
 
-                // b) cantidad cero o negativa (mensajes distintos)
+                // b) cantidad cero o negativa (mensajes distintos) (cubro el flujo alternativo 5)
                 if (itemDTO.CantidadHerramienta == 0)
                 {
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} tiene cantidad cero.");
