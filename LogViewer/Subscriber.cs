@@ -14,7 +14,7 @@ namespace LogViewer
 
         public void StartReceiving()
         {
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            var factory = new ConnectionFactory() { HostName = "10.154.14.250" };
 
             var connection = factory.CreateConnection();
             var channel = connection.CreateModel();
