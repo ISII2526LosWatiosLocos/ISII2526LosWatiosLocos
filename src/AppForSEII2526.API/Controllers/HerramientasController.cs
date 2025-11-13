@@ -1,4 +1,5 @@
 ﻿using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,20 +52,27 @@ namespace AppForSEII2526.API.Controllers
                 .ToListAsync();
             return Ok(herramientas);
         }
-
+        /*
+        Flujo Básico:
+            1. El cliente selecciona Comprar Herramientas en el menú principal.
+            2. El Sistema muestra la lista de herramientas disponibles para comprar, indicando su NOMBRE, MATERIAL, FABRICANTE y PRECIO.    [GET]
+        */
         [HttpGet]
         [Route("Para-Compra")]
         [ProducesResponseType(typeof(IList<HerramientasParaComprarDTO>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetHerramientasParaCompra(string? filtroMaterial, float? filtroPrecio)
+        public async Task<IActionResult> GetHerramientasParaCompra(string? filtroMaterial, float? filtroPrecio) // Como están marcados por la ? (osea, son opcionales) si alguno de los filtros es null no pasa nada
         {
-            var herramientas = await _context.Herramientas
-                .Include(h => h.Fabricante)
+            var herramientas = await _context.Herramientas // Accede al conjunto de herramientas de la BBDD y carga sus datos
+                .Include(h => h.Fabricante) // Carga también los datos relacionados al fabricante de cada herramienta
                 .Where(h => (filtroMaterial == null || h.Material == filtroMaterial) &&
-                            (filtroPrecio == null || h.Precio <= filtroPrecio))
+                            (filtroPrecio == null || h.Precio <= filtroPrecio)) // Filtra según los parámetros que le paso arriba, así cubro el flujo alternativo 1
                 .Select(h => new HerramientasParaComprarDTO(
-                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
-                .ToListAsync();
-            return Ok(herramientas);
+                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio)) // Creo un DTO para cada herramienta, así solo devuelvo los 4 campos que necesito y no todo el objeto.
+                .ToListAsync(); // Consulto los datos de forma asíncrona
+            if (!herramientas.Any())
+                return NoContent(); // Lanzo error 204, así cubro el flujo alternativo 0 
+            return Ok(herramientas); // Devuelvo la lista de HerramientasParaComprarDTO
+
         }
 
         [HttpGet]
