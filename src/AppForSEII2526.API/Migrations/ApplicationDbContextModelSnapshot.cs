@@ -265,6 +265,9 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<float>("Precio")
                         .HasColumnType("real");
 
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
                     b.Property<int>("TiempoReparacion")
                         .HasColumnType("int");
 
