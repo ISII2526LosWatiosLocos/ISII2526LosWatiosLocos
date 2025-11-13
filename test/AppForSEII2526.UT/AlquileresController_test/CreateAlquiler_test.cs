@@ -28,8 +28,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
 
             var herramienta = new List<Herramienta>
             {
-                new Herramienta (_nombreHerramienta1, "Acero" , 10.0f, 5 ,fabricante[0]),
-                new Herramienta (_nombreHerramienta2, "Madera" ,15.7f, 8 , fabricante[1])
+                new Herramienta (_nombreHerramienta1, "Acero" , 10.0f, 5 , 99, fabricante[0]),
+                new Herramienta (_nombreHerramienta2, "Madera" ,15.7f, 8 , 99, fabricante[1])
             };
 
             ApplicationUser usuario = new ApplicationUser("83", _nombreUsuario, _apellidoUsuario, "email_prueba@gmail.com", "222222222");

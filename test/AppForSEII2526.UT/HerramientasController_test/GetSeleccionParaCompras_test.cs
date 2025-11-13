@@ -29,9 +29,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
 
             var Herramientas = new List<Herramienta>()
             {
-                new Herramienta("Nombre - Herramienta1", "Material - Herramientas1y2", (float)10.99, 100, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
-                new Herramienta("Nombre - Herramienta2", "Material - Herramientas1y2", (float)2.99, 200, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
-                new Herramienta("Nombre - Herramienta3", "Material - Herramienta3", (float)3.99, 300, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
+                new Herramienta("Nombre - Herramienta1", "Material - Herramientas1y2", (float)10.99, 1, 100, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
+                new Herramienta("Nombre - Herramienta2", "Material - Herramientas1y2", (float)2.99, 2, 200, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
+                new Herramienta("Nombre - Herramienta3", "Material - Herramienta3", (float)3.99, 3, 300, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
             };
 
             // El nombre de un método de pago no puede ser null en la bbdd
@@ -96,9 +96,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
             // Datos esperados
             var herramientasDTO = new List<HerramientasParaComprarDTO>()
             {
-                new HerramientasParaComprarDTO("Nombre - Herramienta1", "Material - Herramientas1y2", "Nombre - Fabricante1", 10.99f),
-                new HerramientasParaComprarDTO("Nombre - Herramienta2", "Material - Herramientas1y2", "Nombre - Fabricante2", 2.99f),
-                new HerramientasParaComprarDTO("Nombre - Herramienta3", "Material - Herramienta3", "Nombre - Fabricante2", 3.99f)
+                new HerramientasParaComprarDTO("Nombre - Herramienta1", "Material - Herramientas1y2", "Nombre - Fabricante1", 10.99f, 1),
+                new HerramientasParaComprarDTO("Nombre - Herramienta2", "Material - Herramientas1y2", "Nombre - Fabricante2", 2.99f, 2),
+                new HerramientasParaComprarDTO("Nombre - Herramienta3", "Material - Herramienta3", "Nombre - Fabricante2", 3.99f, 3)
             };
 
             // Casos de prueba (los defino, especificando qué herramientasDTO deben devolver según los filtros que defina acontinuación en allTest)

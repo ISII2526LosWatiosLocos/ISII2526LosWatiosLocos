@@ -115,7 +115,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
                     oi.Descripcion,
-                    oi.Cantidad
+                    oi.Cantidad,
+                    oi.Herramienta.Stock
                 )).ToList()
             );
 
@@ -235,6 +236,10 @@ namespace AppForSEII2526.API.Controllers
                     itemTieneError = true;
                 }
 
+                // c. stock inferior a la cantidad de la herramienta solicitada en el item
+                if (itemDTO.StockHerramienta < itemDTO.CantidadHerramienta)
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"StockHerramienta inferior a CantidadHerramienta solicitada: {itemDTO.StockHerramienta} < {itemDTO.CantidadHerramienta}."); // Cubro el flujo alternativo 6
+
                 // Si hubo errores para este item, no lo añadimos a la compra (se devolverán todos al final).
                 if (itemTieneError)
                     continue;
@@ -292,7 +297,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,   // MaterialHerramienta
                     oi.Herramienta.Precio,     // PrecioHerramienta (float)
                     oi.Descripcion,            // DescripcionHerramienta
-                    oi.Cantidad                // CantidadHerramienta
+                    oi.Cantidad,               // CantidadHerramienta
+                    oi.Herramienta.Stock       // StockHerramienta
                 )).ToList()
             );
 

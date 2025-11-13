@@ -33,9 +33,9 @@ namespace AppForSEII2526.UT.ReparacionesController_test
 
             var herramientas = new List<Herramienta>()
             {
-                new Herramienta("Taladro", "Acero", 50.0f, 10, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), fabricante1),
-                new Herramienta("Martillo", "Hierro", 20.0f, 15, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), fabricante2),
-                new Herramienta("Sierra", "Acero", 30.0f, 8, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), fabricante2)
+                new Herramienta("Taladro", "Acero", 50.0f, 99, 10, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), fabricante1),
+                new Herramienta("Martillo", "Hierro", 20.0f, 99, 15, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), fabricante2),
+                new Herramienta("Sierra", "Acero", 30.0f, 99, 8, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), fabricante2)
             };
 
             fabricante1.Herramientas.Add(herramientas[0]);
