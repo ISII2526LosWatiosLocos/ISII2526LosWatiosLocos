@@ -225,7 +225,7 @@ namespace AppForSEII2526.API.Controllers
                 if (herr.Stock < totalSolicitado)
                 {
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items),
-                        $"La herramienta {herr.Nombre} tiene stock insuficiente: {herr.Stock} < {totalSolicitado}."); // Vubro el flujo alternativo 6
+                        $"La herramienta {herr.Nombre} tiene stock insuficiente: {herr.Stock} < {totalSolicitado}."); // Cubro el flujo alternativo 6
                 }
             }
 
