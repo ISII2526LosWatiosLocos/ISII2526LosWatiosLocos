@@ -251,6 +251,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 ),
                 new CompraItemsDTO(
                     2,
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-2)),
                     "Nombre - Herramienta2",
                     "Material - Herramienta2",
                     2.99f,
@@ -260,6 +261,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 ),
                 new CompraItemsDTO(
                     3,
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-3)),
                     "Nombre - Herramienta3",
                     "Material - Herramienta3",
                     3.99f,
@@ -280,6 +282,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 {
                     new CompraItemsDTO(
                     1,                              //IdHerramienta
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
                     "Nombre - Herramienta1",        //NombreHerramienta
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
@@ -320,6 +323,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 {
                     new CompraItemsDTO(
                     1,                              //IdHerramienta
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
                     "Nombre - Herramienta1",        //NombreHerramienta
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
@@ -329,6 +333,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 ),
                 new CompraItemsDTO(
                     2,
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-2)),
                     "Nombre - Herramienta2",
                     "Material - Herramienta2",
                     2.99f,
@@ -338,6 +343,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 ),
                 new CompraItemsDTO(
                     3,
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-3)),
                     "Nombre - Herramienta3",
                     "Material - Herramienta3",
                     3.99f,
@@ -347,6 +353,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 ),
                 new CompraItemsDTO( // Duplico este item para que la Cantidad total sea 6 frente al Stock que sigue siendo 3
                     3,
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-3)),
                     "Nombre - Herramienta3",
                     "Material - Herramienta3",
                     3.99f,

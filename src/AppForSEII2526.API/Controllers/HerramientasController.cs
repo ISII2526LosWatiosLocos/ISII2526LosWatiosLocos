@@ -69,7 +69,7 @@ namespace AppForSEII2526.API.Controllers
                             (filtroFechaFabricacionAlta == null || h.FechaFabricacion <= filtroFechaFabricacionAlta) &&
                             (filtroFechaFabricacionBaja == null || h.FechaFabricacion >= filtroFechaFabricacionBaja)) // Filtra según los parámetros que le paso arriba, así cubro el flujo alternativo 1
                 .Select(h => new HerramientasParaComprarDTO(
-                    h.FechaFabricacion, h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio)) // Creo un DTO para cada herramienta, así solo devuelvo los 5 campos que necesito y no todo el objeto.
+                    h.FechaFabricacion, h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio, h.Stock)) // Creo un DTO para cada herramienta, así solo devuelvo los 5 campos que necesito y no todo el objeto.
                 .ToListAsync(); // Consulto los datos de forma asíncrona
             if (!herramientas.Any())
                 return NoContent(); // Lanzo error 204, así cubro el flujo alternativo 0 
