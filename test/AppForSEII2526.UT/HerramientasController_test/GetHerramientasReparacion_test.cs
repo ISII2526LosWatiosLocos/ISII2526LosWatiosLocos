@@ -21,9 +21,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
 
             var herramienta = new List<Herramienta>()
             {
-                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-0)), "Martillo", "Acero", 15.5f, 5, fabricante[0]),   // 5 días reparación
-                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Destornillador", "Acero", 7.0f, 3, fabricante[1]), // 3 días reparación
-                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Taladro", "Plástico", 5.0f, 10, fabricante[2]) // 10 días reparación
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-0)), "Martillo", "Acero", 15.5f, 99, 5, fabricante[0]),   // 5 días reparación
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Destornillador", "Acero", 7.0f, 99, 3, fabricante[1]), // 3 días reparación
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Taladro", "Plástico", 5.0f, 99, 10, fabricante[2]) // 10 días reparación
             };
 
             _context.AddRange(fabricante);

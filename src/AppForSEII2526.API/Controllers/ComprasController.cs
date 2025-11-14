@@ -116,7 +116,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
                     oi.Descripcion,
-                    oi.Cantidad
+                    oi.Cantidad,
+                    oi.Herramienta.Stock
                 )).ToList()
             );
 
@@ -141,6 +142,7 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
         public async Task<IActionResult> CrearCompra([FromBody] CrearCompraDTO CrearCompraDTO)
         {
+        
             // --- 1. VALIDACIONES DE LÓGICA (Patrón del ejemplo) ---
 
             if (_context.Compras == null || _context.Herramientas == null || _context.MetodosPagos == null)
@@ -179,6 +181,7 @@ namespace AppForSEII2526.API.Controllers
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
+
             // --- 3. CONSULTA ÚNICA (Patrón del ejemplo) ---
 
             // a. Coger todos los IDs del DTO
@@ -202,22 +205,57 @@ namespace AppForSEII2526.API.Controllers
                 Usuario = Usuario
             };
 
+            // --- PRE-CHECK: cantidades totales solicitadas por herramienta (una sola vez) ---
+            // Construimos un diccionario IdHerramienta -> cantidad total solicitada en el DTO
+            var cantidadesSolicitadasPorHerramienta = CrearCompraDTO.Items
+                .GroupBy(i => i.IdHerramienta)
+                .ToDictionary(g => g.Key, g => g.Sum(i => i.CantidadHerramienta));
+
+            // Validar existencia de ids y stock agregado antes de crear items
+            foreach (var kvp in cantidadesSolicitadasPorHerramienta)
+            {
+                var idHerr = kvp.Key;
+                var totalSolicitado = kvp.Value;
+
+                if (!herramientasEnDB.TryGetValue(idHerr, out var herr))
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {idHerr} no existe.");
+                    continue;
+                }
+
+                if (herr.Stock < totalSolicitado)
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items),
+                        $"La herramienta {herr.Nombre} tiene stock insuficiente: {herr.Stock} < {totalSolicitado}."); // Cubro el flujo alternativo 6
+                }
+            }
+
+            // Si hay errores tempranos, devolver sin modificar nada
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+
             // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
-            // Validamos cada item con la información completa (herramienta cargada) para generar mensajes claros
-            // y evitar excepciones en SaveChanges.
+            // Construimos los CompraItem validando solo los campos dependientes del item
+            // (descripción, cantidad negativa/cero). Las validaciones globales de existencia
+            // y stock por herramienta se hicieron previamente en el "pre-check" usando
+            // cantidadesSolicitadasPorHerramienta, por lo que aquí evitamos repetirlas.
+
             foreach (var itemDTO in CrearCompraDTO.Items)
             {
-                // Primero: la herramienta debe existir (comprobación en el diccionario que cargamos)
+                // Seguridad: comprobación de existencia rápida (debería pasar por el pre-check).
+                // La dejamos como guardia pero sin añadir mensajes duplicados si ya se detectó arriba.
                 if (!herramientasEnDB.TryGetValue(itemDTO.IdHerramienta, out var herramienta))
                 {
+                    // Si el pre-check ya añadió el error, este mensaje será redundante;
+                    // pero por si acaso lo dejamos aquí para evitar una NullReferenceException más abajo.
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {itemDTO.IdHerramienta} no existe.");
                     continue;
                 }
 
-                // Validaciones dependientes del nombre real de la herramienta (para mensajes legibles en tests)
                 bool itemTieneError = false;
 
-                // a. descripción no nula, los tests esperan el mensaje: "La herramienta Nombre - Herramienta3 no tiene descipción."
+                // a) descripción no nula (mensaje que esperan los tests)
                 if (string.IsNullOrWhiteSpace(itemDTO.DescripcionHerramienta))
                 {
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} no tiene descipción.");
@@ -236,9 +274,12 @@ namespace AppForSEII2526.API.Controllers
                     itemTieneError = true;
                 }
 
-                // Si hubo errores para este item, no lo añadimos a la compra (se devolverán todos al final).
+                // Nota: NO volvemos a comprobar aquí el stock global por herramienta ni iteramos
+                // sobre cantidadesSolicitadasPorHerramienta porque eso ya se hizo en el PRE-CHECK.
+                // Repetir esa validación aquí produciría mensajes duplicados y trabajo innecesario.
+
                 if (itemTieneError)
-                    continue;
+                    continue; // No añadimos este item si tiene errores individuales
 
                 // Si llegamos aquí, el item es válido: lo añadimos a la nueva compra
                 var nuevoItem = new CompraItem
@@ -250,6 +291,7 @@ namespace AppForSEII2526.API.Controllers
                 };
                 nuevaCompra.CompraItems.Add(nuevoItem);
             }
+
 
             // --- 6. CALCULO DEL PRECIO TOTAL ---
             // convertimos a float solo por compatibilidad con el modelo, aunque decimal sería más adecuado
@@ -263,12 +305,33 @@ namespace AppForSEII2526.API.Controllers
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
-            // --- 8. GUARDADO ÚNICO (Patrón del ejemplo) ---
+
+            // 8. ACTUALIZAR STOCK EN LAS ENTIDADES TRACKED POR EF
+            // cantidadesSolicitadasPorHerramienta ya fue calculado arriba (GroupBy -> ToDictionary)
+            foreach (var kvp in cantidadesSolicitadasPorHerramienta)
+            {
+                var idHerr = kvp.Key;
+                var totalSolicitado = kvp.Value;
+
+                if (herramientasEnDB.TryGetValue(idHerr, out var herr))
+                {
+                    // Ya validamos que herr.Stock >= totalSolicitado arriba, por lo que no quedará negativo
+                    herr.Stock -= totalSolicitado;
+                }
+            }
+
+
+            // --- 9. GUARDADO ÚNICO (Patrón del ejemplo) ---
             _context.Compras.Add(nuevaCompra);
 
             try
             {
                 await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException dbEx)
+            {
+                _logger.LogError(dbEx, "Concurrency error al guardar la compra (stock conflict).");
+                return Conflict("Conflicto al actualizar stock. Intente de nuevo.");
             }
             catch (Exception ex)
             {
@@ -276,7 +339,9 @@ namespace AppForSEII2526.API.Controllers
                 return Conflict($"Ocurrió un error al guardar la compra: {ex.Message}");
             }
 
-            // --- 9. RESPUESTA SIN RECARGAR (Patrón del ejemplo) ---
+
+
+            // --- 10. RESPUESTA SIN RECARGAR (Patrón del ejemplo) ---
             // Construimos el DTO de detalle con los objetos que ya tenemos
 
             var compraDTORespuesta = new ComprasParaDetalleDTO(
@@ -294,7 +359,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,   // MaterialHerramienta
                     oi.Herramienta.Precio,     // PrecioHerramienta (float)
                     oi.Descripcion,            // DescripcionHerramienta
-                    oi.Cantidad                // CantidadHerramienta
+                    oi.Cantidad,               // CantidadHerramienta
+                    oi.Herramienta.Stock       // StockHerramienta
                 )).ToList()
             );
 

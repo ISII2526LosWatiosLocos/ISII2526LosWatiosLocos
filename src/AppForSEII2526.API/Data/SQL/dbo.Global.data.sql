@@ -17,8 +17,8 @@ INSERT INTO [dbo].[Fabricantes] ([Id], [Nombre]) VALUES (4, N'LWL')
 SET IDENTITY_INSERT [dbo].[Fabricantes] OFF
 
 SET IDENTITY_INSERT [dbo].[Herramientas] ON
-INSERT INTO [dbo].[Herramientas] ([Id], [FechaFabricacion], [Nombre], [Material], [Precio], [TiempoReparacion], [FabricanteId]) VALUES (1, N'2026-10-10 00:00:00', N'Martillo', N'Madera', 10, 10, 1)
-INSERT INTO [dbo].[Herramientas] ([Id], [FechaFabricacion], [Nombre], [Material], [Precio], [TiempoReparacion], [FabricanteId]) VALUES (2, N'2027-10-10 00:00:00', N'Llave', N'Hierro', 15, 15, 2)
+INSERT INTO [dbo].[Herramientas] ([Id], [FechaFabricacion], [Nombre], [Material], [Precio], [Stock], [TiempoReparacion], [FabricanteId]) VALUES (1, N'2026-10-10 00:00:00', N'Martillo', N'Madera', 10, 10, 1)
+INSERT INTO [dbo].[Herramientas] ([Id], [FechaFabricacion], [Nombre], [Material], [Precio], [Stock], [TiempoReparacion], [FabricanteId]) VALUES (2, N'2027-10-10 00:00:00', N'Llave', N'Hierro', 15, 15, 2)
 SET IDENTITY_INSERT [dbo].[Herramientas] OFF
 
 SET IDENTITY_INSERT [dbo].[MetodosPagos] ON

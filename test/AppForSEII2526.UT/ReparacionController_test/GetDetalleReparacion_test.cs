@@ -37,8 +37,8 @@ namespace AppForSEII2526.UT.ReparacionesController_test
 
             var herramientas = new List<Herramienta>()
             {
-                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Martillo Pro", "Acero Forjado", 15.50f, 50, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
-                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Destornillador Estrella", "Cromo-Vanadio", 5.25f, 100, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null)
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Martillo Pro", "Acero Forjado", 15.50f, 99, 50, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null),
+                new Herramienta(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), "Destornillador Estrella", "Cromo-Vanadio", 5.25f, 99, 100, new List<CompraItem>(), new List<AlquilarItem>(), new List<OfertaItem>(), new List<ReparaciónItem>(), null)
             };
 
             // El nombre de un método de pago no puede ser null en la bbdd

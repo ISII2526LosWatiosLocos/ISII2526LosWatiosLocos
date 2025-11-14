@@ -21,6 +21,9 @@
         [Required]
         public float Precio { get; set; }
 
+        [Required]
+        public int Stock { get; set; }
+
         public int TiempoReparacion { get; set; }
 
         public List<CompraItem> CompraItems { get; set; }
@@ -30,13 +33,14 @@
         public Fabricante Fabricante { get; set; }
 
         // Constructor completo
-        public Herramienta(int id, DateOnly fechafabricacion, string nombre, string material, float precio, int tiemporeparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaitems, List<ReparaciónItem> reparacionItems, Fabricante fabricante)
+        public Herramienta(int id, DateOnly fechafabricacion, string nombre, string material, float precio, int stock, int tiemporeparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaitems, List<ReparaciónItem> reparacionItems, Fabricante fabricante)
         {
             Id = id;
             FechaFabricacion = fechafabricacion;
             Nombre = nombre;
             Material = material;
             Precio = precio;
+            Stock = stock;
             TiempoReparacion = tiemporeparacion;
             CompraItems = compraItems;
             AlquilarItems = alquilarItems;
@@ -46,12 +50,13 @@
         }
 
         // Constructor sin el ID para las pruebas
-        public Herramienta(DateOnly fechafabricacion, string nombre, string material, float precio, int tiemporeparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaitems, List<ReparaciónItem> reparacionItems, Fabricante fabricante)
+        public Herramienta(DateOnly fechafabricacion, string nombre, string material, float precio, int stock, int tiemporeparacion, List<CompraItem> compraItems, List<AlquilarItem> alquilarItems, List<OfertaItem> ofertaitems, List<ReparaciónItem> reparacionItems, Fabricante fabricante)
         {
             FechaFabricacion = fechafabricacion;
             Nombre = nombre;
             Material = material;
             Precio = precio;
+            Stock = stock;
             TiempoReparacion = tiemporeparacion;
             CompraItems = compraItems;
             AlquilarItems = alquilarItems;
@@ -60,12 +65,14 @@
             Fabricante = fabricante;
         }
 
-        public Herramienta(DateOnly fechafabricacion, string nombre, string material, float precio, int tiemporeparacion, Fabricante fabricante)
+        // Constructor sin el ID ni las listas para las pruebas del CU de Ofertas
+        public Herramienta(DateOnly fechafabricacion, string nombre, string material, float precio, int stock, int tiemporeparacion, Fabricante fabricante)
         {
             FechaFabricacion = fechafabricacion;
             Nombre = nombre;
             Material = material;
             Precio = precio;
+            Stock = stock;
             TiempoReparacion = tiemporeparacion;
             Fabricante = fabricante;
         }
