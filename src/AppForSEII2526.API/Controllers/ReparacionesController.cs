@@ -145,7 +145,14 @@ namespace AppForSEII2526.API.Controllers
                 }
                 else
                 {
-                   
+                    // Validación de cantidad > 0
+                    if (itemDTO.HerramientaCantidad <= 0)
+                    {
+                        ModelState.AddModelError(nameof(itemDTO.HerramientaCantidad),
+                            "La cantidad debe ser mayor que 0.");
+                        continue; // Saltar este item, no lo añadimos al objeto
+                    }
+
 
                     var nuevoItem = new ReparaciónItem
                     {
