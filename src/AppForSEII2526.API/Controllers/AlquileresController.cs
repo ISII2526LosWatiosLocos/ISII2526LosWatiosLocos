@@ -86,10 +86,6 @@ namespace AppForSEII2526.API.Controllers
             if (crearAlquilerDTO.Items == null || !crearAlquilerDTO.Items.Any())
                 ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "El alquiler debe incluir al menos una herramienta.");
 
-            // Flujos alternativos ???
-
-
-            // Validar entidades
             var metodoPago = await _context.MetodosPagos.FindAsync(crearAlquilerDTO.MetodoPagoId);
             if (metodoPago == null)
                 ModelState.AddModelError(nameof(crearAlquilerDTO.MetodoPagoId), $"El MetodoPagoId {crearAlquilerDTO.MetodoPagoId} no existe.");
@@ -122,8 +118,8 @@ namespace AppForSEII2526.API.Controllers
                 MetodoPago = metodoPago,
                 AlquilarItems = new List<AlquilarItem>(),
                 Usuario = usuario,
-            }; 
-                
+            };
+
 
 
             // Validar que todas las herramientas existen
@@ -135,26 +131,25 @@ namespace AppForSEII2526.API.Controllers
                     // La herramienta no se encontró en nuestra consulta
                     ModelState.AddModelError(nameof(CrearAlquilerDTO.Items), $"La HerramientaId {itemDTO.HerramientaId} no existe.");
                 }
-               // Aplicar logica de negociooo (flujos alterrnativos) !!!!!
                 else
                 {
-                    // calcula si necesitas el total en algún lado, pero no lo almacenes en AlquilarItem.Precio
-                    float precioTotal = itemDTO.HerramientaCantidad * herramienta.Precio;
-
                     var nuevoItem = new AlquilarItem(
                         herramienta.Precio,               // <-- usar precio unitario
                         itemDTO.HerramientaCantidad,
                         nuevoAlquiler,
-                        herramienta);
+                        herramienta
+                    );
 
                     nuevoAlquiler.AlquilarItems.Add(nuevoItem);
                 }
             }
-            // Validación final
+
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
-            // Guardado único
+            // Calcular el precio total del alquiler
+            nuevoAlquiler.PrecioTotal = nuevoAlquiler.AlquilarItems
+                .Sum(i => i.Cantidad * i.Precio);
 
             _context.Alquileres.Add(nuevoAlquiler);
 
@@ -168,8 +163,7 @@ namespace AppForSEII2526.API.Controllers
                 return Conflict($"Ocurrió un error al guardar el alquiler: {ex.Message}");
             }
 
-            // Respuesta sin recargar
-            // Construir DTO de respuesta con la información de los objetos Herramienta
+            // Construir DTO de respuesta
             var alquilerDTORespuesta = new AlquileresParaDetalleDTO(
                 nuevoAlquiler.Usuario.Nombre,
                 nuevoAlquiler.Usuario.Apellidos,
@@ -194,5 +188,4 @@ namespace AppForSEII2526.API.Controllers
                 alquilerDTORespuesta); // El cuerpo de la respuesta
         }
     }
-
 }
