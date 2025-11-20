@@ -95,6 +95,9 @@ namespace AppForSEII2526.API.Controllers
             if (crearOfertaDTO.Items == null || !crearOfertaDTO.Items.Any())
                 ModelState.AddModelError(nameof(crearOfertaDTO.Items), "La oferta debe incluir al menos una herramienta.");
 
+            if (crearOfertaDTO.FechaFinal <= crearOfertaDTO.FechaInicio.AddDays(7))
+                ModelState.AddModelError(nameof(crearOfertaDTO.FechaFinal), "ERROR! La oferta debe durar al menos una semana");
+
             // --- 2. VALIDAR ENTIDADES RELACIONADAS (Patrón del ejemplo) ---
 
             // a. Buscar Método de Pago

@@ -165,6 +165,20 @@ namespace AppForSEII2526.UT.OfertasController_test
                 }
             };
 
+            var ofertaDeUnaSemana = new CrearOfertaDTO
+            {
+                FechaInicio = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                FechaFinal = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(2)),
+                TipoDirigida = "Cliente",
+                MetodoPagoId = 1,
+                nombreUsuario = _nombreUsuario,
+                Items = new List<CrearOfertaItemDTO>
+                {
+                new CrearOfertaItemDTO { HerramientaId = 1, PorcentajeDescuento = 10 }
+
+                }
+            };
+
             var allTests = new List<object[]>
             {
                 new object[] { ofertaNoItem, "La oferta debe incluir al menos una herramienta." },
@@ -176,7 +190,8 @@ namespace AppForSEII2526.UT.OfertasController_test
                 new object[] { ofertaTipoInvalido, "El valor 'TipoRaro' no es válido. Use 'Socio' o 'Cliente'." },
                 // El mensaje de error del porcentaje puede variar según el nombre de tu herramienta
                 new object[] { ofertaPorcentajeInvalido, "El porcentaje 91% para 'Herramienta1' no es válido. Debe estar entre 1 y 90." },
-                new object[] { ofertaPorcentajeCero, "El porcentaje 0% para 'Herramienta1' no es válido. Debe estar entre 1 y 90." }
+                new object[] { ofertaPorcentajeCero, "El porcentaje 0% para 'Herramienta1' no es válido. Debe estar entre 1 y 90." },
+                new object[] { ofertaDeUnaSemana , "ERROR! La oferta debe durar al menos una semana" }
             };
 
             return allTests;
