@@ -100,7 +100,7 @@ namespace AppForSEII2526.API.Controllers
 
             // modifciación examen téléfono 
 
-            if ( ! Usuario.NumeroTelefono.StartsWith ("+34")) {
+            if (  ! Usuario.NumeroTelefono.StartsWith ("+34")) {
 
                 ModelState.AddModelError(nameof(Usuario.NumeroTelefono), "Error. El usuario debe de empezar por  +34 ");
                
