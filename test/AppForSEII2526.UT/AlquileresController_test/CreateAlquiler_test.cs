@@ -35,7 +35,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
             ApplicationUser usuario = new ApplicationUser("83", _nombreUsuario, _apellidoUsuario, "email_prueba@gmail.com", "222222222");
 
             var alquiler = new Alquiler(
-                "La casa rosada",
+                "Calle Alameda Aullante",
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
@@ -61,7 +61,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 _nombreUsuario, 
                 _apellidoUsuario,
                 1,
-                "Pisos Picados", 
+                "Calle Balsa Botin", 
                 "123456722", 
                 "abc@hello.com", 
                 new List<CrearAlquilerItemDTO>());
@@ -73,12 +73,21 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 new CrearAlquilerItemDTO(7, 15)
             };
 
+            var alquilerDireccionInvalida = new CrearAlquilerDTO(
+                _nombreUsuario,
+                _apellidoUsuario,
+                1,
+                "Pisos Picadooos",
+                "123456722",
+                "abc@hello.com",
+                alquilerItems
+                );
 
             var alquilerApplicationUser = new CrearAlquilerDTO(
                 "usuario_no_existe",
                 "apellido",
                 1,
-                "Pisos Picados",
+                "Calle Senorio de la Sal",
                 "123456722",
                 "abc@hello.com",
                 alquilerItems);
@@ -87,7 +96,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 _nombreUsuario,
                 _apellidoUsuario,
                 1,
-                "Pisos Picados",
+                "Calle Soto Solitario",
                 "123456722",
                 "abc@hello.com",
                 new List<CrearAlquilerItemDTO>
@@ -102,7 +111,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 _nombreUsuario,
                 _apellidoUsuario,
                 999, // Id que no existe
-                "Pisos Picados",
+                "Calle 24",
                 "123456722",
                 "abc@hello.com",
                 alquilerItems
@@ -112,6 +121,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
             {
                 new object[] { alquilerNoItem, "El alquiler debe incluir al menos una herramienta." },
                 // Match controller message exactly (case and included name)
+                new object[] { alquilerDireccionInvalida, "¡Error! La dirección de envío debe empezar por la palabra Calle" },
                 new object[] { alquilerApplicationUser, $"El Usuario {alquilerApplicationUser.Nombre} {alquilerApplicationUser.Apellidos} no existe." },
                 new object[] { alquilerNoDisponible, "La HerramientaId 4 no existe." },
                 new object[] { alquilerMetodoPagoInvalido, "El MetodoPagoId 999 no existe." },
@@ -163,7 +173,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 _nombreUsuario,
                 _apellidoUsuario,
                 1,
-                "Pisos Picados",
+                "Calle Caserio Colesterol",
                 "123456722",
                 "abc@hello.com",
                 alquilerItems
