@@ -254,11 +254,20 @@ namespace AppForSEII2526.API.Controllers
 
                 bool itemTieneError = false;
 
-                // a) descripción no nula (mensaje que esperan los tests)
-                if (string.IsNullOrWhiteSpace(itemDTO.DescripcionHerramienta))
+                // MODIFICACIÓN
+                if (string.IsNullOrWhiteSpace(itemDTO.DescripcionHerramienta) && (itemDTO.CantidadHerramienta == 3))
                 {
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} no tiene descipción.");
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"¡Error! Estás comprando demasiadas herramientas sin descripción.");
                     itemTieneError = true;
+                }
+                else
+                {
+                    // a) descripción no nula (mensaje que esperan los tests)
+                    if (string.IsNullOrWhiteSpace(itemDTO.DescripcionHerramienta))
+                    {
+                        ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} no tiene descipción.");
+                        itemTieneError = true;
+                    }
                 }
 
                 // b) cantidad cero o negativa (mensajes distintos) (cubro el flujo alternativo 5)

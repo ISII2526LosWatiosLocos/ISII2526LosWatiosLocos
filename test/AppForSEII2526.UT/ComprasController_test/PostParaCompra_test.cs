@@ -178,7 +178,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     null, // Descripción nula
-                    3,
+                    1, // Cantidad no igual a 3
                     3
                 )
                 },
@@ -346,6 +346,44 @@ namespace AppForSEII2526.UT.ComprasController_test
                 DireccionEnvio = "DireccionEnvio - Compra1"
             };
 
+            var compraItemDescripcionNulaCantidadIgualATres = new CrearCompraDTO
+            {
+                Nombre = "Fulanito",
+                Apellidos = "De Tal",
+                MetodoPagoId = 1,
+                Items = new List<CompraItemsDTO>
+                {
+                    new CompraItemsDTO(
+                    1,                              //IdHerramienta
+                    "Nombre - Herramienta1",        //NombreHerramienta
+                    "Material - Herramienta1",      //PrecioHerramienta
+                    10.99f,                         //PrecioHerramienta
+                    "Descripción - CompraItem1",    //DescripciónHerramienta
+                    1,                              //CantidadHerramienta
+                    1                               //StockHerramienta
+                ),
+                new CompraItemsDTO(
+                    2,
+                    "Nombre - Herramienta2",
+                    "Material - Herramienta2",
+                    2.99f,
+                    "Descripción - CompraItem2",
+                    2,
+                    2
+                ),
+                new CompraItemsDTO(
+                    3,
+                    "Nombre - Herramienta3",
+                    "Material - Herramienta3",
+                    3.99f,
+                    null, // Descripción nula
+                    3, // Cantidad es igual a 3
+                    3
+                )
+                },
+                DireccionEnvio = "DireccionEnvio - Compra1"
+            };
+
             var allTests = new List<object[]>
             {
                 new object[] { compraSinUsuario, "El usuario no existe." },
@@ -357,7 +395,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                 new object[] { compraItemCantidadNegativa, "La herramienta Nombre - Herramienta3 tiene cantidad negativa." },
                 // Los mensajes de error de las herramientas pueden variar según el nombre de ésta y de la cantidad de sus items y stock total de las herramientas:
                 new object[] { compraItemCantidadMayorQueStockConUnSoloItem, "La herramienta Nombre - Herramienta3 tiene stock insuficiente: 3 < 4." }, // Stock < Cantidad
-                new object[] { compraItemCantidadMayorQueStockConVariosItems, "La herramienta Nombre - Herramienta3 tiene stock insuficiente: 3 < 6." } // Stock < Cantidad
+                new object[] { compraItemCantidadMayorQueStockConVariosItems, "La herramienta Nombre - Herramienta3 tiene stock insuficiente: 3 < 6." }, // Stock < Cantidad
+                // MODIFICACIÓN
+                new object[] { compraItemDescripcionNulaCantidadIgualATres, "¡Error! Estás comprando demasiadas herramientas sin descripción." }
             };
 
             return allTests;
