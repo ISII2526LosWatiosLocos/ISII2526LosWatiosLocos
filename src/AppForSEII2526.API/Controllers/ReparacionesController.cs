@@ -78,7 +78,9 @@ namespace AppForSEII2526.API.Controllers
             var metodoPago = await _context.MetodosPagos.FindAsync(reparacionCreate.MetodoPagoId);
             if (metodoPago == null)
                 ModelState.AddModelError(nameof(reparacionCreate.MetodoPagoId), $"El MetodoPagoId {reparacionCreate.MetodoPagoId} no existe.");
-          
+        
+
+
             // Validacion FechaEntrega > hoy
             if (reparacionCreate.FechaEntrega <= DateOnly.FromDateTime(DateTime.Now))
                 ModelState.AddModelError("FechaEntrega", "Error: la fecha de entrega debe ser posterior a hoy");
@@ -94,6 +96,17 @@ namespace AppForSEII2526.API.Controllers
             // Buscar usuario
            var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == reparacionCreate.Nombre && u.Apellidos == reparacionCreate.Apellidos);
             if (Usuario == null) ModelState.AddModelError(nameof(reparacionCreate.Nombre), $"El Usuario {reparacionCreate.Nombre} {reparacionCreate.Apellidos} no existe.");
+
+
+            // modifciación examen téléfono 
+
+            if (  ! Usuario.NumeroTelefono.StartsWith ("+34")) {
+
+                ModelState.AddModelError(nameof(Usuario.NumeroTelefono), "Error. El usuario debe de empezar por  +34 ");
+               
+
+
+            }
 
             // Si hay errores, retornar
             if (ModelState.ErrorCount > 0)
