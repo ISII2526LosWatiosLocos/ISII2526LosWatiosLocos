@@ -83,6 +83,10 @@ namespace AppForSEII2526.API.Controllers
             }
 
 
+            if (crearAlquilerDTO.Direccion == null || !crearAlquilerDTO.Direccion.StartsWith("Calle"))
+            {
+                ModelState.AddModelError(nameof(crearAlquilerDTO.Direccion), "¡Error! La dirección de envío debe empezar por la palabra Calle");
+            }
             if (crearAlquilerDTO.Items == null || !crearAlquilerDTO.Items.Any())
                 ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "El alquiler debe incluir al menos una herramienta.");
 
