@@ -22,11 +22,14 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 "Fulanito",
                 "De Tal",
                 "fulanitodetal@uclm.es",
-                "111222333",
+                "+34111222333",
                 new List<Compra>(),
                 new List<Reparación>(),
                 new List<Alquiler>()
             );
+
+
+            // usuario para porbar la modificación del examen 
 
             var fabricante1 = new Fabricante("Fabricante1", new List<Herramienta>());
             var fabricante2 = new Fabricante("Fabricante2", new List<Herramienta>());
@@ -46,6 +49,9 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             var tarjeta = new TarjetaCredito() { Nombre = "TarjetaCredito" };
 
             _context.Users.Add(usuario);
+            // modifcación 
+            
+            //
             _context.Fabricantes.AddRange(fabricante1, fabricante2);
             _context.Herramientas.AddRange(herramientas);
             _context.MetodosPagos.AddRange(efectivo, tarjeta);
@@ -66,16 +72,18 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 Nombre = "Pepe",
                 Apellidos = "Grillo",
                 MetodoPagoId = 1,
+                telefono = "+34111222333",
                 FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
                 FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(3)),
                 ReparacionesItems = itemsBase
-            };
+            }; 
 
             var reparacionMetodoPagoInvalido = new CrearReparacionDTO
             {
                 Nombre = "Fulanito",
                 Apellidos = "De Tal",
                 MetodoPagoId = 999,
+                telefono = "+34111222333",
                 FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
                 FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(3)),
                 ReparacionesItems = itemsBase
@@ -86,6 +94,8 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 Nombre = "Fulanito",
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
+
+                telefono = "+34111222333",
                 FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
                 FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(3)),
                 ReparacionesItems = new List<CrearReparacionItemDTO>()
@@ -96,6 +106,8 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 Nombre = "Fulanito",
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
+
+                telefono = "+34111222333",
                 FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
                 FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
                 ReparacionesItems = itemsBase
@@ -106,7 +118,20 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 Nombre = "Fulanito",
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
+                telefono = "+34111222333",
                 FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(5)),
+                FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
+                ReparacionesItems = itemsBase
+            };
+
+
+            var reparacionNumeroInvalido = new CrearReparacionDTO
+            {
+                Nombre = "Fulanito",
+                Apellidos = "De Tal",
+                MetodoPagoId = 1,
+                telefono = "111222333",
+                FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(6)),
                 FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
                 ReparacionesItems = itemsBase
             };
@@ -118,6 +143,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new object[] { reparacionSinItems, "Error: debe incluir al menos una herramienta para reparación" },
                 new object[] { reparacionFechaEntregaPasada, "Error: la fecha de entrega debe ser posterior a hoy" },
                 new object[] { reparacionFechaRecogidaAntesEntrega, "Error: la fecha de recogida debe ser posterior a la entrega" },
+                    new object[] { reparacionNumeroInvalido, "Error. El usuario debe de empezar por  +34 " },
             };
         }
 
@@ -163,10 +189,11 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 Nombre = "Fulanito",
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
+                telefono = "+34111222333",
                 FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
                 FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(4)),
                 ReparacionesItems = items
-            };
+            }; 
 
             // Act
             var result = await controller.CreateReparacion(dto);
