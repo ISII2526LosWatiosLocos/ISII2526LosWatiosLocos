@@ -7,9 +7,7 @@ on:
   push:
     branches:
       - CI-CopiaYoel
-#      - development
-#    paths:
-#      - 'src/AppForMovies.API**'
+
 
 
       
@@ -22,7 +20,7 @@ jobs:
       contents: read #This is required for actions/checkout
     env:
       API: ./src/AppForSEII2526.API/AppForSEII2526.API.csproj
-      UT: ./src/AppForSEII2526.UT/AppForSEII2526.UT.csproj
+      UT: ./test/AppForSEII2526.UT/AppForSEII2526.UT.csproj
 
     steps:
       - uses: actions/checkout@v4
@@ -81,4 +79,5 @@ jobs:
           package: .
 
           
+
 
