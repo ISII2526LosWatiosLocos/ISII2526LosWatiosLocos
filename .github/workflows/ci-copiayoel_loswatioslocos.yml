@@ -7,6 +7,12 @@ on:
   push:
     branches:
       - CI-CopiaYoel
+#      - development
+#    paths:
+#      - 'src/AppForMovies.API**'
+
+
+      
   workflow_dispatch:
 
 jobs:
@@ -14,6 +20,9 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: read #This is required for actions/checkout
+    env:
+      API: ./src/AppForSEII2526.API/AppForSEII2526.API.csproj
+      UT: ./src/AppForSEII2526.UT/AppForSEII2526.UT.csproj
 
     steps:
       - uses: actions/checkout@v4
@@ -23,11 +32,21 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Restore dependencies
+        run:
+          dotnet restore ${{ env.API }}
+          dotnet restore ${{ env.UT }}
 
+      - name: Build with dotnet
+        run: 
+          dotnet build ${{ env.API }} --configuration Release --no-Restore
+          dotnet build ${{ env.UT }} --configuration Release --no-Restore
+
+      - name: Run unit tests with report
+        run: dotnet test ${{ env.UT }} --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
+        
       - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish ${{ env.API }} -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -38,9 +57,7 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+    
 
     steps:
       - name: Download artifact from build job
@@ -62,4 +79,5 @@ jobs:
           app-name: 'LosWatiosLocos'
           slot-name: 'Production'
           package: .
+
           
