@@ -12,9 +12,10 @@ namespace AppForSEII2526.API.DTOs
         public float PrecioHerramienta { get; set; }
         public string DescripcionHerramienta { get; set; }
         public int CantidadHerramienta { get; set; }
+        public int StockHerramienta { get; set; }
 
-        // Constructor completo para el Details
-        public CompraItemsDTO(int idHerramienta, string nombreHerramienta, string materialHerramienta, float precioHerramienta, string descripcionHerramienta, int cantidadHerramienta)
+        // Constructor completo
+        public CompraItemsDTO(int idHerramienta, string nombreHerramienta, string materialHerramienta, float precioHerramienta, string descripcionHerramienta, int cantidadHerramienta, int stockHerramienta)
         {
             IdHerramienta = idHerramienta;
             NombreHerramienta = nombreHerramienta;
@@ -22,13 +23,7 @@ namespace AppForSEII2526.API.DTOs
             PrecioHerramienta = precioHerramienta;
             DescripcionHerramienta = descripcionHerramienta;
             CantidadHerramienta = cantidadHerramienta;
-        }
-
-        // Constructor solo con lo necesario para el Post
-        public CompraItemsDTO(string descripcionHerramienta, int cantidadHerramienta)
-        {
-            DescripcionHerramienta = descripcionHerramienta;
-            CantidadHerramienta = cantidadHerramienta;
+            StockHerramienta = stockHerramienta;
         }
 
         // Constructor vacío para que el Json lo use por defecto al serializar (sino, al haber más de uno no sabe cual usar y peta)
@@ -42,12 +37,13 @@ namespace AppForSEII2526.API.DTOs
                    MaterialHerramienta == dTO.MaterialHerramienta &&
                    PrecioHerramienta == dTO.PrecioHerramienta &&
                    DescripcionHerramienta == dTO.DescripcionHerramienta &&
-                   CantidadHerramienta == dTO.CantidadHerramienta;
+                   CantidadHerramienta == dTO.CantidadHerramienta &&
+                   StockHerramienta == dTO.StockHerramienta;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(NombreHerramienta, MaterialHerramienta, PrecioHerramienta, DescripcionHerramienta, CantidadHerramienta);
+            return HashCode.Combine(NombreHerramienta, MaterialHerramienta, PrecioHerramienta, DescripcionHerramienta, CantidadHerramienta, StockHerramienta);
         }
     }
 }

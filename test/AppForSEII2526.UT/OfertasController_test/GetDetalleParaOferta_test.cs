@@ -1,5 +1,6 @@
 ﻿using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,16 +24,14 @@ namespace AppForSEII2526.UT.OfertasController_test
 
             var herramienta = new List<Herramienta>()
             {
-                new Herramienta("Martillo", "Acero", 15.5f, 5, fabricante[0]),
-                new Herramienta("Destornillador", "Acero", 7.0f, 3, fabricante[1]),
-                new Herramienta("Taladro", "Plástico", 5.0f, 10, fabricante[2]),
+                new Herramienta("Martillo", "Acero", 15.5f, 99, 5, fabricante[0]),
+                new Herramienta("Destornillador", "Acero", 7.0f, 99, 3, fabricante[1]),
+                new Herramienta("Taladro", "Plástico", 5.0f, 99, 10, fabricante[2]),
             };
 
             var ofertaItem = new List<OfertaItem>()
             {
                 new OfertaItem(10, 13.95f, null, herramienta[0]),
-                new OfertaItem(20, 5.6f, null, herramienta[1]),
-                new OfertaItem(15, 4.25f, null, herramienta[2]),
             };
 
             var metodoPago = new Efectivo()
@@ -40,13 +39,16 @@ namespace AppForSEII2526.UT.OfertasController_test
                 Nombre = "Efectivo"
             };
 
+            ApplicationUser usuario = new ApplicationUser("5", "Jesus", "Arribas", "Jesus.Arribas@alu.uclm.es", "111111112");
+
             var oferta = new Oferta(
                 DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 tipoDirigidaOferta.Cliente,
                 ofertaItem,
-                metodoPago
+                metodoPago,
+                usuario
             );
 
             //Añadimos a la bbdd los datos de prueba
@@ -58,45 +60,86 @@ namespace AppForSEII2526.UT.OfertasController_test
             _context.SaveChanges();
         }
 
-        public static IEnumerable<object[]> TestCasesFor_GetDetalleParaOferta_Ok()
-        {
-            var ofertaItemsDTO = new List<OfertaItemsDTO>()
-            {
-                new OfertaItemsDTO ( "Martillo", "Acero", "Herramientas SA", 15.5f, 13.95f),
-                new OfertaItemsDTO ( "Destornillador", "Acero", "Utensilios y Más", 7.0f, 5.6f),
-                new OfertaItemsDTO ( "Taladro", "Plástico", "Todo para Construcción", 5.0f, 4.25f)
-            };
 
-            var ofertasParaDetalleDTO_TC1 = new OfertasParaDetalleDTO(
+        [Fact]
+        [Trait("Database", "WithoutFixture")]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetDetalleParaOferta_NotFound()
+        {
+            //Arrange
+            var mock = new Mock<ILogger<OfertasController>>();
+            ILogger<OfertasController> logger = mock.Object;
+
+            var controller = new OfertasController(_context, logger);
+
+            //Act
+            var result = await controller.GetDetalleHerramientasParaOferta(999); // ID de oferta que no existe (999)
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetDetalleParaOferta_Found_test()
+        {
+            //Arrange
+            var mock = new Mock<ILogger<OfertasController>>();
+            ILogger<OfertasController> logger = mock.Object;
+            var controller = new OfertasController(_context, logger);
+
+            var expectedOferta = new OfertasParaDetalleDTO(
                 DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 "Cliente",
                 "Efectivo",
-                new List<OfertaItemsDTO> { ofertaItemsDTO[0], ofertaItemsDTO[1], ofertaItemsDTO[2] }
+                new List<OfertaItemsDTO>(),
+                "Jesus"
             );
+            expectedOferta.Items.Add(new OfertaItemsDTO
+            (
+                "Martillo",
+                "Acero",
+                "Herramientas SA",
+                15.5f,
+                13.95f
+            ));
 
-            var allTest = new List<object[]> {
-                new object[] {1, ofertasParaDetalleDTO_TC1 }
-            };
+            //Act
+            var result = await controller.GetDetalleHerramientasParaOferta(1);
 
-            return allTest;
-        }
+            //Assert 
+            // 1. Comprueba que los objetos no sean nulos
+            Assert.NotNull(result);
 
-        [Theory]
-        [MemberData(nameof(TestCasesFor_GetDetalleParaOferta_Ok))]
-        public async Task GetDetalleParaOferta_Ok(int ofertaId, OfertasParaDetalleDTO expectedDTO)
-        {
-            // Arrange
-            var controller = new OfertasController(_context, null);
-            // Act
-            var actionResult = await controller.GetDetalleHerramientasParaOferta(ofertaId);
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(actionResult);
-            var actualDTO = Assert.IsType<OfertasParaDetalleDTO>(okResult.Value);
-            Assert.Equal(expectedDTO, actualDTO);
+            var okResult = Assert.IsType<OkObjectResult>(result);
 
+            var ofertaDTOActual = Assert.IsType<OfertasParaDetalleDTO>(okResult.Value);
 
+            // 2. Comprueba las propiedades simples (string, DateOnly, int, etc.)
+            Assert.Equal(expectedOferta.FechaFinal, ofertaDTOActual.FechaFinal);
+            Assert.Equal(expectedOferta.FechaInicio, ofertaDTOActual.FechaInicio);
+            Assert.Equal(expectedOferta.TipoDirigida, ofertaDTOActual.TipoDirigida);
+            Assert.Equal(expectedOferta.MetodoPago, ofertaDTOActual.MetodoPago);
+            Assert.Equal(expectedOferta.nombreUsuario, ofertaDTOActual.nombreUsuario);
+
+            // 3. Comprueba las listas o colecciones
+            //    Primero, comprueba que tengan el mismo número de elementos
+            Assert.Equal(expectedOferta.Items.Count, ofertaDTOActual.Items.Count);
+
+            // 4. Comprueba los elementos DENTRO de las listas
+            //    (En este test, sabes que solo hay un item, en la posición [0])
+            var expectedItem = expectedOferta.Items[0];
+            var actualItem = ofertaDTOActual.Items[0];
+
+            Assert.Equal(expectedItem.NombreHerramienta, actualItem.NombreHerramienta);
+            Assert.Equal(expectedItem.MaterialHerramienta, actualItem.MaterialHerramienta);
+            Assert.Equal(expectedItem.FabricanteHerramienta, actualItem.FabricanteHerramienta);
+            Assert.Equal(expectedItem.PrecioHerramienta, actualItem.PrecioHerramienta);
+            Assert.Equal(expectedItem.PrecioFinalOferta, actualItem.PrecioFinalOferta);
         }
     }
 }

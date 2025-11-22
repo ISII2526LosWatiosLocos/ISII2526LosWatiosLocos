@@ -15,9 +15,9 @@ namespace AppForSEII2526.API.Controllers
         private readonly ApplicationDbContext _context;
 
         //used to log any information when your system is running
-        private readonly ILogger<HerramientasController> _logger;
+        private readonly ILogger<OfertasController> _logger;
 
-        public OfertasController(ApplicationDbContext context, ILogger<HerramientasController> logger)
+        public OfertasController(ApplicationDbContext context, ILogger<OfertasController> logger)
         {
             _context = context;
             _logger = logger;
@@ -37,6 +37,7 @@ namespace AppForSEII2526.API.Controllers
 
             var ofertas = await _context.Ofertas
                 .Include(o => o.MetodosPago)
+                .Include(o => o.Usuario)
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
@@ -56,10 +57,11 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Fabricante.Nombre,
                     oi.Herramienta.Precio,
                     oi.Herramienta.Precio * (100f - oi.Porcentaje) / 100
-                )).ToList()
+                )).ToList(),
+                o.Usuario.Nombre
             )).FirstOrDefault();
 
-            if (ofertas == null)
+            if (ofertasDTO == null)
             {
                 _logger.LogError("Error: No se encontraron ofertas.");
                 return NotFound();
@@ -93,6 +95,9 @@ namespace AppForSEII2526.API.Controllers
             if (crearOfertaDTO.Items == null || !crearOfertaDTO.Items.Any())
                 ModelState.AddModelError(nameof(crearOfertaDTO.Items), "La oferta debe incluir al menos una herramienta.");
 
+            if (crearOfertaDTO.FechaFinal <= crearOfertaDTO.FechaInicio.AddDays(7))
+                ModelState.AddModelError(nameof(crearOfertaDTO.FechaFinal), "ERROR! La oferta debe durar al menos una semana");
+
             // --- 2. VALIDAR ENTIDADES RELACIONADAS (Patrón del ejemplo) ---
 
             // a. Buscar Método de Pago
@@ -108,7 +113,13 @@ namespace AppForSEII2526.API.Controllers
                     ModelState.AddModelError(nameof(crearOfertaDTO.TipoDirigida), $"El valor '{crearOfertaDTO.TipoDirigida}' no es válido. Use 'Socio' o 'Cliente'.");
             }
 
-            // c. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
+            //c. Validar Usuario
+            var usuario = await _context.Users
+                .FirstOrDefaultAsync(u => u.Nombre == crearOfertaDTO.nombreUsuario);
+            if (usuario == null)
+                ModelState.AddModelError(nameof(crearOfertaDTO.nombreUsuario), "El usuario no existe.");
+
+            // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
@@ -133,7 +144,8 @@ namespace AppForSEII2526.API.Controllers
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 tipoDirigido,
                 new List<OfertaItem>(),
-                metodoPago!
+                metodoPago!,
+                usuario
             );
 
             // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
@@ -200,7 +212,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Fabricante.Nombre, // Esto funciona gracias al .Include() que hicimos
                     oi.Herramienta.Precio,
                     oi.PrecioFinal
-                )).ToList()
+                )).ToList(),
+                nuevaOferta.Usuario.Nombre
             );
 
             // Devolvemos el DTO de detalle

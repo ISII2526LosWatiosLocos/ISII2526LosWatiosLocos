@@ -196,6 +196,7 @@ namespace AppForSEII2526.API.Migrations
                     Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Material = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Precio = table.Column<float>(type: "real", nullable: false),
+                    Stock = table.Column<int>(type: "int", nullable: false),
                     TiempoReparacion = table.Column<int>(type: "int", nullable: false),
                     FabricanteId = table.Column<int>(type: "int", nullable: false)
                 },

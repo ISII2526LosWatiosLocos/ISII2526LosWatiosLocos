@@ -15,9 +15,9 @@ namespace AppForSEII2526.API.Controllers
         private readonly ApplicationDbContext _context;
 
         //used to log any information when your system is running
-        private readonly ILogger<HerramientasController> _logger;
+        private readonly ILogger<ReparacionesController> _logger;
 
-        public ReparacionesController(ApplicationDbContext context, ILogger<HerramientasController> logger)
+        public ReparacionesController(ApplicationDbContext context, ILogger<ReparacionesController> logger)
         {
             _context = context;
             _logger = logger;
@@ -26,7 +26,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("Detalle-Reparaciones")]
         [ProducesResponseType(typeof(IList<ReparacionesDTO>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetDetalleHerramientasParaReparación()
+        public async Task<IActionResult> GetDetalleHerramientasParaReparación(int id)
         {
             var reparaciones = await _context.Reparaciones
                 .Include(r => r.MétodoPago)
@@ -34,6 +34,7 @@ namespace AppForSEII2526.API.Controllers
                 .Include(r => r.ReparaciónItems)
                     .ThenInclude(ri => ri.Herramienta)
                         .ThenInclude(h => h.Fabricante)
+                             .Where(r => r.Id == id)
                 .ToListAsync();
 
 
@@ -54,6 +55,10 @@ namespace AppForSEII2526.API.Controllers
 
             )).ToList();
 
+            if (reparacionesDTO == null || reparacionesDTO.Count == 0)
+                return NotFound();
+
+
             return Ok(reparacionesDTO);
         }
 
@@ -73,8 +78,11 @@ namespace AppForSEII2526.API.Controllers
             var metodoPago = await _context.MetodosPagos.FindAsync(reparacionCreate.MetodoPagoId);
             if (metodoPago == null)
                 ModelState.AddModelError(nameof(reparacionCreate.MetodoPagoId), $"El MetodoPagoId {reparacionCreate.MetodoPagoId} no existe.");
+        
+
+
             // Validacion FechaEntrega > hoy
-            if (reparacionCreate.FechaEntrega <= reparacionCreate.FechaRecogida)
+            if (reparacionCreate.FechaEntrega <= DateOnly.FromDateTime(DateTime.Now))
                 ModelState.AddModelError("FechaEntrega", "Error: la fecha de entrega debe ser posterior a hoy");
 
             // Validacion FechaRecogida > FechaEntrega
@@ -88,6 +96,17 @@ namespace AppForSEII2526.API.Controllers
             // Buscar usuario
            var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == reparacionCreate.Nombre && u.Apellidos == reparacionCreate.Apellidos);
             if (Usuario == null) ModelState.AddModelError(nameof(reparacionCreate.Nombre), $"El Usuario {reparacionCreate.Nombre} {reparacionCreate.Apellidos} no existe.");
+
+
+            // modifciación examen téléfono 
+
+            if (  ! Usuario.NumeroTelefono.StartsWith ("+34")) {
+
+                ModelState.AddModelError(nameof(Usuario.NumeroTelefono), "Error. El usuario debe de empezar por  +34 ");
+               
+
+
+            }
 
             // Si hay errores, retornar
             if (ModelState.ErrorCount > 0)
@@ -139,7 +158,14 @@ namespace AppForSEII2526.API.Controllers
                 }
                 else
                 {
-                   
+                    // Validación de cantidad > 0
+                    if (itemDTO.HerramientaCantidad <= 0)
+                    {
+                        ModelState.AddModelError(nameof(itemDTO.HerramientaCantidad),
+                            "La cantidad debe ser mayor que 0.");
+                        continue; // Saltar este item, no lo añadimos al objeto
+                    }
+
 
                     var nuevoItem = new ReparaciónItem
                     {

@@ -13,63 +13,63 @@ namespace AppForSEII2526.API.Controllers
         private readonly ApplicationDbContext _context;
 
         //used to log any information when your system is running
-        private readonly ILogger<HerramientasController> _logger;
+        private readonly ILogger<AlquileresController> _logger;
 
-        public AlquileresController(ApplicationDbContext context, ILogger<HerramientasController> logger)
+        public AlquileresController(ApplicationDbContext context, ILogger<AlquileresController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
         [HttpGet]
-        [Route("Detalle-Alquiler")]
-        // El tipo de respuesta es una lista de AlquileresParaDetalleDTO
-        [ProducesResponseType(typeof(IList<AlquileresParaDetalleDTO>), (int)HttpStatusCode.OK)]
+        [Route("DetalleAlquiler")]
+        // El tipo de respuesta es un AlquileresParaDetalleDTO (detalle de un alquiler)
+        [ProducesResponseType(typeof(AlquileresParaDetalleDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetDetalleHerramientasParaAlquiler()
+        public async Task<IActionResult> GetDetalleHerramientasParaAlquiler(int id)
         {
             if (_context.Alquileres == null)
             {
                 _logger.LogError("Error: La tabla no existe.");
                 return NotFound();
             }
-            var alquileresParaDetalle = await _context.Alquileres
+
+            var alquiler = await _context.Alquileres
                 .Include(o => o.MetodoPago)
                 .Include(o => o.Usuario)
                 .Include(o => o.AlquilarItems)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
-                .ToListAsync();
+                .Where(a => a.Id == id)
+                .FirstOrDefaultAsync();
 
+            if (alquiler == null)
+            {
+                _logger.LogError("Error: No se encontró el alquiler con id {Id}.", id);
+                return NotFound();
+            }
 
-            var alquileresParaDetalleDTO = alquileresParaDetalle.Select(o => new AlquileresParaDetalleDTO(
-                o.Usuario.Nombre,
-                o.Usuario.Apellidos,
-                o.DireccionEnvio,
-                o.FechaAlquiler,
-                o.PrecioTotal,
-                o.FechaInicio,
-                o.FechaFin,
-                o.AlquilarItems.Select(oi => new AlquilarItemsDTO(
+            var alquilerParaDetalle = new AlquileresParaDetalleDTO(
+                alquiler.Usuario.Nombre,
+                alquiler.Usuario.Apellidos,
+                alquiler.DireccionEnvio,
+                alquiler.FechaAlquiler,
+                alquiler.PrecioTotal,
+                alquiler.FechaInicio,
+                alquiler.FechaFin,
+                alquiler.AlquilarItems.Select(oi => new AlquilarItemsDTO(
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
                     oi.Cantidad
                 )).ToList()
+            );
 
-            )).ToList();
-
-            if (alquileresParaDetalle == null)
-            {
-                _logger.LogError("Error: No se encontraron alquileres.");
-                return NotFound();
-            }
-
-            return Ok(alquileresParaDetalleDTO);
+            return Ok(alquilerParaDetalle);
         }
 
         [HttpPost]
-        [Route("Crear-Alquiler")]
+        [Route("CrearAlquiler")]
         [ProducesResponseType(typeof(AlquileresParaDetalleDTO), 201)] // Created
         [ProducesResponseType(typeof(ValidationProblemDetails),400)] // Bad Request
         [ProducesResponseType(typeof(string), 409)] // Conflict
@@ -83,6 +83,10 @@ namespace AppForSEII2526.API.Controllers
             }
 
 
+            if (crearAlquilerDTO.Direccion == null || !crearAlquilerDTO.Direccion.StartsWith("Calle"))
+            {
+                ModelState.AddModelError(nameof(crearAlquilerDTO.Direccion), "¡Error! La dirección de envío debe empezar por la palabra Calle");
+            }
             if (crearAlquilerDTO.Items == null || !crearAlquilerDTO.Items.Any())
                 ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "El alquiler debe incluir al menos una herramienta.");
 
@@ -138,11 +142,15 @@ namespace AppForSEII2526.API.Controllers
                // Aplicar logica de negociooo (flujos alterrnativos) !!!!!
                 else
                 {
+                    // calcula si necesitas el total en algún lado, pero no lo almacenes en AlquilarItem.Precio
+                    float precioTotal = itemDTO.HerramientaCantidad * herramienta.Precio;
+
                     var nuevoItem = new AlquilarItem(
-                        nuevoAlquiler.PrecioTotal,
+                        herramienta.Precio,               // <-- usar precio unitario
                         itemDTO.HerramientaCantidad,
                         nuevoAlquiler,
                         herramienta);
+
                     nuevoAlquiler.AlquilarItems.Add(nuevoItem);
                 }
             }

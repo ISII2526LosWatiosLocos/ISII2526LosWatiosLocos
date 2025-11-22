@@ -5,6 +5,52 @@ using AppForSEII2526.API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
+/*
+Sistema 1. Ferretería: Caso de uso 1. Comprar herramientas
+
+Flujo Básico:
+    1. El cliente selecciona Comprar Herramientas en el menú principal.
+    2. El Sistema muestra la lista de herramientas disponibles para comprar, indicando su NOMBRE, MATERIAL, FABRICANTE y PRECIO.    [GET]
+    3. El cliente selecciona las herramientas que desea comprar, y estas se añaden al carrito de compras, actualizando el precio 
+    total de acuerdo con el precio de compra de las herramientas seleccionadas.
+    4. El cliente selecciona Comprar Herramientas.
+    5. El sistema muestra la lista de herramientas seleccionadas incluyendo su NOMBRE, MATERIAL y PRECIO, y pide al cliente que     [POST]
+    introduzca su NOMBRE, APELLIDOS, DIRECCIÓN DE ENVÍO y MÉTODO DE PAGO (tarjeta de crédito, PayPal o metálico), siendo todos
+    ellos campos obligatorios, y de manera opcional un NÚMERO DE TELÉFONO y CORREO ELECTRÓNICO. De forma obligatoria, para cada
+    herramienta seleccionada se pedirá la CANTIDAD a comprar y una breve DESCRIPCIÓN.
+    6. El cliente rellena los datos y elige la opción Guardar.
+    7. El sistema muestra la compra realizada, indicando los datos del cliente (NOMBRE y APELLIDOS), DIRECCIÓN DE ENVÍO, su         [DETAIL]
+    PRECIO TOTAL, FECHA DE COMPRA y las herramientas compradas (NOMBRE, MATERIAL, PRECIO, DESCRIPCIÓN y CANTIDAD).
+
+Flujo Alternativo 0 - al Paso 2:
+    Si el sistema detecta que no hay herramientas disponibles para comprar se lo notificará al usuario.
+
+Flujo Alternativo 1 - al Paso 2:
+    1.1 El sistema ofrece al cliente la posibilidad de filtrar las herramientas por material y/o precio.
+    1.2 El cliente fija los filtros que le interesan.
+    1.3 El sistema muestra sólo las herramientas que cumplen los criterios de los filtros.
+
+Flujo Alternativo 2 - al Paso 5:                                                                                            [SPRINT 3]
+    El cliente elige modificar el carrito de compras para borrar aquellas herramientas que no le interesan. Automáticamente,
+    el sistema actualiza el precio total del contenido del carrito de acuerdo con el precio de compra de las herramientas seleccionadas.
+
+Flujo Alternativo 3 - al Paso 4:
+    Si el sistema detecta que no hay en el carrito ninguna herramienta para comprar, la opción para continuar el proceso no estará activa.
+
+Flujo Alternativo 4 - al Paso 6:
+    Si el sistema detecta que algún dato obligatorio no se ha rellenado, notificará al usuario y volverá al paso 5.
+
+Flujo Alternativo 5 - al Paso 6:
+    Si el sistema detecta que la cantidad que el usuario desea comprar de cualquier herramienta es 0, la opción de continuar el proceso no estará activa.
+
+Flujo Alternativo 6 - al Paso 7:
+    El sistema detecta que no hay cantidad suficiente de herramientas, informa al usuario del problema y muestra otra vez la vista de
+    selección de herramientas volviendo al paso 4.
+
+Precondición:
+    El usuario debe estar conectado como Cliente para iniciar el caso de uso.
+ */
+
 namespace AppForSEII2526.API.Controllers
 {
     [Route("api/[controller]")]
@@ -23,54 +69,73 @@ namespace AppForSEII2526.API.Controllers
             _logger = logger;
         }
 
+        /*
+        Flujo Básico:
+            6. El cliente rellena los datos y elige la opción Guardar.
+            7. El sistema muestra la compra realizada, indicando los datos del cliente (NOMBRE y APELLIDOS), DIRECCIÓN DE ENVÍO, su         [DETAIL]
+               PRECIO TOTAL, FECHA DE COMPRA y las herramientas compradas (NOMBRE, MATERIAL, PRECIO, DESCRIPCIÓN y CANTIDAD).
+        */
+
         [HttpGet]
-        [Route("Detalle-Compra")]
+        [Route("DetalleCompra")]
         // El tipo de respuesta es una lista de ComprasParaDetalleDTO
         [ProducesResponseType(typeof(IList<ComprasParaDetalleDTO>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetDetalleHerramientasParaCompra()
+        public async Task<IActionResult> GetDetalleHerramientasParaCompra(int id)
         {
             if (_context.Compras == null)
             {
-                _logger.LogError("Error: La tabla no existe.");
+                _logger.LogError("Error: La tabla Compras no existe en el DbContext.");
                 return NotFound();
             }
-            var comprasParaDetalle = await _context.Compras
+
+            var compra = await _context.Compras // Busca en todas las compras
                 .Include(o => o.MetodoPago)
                 .Include(o => o.Usuario)
                 .Include(o => o.CompraItems)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
-                .ToListAsync();
+                .FirstOrDefaultAsync(o => o.Id == id); // Toma solo la del id que le pasamos
 
+            if (compra == null)
+            {
+                _logger.LogInformation("No se encontró la compra con id {Id}", id);
+                return NotFound();
+            }
 
-            var comprasParaDetalleDTO = comprasParaDetalle.Select(o => new ComprasParaDetalleDTO(
-                o.Usuario.Nombre,
-                o.Usuario.Apellidos,
-                o.DireccionEnvio,
-                o.PrecioTotal,
-                o.FechaCompra,
-                o.CompraItems.Select(oi => new CompraItemsDTO(
+            var compraDto = new ComprasParaDetalleDTO( // Construye el DTO
+                compra.Usuario?.Nombre ?? string.Empty, // las interrogaciones y el string.Empty son por si el usuario es NULL
+                compra.Usuario?.Apellidos ?? string.Empty,
+                compra.DireccionEnvio,
+                compra.PrecioTotal,
+                compra.FechaCompra,
+                compra.CompraItems.Select(oi => new CompraItemsDTO(
                     oi.Herramienta.Id,
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
                     oi.Descripcion,
-                    oi.Cantidad
+                    oi.Cantidad,
+                    oi.Herramienta.Stock
                 )).ToList()
+            );
 
-            )).ToList();
-
-            if (comprasParaDetalle == null)
-            {
-                _logger.LogError("Error: No se encontraron compras.");
-                return NotFound();
-            }
-
-            return Ok(comprasParaDetalleDTO);
+            return Ok(compraDto); // Devuelve el DTO
         }
+
+        /*
+         Flujo Básico:
+            3. El cliente selecciona las herramientas que desea comprar, y estas se añaden al carrito de compras, actualizando el precio 
+               total de acuerdo con el precio de compra de las herramientas seleccionadas.
+            4. El cliente selecciona Comprar Herramientas.
+            5. El sistema muestra la lista de herramientas seleccionadas incluyendo su NOMBRE, MATERIAL y PRECIO, y pide al cliente que     [POST]
+               introduzca su NOMBRE, APELLIDOS, DIRECCIÓN DE ENVÍO y MÉTODO DE PAGO (tarjeta de crédito, PayPal o metálico), siendo todos
+               ellos campos obligatorios, y de manera opcional un NÚMERO DE TELÉFONO y CORREO ELECTRÓNICO. De forma obligatoria, para cada
+               herramienta seleccionada se pedirá la CANTIDAD a comprar y una breve DESCRIPCIÓN.
+        */
+
         [HttpPost]
-        [Route("Crear-Compra")]
+        [Route("CrearCompra")]
         [ProducesResponseType(typeof(ComprasParaDetalleDTO), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
@@ -85,7 +150,8 @@ namespace AppForSEII2526.API.Controllers
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
-            // --- 2. VALIDAR ENTIDADES RELACIONADAS (Patrón del ejemplo) ---
+
+            // --- 2. VALIDAR ENTIDADES RELACIONADAS (Patrón del ejemplo) --- (Cubro el flujo alternativo 4)
 
             // a. Buscar Método de Pago
             var metodoPago = await _context.MetodosPagos.FindAsync(CrearCompraDTO.MetodoPagoId);
@@ -94,24 +160,26 @@ namespace AppForSEII2526.API.Controllers
 
             // b. Buscar Usuario
             var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos);
-            if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El Usuario {CrearCompraDTO.Nombre} {CrearCompraDTO.Apellidos} no existe.");
+            if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El usuario no existe.");
 
-            // c. Validar items del dto (que no tengan valores imposibles)
+            // c. Validar items del DTO (que no tengan valores imposibles)
+            // Solo comprobación estructural mínima aquí: existencia de la lista y validación básica del IdHerramienta.
+            // Las validaciones dependientes del nombre de la herramienta (descripción / cantidad) se hacen
+            // dentro del bucle principal donde ya tenemos la herramienta cargada y su nombre.
             if (CrearCompraDTO.Items == null || !CrearCompraDTO.Items.Any())
-                ModelState.AddModelError(nameof(CrearCompraDTO.Items), "La compra debe incluir al menos una herramienta.");
+                ModelState.AddModelError(nameof(CrearCompraDTO.Items), "La compra debe incluir al menos una herramienta."); // Cubro el flujo alternativo 3
 
+            // Validación básica de IdHerramienta (sigue interesando para ciertos tests)
             foreach (var itemDto in CrearCompraDTO.Items)
             {
                 if (itemDto.IdHerramienta <= 0)
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"IdHerramienta inválido: {itemDto.IdHerramienta}.");
-
-                if (itemDto.CantidadHerramienta <= 0)
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La cantidad para la IdHerramienta {itemDto.IdHerramienta} debe ser mayor que 0.");
             }
 
             // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
+
 
             // --- 3. CONSULTA ÚNICA (Patrón del ejemplo) ---
 
@@ -136,31 +204,104 @@ namespace AppForSEII2526.API.Controllers
                 Usuario = Usuario
             };
 
-            // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
-            foreach (var itemDTO in CrearCompraDTO.Items)
-            {
-                // Buscar la herramienta en la lista local (el Diccionario)
-                if (!herramientasEnDB.TryGetValue(itemDTO.IdHerramienta, out var herramienta))
-                {
-                    // La herramienta no se encontró en nuestra consulta
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {itemDTO.IdHerramienta} no existe.");
-                }
-                else
-                {
-                    // Todo correcto para este item
+            // --- PRE-CHECK: cantidades totales solicitadas por herramienta (una sola vez) ---
+            // Construimos un diccionario IdHerramienta -> cantidad total solicitada en el DTO
+            var cantidadesSolicitadasPorHerramienta = CrearCompraDTO.Items
+                .GroupBy(i => i.IdHerramienta)
+                .ToDictionary(g => g.Key, g => g.Sum(i => i.CantidadHerramienta));
 
-                    var nuevoItem = new CompraItem
-                    {
-                        Herramienta = herramienta,
-                        Compra = nuevaCompra,
-                        Cantidad = itemDTO.CantidadHerramienta,
-                        Descripcion = itemDTO.DescripcionHerramienta,
-                    };
-                    nuevaCompra.CompraItems.Add(nuevoItem);
+            // Validar existencia de ids y stock agregado antes de crear items
+            foreach (var kvp in cantidadesSolicitadasPorHerramienta)
+            {
+                var idHerr = kvp.Key;
+                var totalSolicitado = kvp.Value;
+
+                if (!herramientasEnDB.TryGetValue(idHerr, out var herr))
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {idHerr} no existe.");
+                    continue;
+                }
+
+                if (herr.Stock < totalSolicitado)
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items),
+                        $"La herramienta {herr.Nombre} tiene stock insuficiente: {herr.Stock} < {totalSolicitado}."); // Cubro el flujo alternativo 6
                 }
             }
 
-            // --- 6. CALCULO PRECIOTOTAL ---
+            // Si hay errores tempranos, devolver sin modificar nada
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+
+            // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
+            // Construimos los CompraItem validando solo los campos dependientes del item
+            // (descripción, cantidad negativa/cero). Las validaciones globales de existencia
+            // y stock por herramienta se hicieron previamente en el "pre-check" usando
+            // cantidadesSolicitadasPorHerramienta, por lo que aquí evitamos repetirlas.
+
+            foreach (var itemDTO in CrearCompraDTO.Items)
+            {
+                // Seguridad: comprobación de existencia rápida (debería pasar por el pre-check).
+                // La dejamos como guardia pero sin añadir mensajes duplicados si ya se detectó arriba.
+                if (!herramientasEnDB.TryGetValue(itemDTO.IdHerramienta, out var herramienta))
+                {
+                    // Si el pre-check ya añadió el error, este mensaje será redundante;
+                    // pero por si acaso lo dejamos aquí para evitar una NullReferenceException más abajo.
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {itemDTO.IdHerramienta} no existe.");
+                    continue;
+                }
+
+                bool itemTieneError = false;
+
+                // MODIFICACIÓN
+                if (string.IsNullOrWhiteSpace(itemDTO.DescripcionHerramienta) && (itemDTO.CantidadHerramienta == 3))
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"¡Error! Estás comprando demasiadas herramientas sin descripción.");
+                    itemTieneError = true;
+                }
+                else
+                {
+                    // a) descripción no nula (mensaje que esperan los tests)
+                    if (string.IsNullOrWhiteSpace(itemDTO.DescripcionHerramienta))
+                    {
+                        ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} no tiene descipción.");
+                        itemTieneError = true;
+                    }
+                }
+
+                // b) cantidad cero o negativa (mensajes distintos) (cubro el flujo alternativo 5)
+                if (itemDTO.CantidadHerramienta == 0)
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} tiene cantidad cero.");
+                    itemTieneError = true;
+                }
+                else if (itemDTO.CantidadHerramienta < 0)
+                {
+                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La herramienta {herramienta.Nombre} tiene cantidad negativa.");
+                    itemTieneError = true;
+                }
+
+                // Nota: NO volvemos a comprobar aquí el stock global por herramienta ni iteramos
+                // sobre cantidadesSolicitadasPorHerramienta porque eso ya se hizo en el PRE-CHECK.
+                // Repetir esa validación aquí produciría mensajes duplicados y trabajo innecesario.
+
+                if (itemTieneError)
+                    continue; // No añadimos este item si tiene errores individuales
+
+                // Si llegamos aquí, el item es válido: lo añadimos a la nueva compra
+                var nuevoItem = new CompraItem
+                {
+                    Herramienta = herramienta,
+                    Compra = nuevaCompra,
+                    Cantidad = itemDTO.CantidadHerramienta,
+                    Descripcion = itemDTO.DescripcionHerramienta,
+                };
+                nuevaCompra.CompraItems.Add(nuevoItem);
+            }
+
+
+            // --- 6. CALCULO DEL PRECIO TOTAL ---
             // convertimos a float solo por compatibilidad con el modelo, aunque decimal sería más adecuado
             // dos decimales para moneda (2)
             // opción recomendada para cálculos financieros (MidpointRounding.AwayFromZero)
@@ -172,12 +313,33 @@ namespace AppForSEII2526.API.Controllers
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
-            // --- 8. GUARDADO ÚNICO (Patrón del ejemplo) ---
+
+            // 8. ACTUALIZAR STOCK EN LAS ENTIDADES TRACKED POR EF
+            // cantidadesSolicitadasPorHerramienta ya fue calculado arriba (GroupBy -> ToDictionary)
+            foreach (var kvp in cantidadesSolicitadasPorHerramienta)
+            {
+                var idHerr = kvp.Key;
+                var totalSolicitado = kvp.Value;
+
+                if (herramientasEnDB.TryGetValue(idHerr, out var herr))
+                {
+                    // Ya validamos que herr.Stock >= totalSolicitado arriba, por lo que no quedará negativo
+                    herr.Stock -= totalSolicitado;
+                }
+            }
+
+
+            // --- 9. GUARDADO ÚNICO (Patrón del ejemplo) ---
             _context.Compras.Add(nuevaCompra);
 
             try
             {
                 await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException dbEx)
+            {
+                _logger.LogError(dbEx, "Concurrency error al guardar la compra (stock conflict).");
+                return Conflict("Conflicto al actualizar stock. Intente de nuevo.");
             }
             catch (Exception ex)
             {
@@ -185,7 +347,9 @@ namespace AppForSEII2526.API.Controllers
                 return Conflict($"Ocurrió un error al guardar la compra: {ex.Message}");
             }
 
-            // --- 9. RESPUESTA SIN RECARGAR (Patrón del ejemplo) ---
+
+
+            // --- 10. RESPUESTA SIN RECARGAR (Patrón del ejemplo) ---
             // Construimos el DTO de detalle con los objetos que ya tenemos
 
             var compraDTORespuesta = new ComprasParaDetalleDTO(
@@ -195,12 +359,18 @@ namespace AppForSEII2526.API.Controllers
                 nuevaCompra.PrecioTotal,
                 nuevaCompra.FechaCompra,
 
-                // Mapeamos los items desde los objetos en memoria
+                // Mapeamos los items desde los objetos en memoria incluyendo datos de la herramienta
                 nuevaCompra.CompraItems.Select(oi => new CompraItemsDTO(
-                    oi.Descripcion,
-                    oi.Cantidad
+                    oi.Herramienta.Id,         // IdHerramienta
+                    oi.Herramienta.Nombre,     // NombreHerramienta
+                    oi.Herramienta.Material,   // MaterialHerramienta
+                    oi.Herramienta.Precio,     // PrecioHerramienta (float)
+                    oi.Descripcion,            // DescripcionHerramienta
+                    oi.Cantidad,               // CantidadHerramienta
+                    oi.Herramienta.Stock       // StockHerramienta
                 )).ToList()
             );
+
 
             // Devolvemos el DTO de detalle
             return CreatedAtAction(

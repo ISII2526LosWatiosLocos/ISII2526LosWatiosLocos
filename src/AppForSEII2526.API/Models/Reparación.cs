@@ -24,7 +24,7 @@ namespace AppForSEII2526.API.Models
             [DataType(System.ComponentModel.DataAnnotations.DataType.Currency), Display(Name = "Precio Total")]
             public float PrecioTotal { get; set; }
 
-            [Required]
+           
             public MetodosPago MétodoPago { get; set; }
 
         
@@ -32,14 +32,16 @@ namespace AppForSEII2526.API.Models
         public List<ReparaciónItem> ReparaciónItems { get; set; }
         public ApplicationUser Usuario { get; set; }
 
-        public Reparación(DateOnly fechaEntrega, DateOnly fechaRecogida, float precioTotal, MetodosPago Metodopago,List<ReparaciónItem> reparaciónItems)
+        public Reparación(DateOnly fechaEntrega, DateOnly fechaRecogida, float precioTotal, MetodosPago Metodopago,List<ReparaciónItem> reparaciónItems, ApplicationUser usuario)
         {
             FechaEntrega = fechaEntrega;
             FechaRecogida = fechaRecogida;
             PrecioTotal = precioTotal;
             MétodoPago = Metodopago;
             ReparaciónItems = reparaciónItems;
-           
+            Usuario = usuario;
+
+
         }
 
         public Reparación(int id, DateOnly fechaEntrega, DateOnly fechaRecogida, float precioTotal, MetodosPago métodoPago, List<ReparaciónItem> reparaciónItems, ApplicationUser usuario)
@@ -50,7 +52,8 @@ namespace AppForSEII2526.API.Models
             PrecioTotal = precioTotal;
             MétodoPago = métodoPago;
             ReparaciónItems = reparaciónItems;
-         
+            Usuario = usuario;
+
         }
 
         public Reparación()
