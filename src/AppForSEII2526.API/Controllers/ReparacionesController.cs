@@ -98,18 +98,20 @@ namespace AppForSEII2526.API.Controllers
             if (Usuario == null) ModelState.AddModelError(nameof(reparacionCreate.Nombre), $"El Usuario {reparacionCreate.Nombre} {reparacionCreate.Apellidos} no existe.");
 
 
+
+
             // modifciación examen téléfono 
 
-            if (  ! Usuario.NumeroTelefono.StartsWith ("+34")) {
+            if (!reparacionCreate.telefono.StartsWith("+34"))
+            {
 
                 ModelState.AddModelError(nameof(Usuario.NumeroTelefono), "Error. El usuario debe de empezar por  +34 ");
-               
-
-
             }
 
-            // Si hay errores, retornar
-            if (ModelState.ErrorCount > 0)
+
+
+                // Si hay errores, retornar
+                if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
             // Hacer una sola llamada a la BBDD para traer todas las herramientas

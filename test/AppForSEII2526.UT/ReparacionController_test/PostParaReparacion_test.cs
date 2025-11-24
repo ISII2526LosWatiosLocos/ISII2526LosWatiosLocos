@@ -131,8 +131,8 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
                 telefono = "111222333",
-                FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(6)),
-                FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
+                FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
+                FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(4)),
                 ReparacionesItems = itemsBase
             };
 
