@@ -115,8 +115,7 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
                     oi.Descripcion,
-                    oi.Cantidad,
-                    oi.Herramienta.Stock
+                    oi.Cantidad
                 )).ToList()
             );
 
@@ -366,8 +365,7 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,   // MaterialHerramienta
                     oi.Herramienta.Precio,     // PrecioHerramienta (float)
                     oi.Descripcion,            // DescripcionHerramienta
-                    oi.Cantidad,               // CantidadHerramienta
-                    oi.Herramienta.Stock       // StockHerramienta
+                    oi.Cantidad                // CantidadHerramienta
                 )).ToList()
             );
 

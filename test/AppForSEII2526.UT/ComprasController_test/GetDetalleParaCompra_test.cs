@@ -132,8 +132,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 "Material - Herramientas1y2",
                 (float)10.99,
                 "Descripción - CompraItem1",
-                1, // Cantidad
-                1  // Stock
+                1 // Cantidad
             ));
 
             //Act
@@ -168,7 +167,6 @@ namespace AppForSEII2526.UT.ComprasController_test
             Assert.Equal(expectedItem.PrecioHerramienta, actualItem.PrecioHerramienta);
             Assert.Equal(expectedItem.DescripcionHerramienta, actualItem.DescripcionHerramienta);
             Assert.Equal(expectedItem.CantidadHerramienta, actualItem.CantidadHerramienta);
-            Assert.Equal(expectedItem.StockHerramienta, actualItem.StockHerramienta);
         }
     }
 }
