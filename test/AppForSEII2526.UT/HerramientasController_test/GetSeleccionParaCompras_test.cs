@@ -96,9 +96,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
             // Datos esperados
             var herramientasDTO = new List<HerramientasParaComprarDTO>()
             {
-                new HerramientasParaComprarDTO("Nombre - Herramienta1", "Material - Herramientas1y2", "Nombre - Fabricante1", 10.99f, 1),
-                new HerramientasParaComprarDTO("Nombre - Herramienta2", "Material - Herramientas1y2", "Nombre - Fabricante2", 2.99f, 2),
-                new HerramientasParaComprarDTO("Nombre - Herramienta3", "Material - Herramienta3", "Nombre - Fabricante2", 3.99f, 3)
+                new HerramientasParaComprarDTO("Nombre - Herramienta1", "Material - Herramientas1y2", "Nombre - Fabricante1", 10.99f),
+                new HerramientasParaComprarDTO("Nombre - Herramienta2", "Material - Herramientas1y2", "Nombre - Fabricante2", 2.99f),
+                new HerramientasParaComprarDTO("Nombre - Herramienta3", "Material - Herramienta3", "Nombre - Fabricante2", 3.99f)
             };
 
             // Casos de prueba (los defino, especificando qué herramientasDTO deben devolver según los filtros que defina acontinuación en allTest)

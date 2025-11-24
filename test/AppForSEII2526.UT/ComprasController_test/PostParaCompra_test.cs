@@ -97,8 +97,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -106,7 +105,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -115,7 +113,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    3,
                     3
                 )
             };
@@ -160,8 +157,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                              //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -169,7 +165,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -178,8 +173,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     null, // Descripción nula
-                    1, // Cantidad no igual a 3
-                    3
+                    1 // Cantidad no igual a 3
                 )
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
@@ -198,8 +192,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -207,7 +200,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -216,8 +208,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    0, // Cantidad cero
-                    3
+                    0 // Cantidad cero
                 )
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
@@ -236,8 +227,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -245,7 +235,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -254,8 +243,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    -3, // Cantidad negativa
-                    3
+                    -3 // Cantidad negativa
                 )
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
@@ -274,8 +262,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -283,7 +270,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -292,8 +278,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    4, // Cantidad mayor que Stock
-                    3
+                    4 // Cantidad mayor que Stock
                 )
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
@@ -312,8 +297,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -321,7 +305,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -330,7 +313,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    3,
                     3
                 ),
                 new CompraItemsDTO( // Duplico este item para que la Cantidad total sea 6 frente al Stock que sigue siendo 3
@@ -339,7 +321,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    3,
                     3
                 )
                 },
@@ -359,8 +340,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -368,7 +348,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -377,8 +356,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     null, // Descripción nula
-                    3, // Cantidad es igual a 3
-                    3
+                    3 // Cantidad es igual a 3
                 )
                 },
                 DireccionEnvio = "DireccionEnvio - Compra1"
@@ -445,8 +423,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -454,7 +431,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -463,7 +439,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    3,
                     3
                 )
             };
