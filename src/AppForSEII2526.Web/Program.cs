@@ -5,6 +5,7 @@ using AppForSEII2526.Web.Components;
 using AppForSEII2526.Web.Components.Account;
 using AppForSEII2526.Web.Data;
 using AppForSEII2526.Web.API;
+using AppForSEII2526.Web; // Using para los StateContainers
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +44,10 @@ string? URI2API = builder.Configuration.GetValue(typeof(string), "AppForHerramie
 builder.Services.AddScoped<AppForHerramientasAPIClient>(sp => new AppForHerramientasAPIClient(URI2API, new HttpClient()));
 
 
-
+//////////////////////////// AQUI VAN LOS STATECONTAINERS ////////////////////////////
+//adding an In-memory state container service
+//https://learn.microsoft.com/en-us/aspnet/core/blazor/state-management/?view=aspnetcore-8.0#in-memory-state-container-service
+builder.Services.AddScoped<CompraStateContainer>();
 
 var app = builder.Build();
 
