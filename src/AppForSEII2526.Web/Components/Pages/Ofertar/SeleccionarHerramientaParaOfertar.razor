@@ -1,17 +1,33 @@
 ﻿@page "/Ofertar/SeleccionarHerramientaParaOfertar"
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient ApiClient
+@inject ILogger<SeleccionarHerramientaParaOfertar> Logger
+
 <h3>Seleccionar Herramientas Para Ofertar</h3>
 
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" hidden="@hideErrors">
         <p>Aquí voy a mostrar los errores</p>
     </div>
     <div class="row">
         <div class="col-8">
             <div class="row">
                 <p>Aquí mostraré los filtros</p>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="buscarHerramientas">Buscar Herramientas</button>
+                </div>
             </div>
             <div class="row">
-                <p>Aquí mostraré la lista de herramientas</p>
+                @if (herramienta == null)
+                {
+                    <p>Loading herramientas....</p>
+                }
+                else
+                {
+                    <p>Numero de herramientas @herramienta.Count</p>
+
+                }
             </div>
         </div>
         <div class="col-2">
@@ -23,5 +39,24 @@
 </div>
 
 @code {
+    private ICollection<HerramientasParaOfertarDTO> herramienta;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private string nombreFabricante { get; set; }
+    private float precio { get; set; }
 
+    public async void BuscarHerramientas()
+    {
+        try
+        {
+            herramienta = await ApiClient.GetHerramientasParaOfertaAsync(nombreFabricante, precio);
+
+        }
+        catch (ApiException ex)
+        {
+            Logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+        StateHasChanged();
+    }
 }
