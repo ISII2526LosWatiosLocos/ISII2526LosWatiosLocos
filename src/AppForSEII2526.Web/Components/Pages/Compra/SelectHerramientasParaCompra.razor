@@ -36,7 +36,29 @@
                 }
                 else
                 {
-                    <p>number of herramientas @herramientas.Count</p>
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfCompras">
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Precio</th>
+                                    <th>Compra</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var herramientas in herramientas)
+                                {
+                                    <tr nombre="HerramientaData_@herramientas.Nombre">
+                                        <td>@herramientas.Material</td>
+                                        <td>@herramientas.Precio</td>
+                                        <td>
+                                            <button class="btn btn-outline-secondary" nombre="herramientaParaComprar_@herramientas.Nombre" @onclick="@(() => AñadirHerramienta(herramientas))">Add</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 }
             </div>
         </div>
@@ -55,9 +77,9 @@
     private float filtroPrecio { get; set; }
     private CrearCompraDTO compra => compraState.Compra;
     private bool hiddenRentingCart = true;
-    private void AddMovie(HerramientasParaComprarDTO movie)
+    private void AñadirHerramienta(HerramientasParaComprarDTO herramienta)
     {
-        compraState.AñadirHerramientaAlCarroDeCompra(movie);
+        compraState.AñadirHerramientaAlCarroDeCompra(herramienta);
     }
     private void RemoveRentalItem(CompraItemsDTO item)
     {
