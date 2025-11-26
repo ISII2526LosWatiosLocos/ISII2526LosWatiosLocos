@@ -8,6 +8,17 @@
 
 @attribute [Authorize]
 
+
+@if (oferta == null)
+{
+    <p>@error</p>
+}
+else
+{
+
+
+}
+
 @code {
     [Parameter]
     [SupplyParameterFromQuery]
@@ -17,6 +28,8 @@
 
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
+
+
 
     protected override async Task OnInitializedAsync()
     {
