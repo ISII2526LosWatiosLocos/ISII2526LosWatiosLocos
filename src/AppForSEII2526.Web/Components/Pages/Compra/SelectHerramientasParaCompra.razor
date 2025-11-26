@@ -4,6 +4,7 @@
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<SelectHerramientasParaCompra> logger
 @inject CompraStateContainer compraState
+@inject NavigationManager navigation
 
 <h3>Select Herramientas Para Compra</h3>
 <div class="container-fluid">
@@ -15,14 +16,14 @@
             <div class="row">
                 <div class="col">
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Title</span>
-                        <input type="text" id="inputTitle" @bind=filtroMaterial class="form-control" placeholder="Material" aria-label="Material" aria-describedby="basic-addon1">
+                        <span class="input-group-text" id="basic-addon1">Material</span>
+                        <input type="text" id="inputMaterial" @bind=filtroMaterial class="form-control" placeholder="Material" aria-label="Material" aria-describedby="basic-addon1">
                     </div>
                 </div>
                 <div class="col">
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Genre</span>
-                        <input type="text" id="inputGenre" @bind=filtroPrecio class="form-control" placeholder="Precio" aria-label="Precio" aria-describedby="basic-addon1">
+                        <span class="input-group-text" id="basic-addon1">Precio</span>
+                        <input type="text" id="inputPrecio" @bind=filtroPrecio class="form-control" placeholder="Precio" aria-label="Precio" aria-describedby="basic-addon1">
                     </div>
                 </div>
                 <div class="col">
@@ -48,11 +49,11 @@
                             <tbody>
                                 @foreach (var herramientas in herramientas)
                                 {
-                                    <tr nombre="HerramientaData_@herramientas.Nombre">
+                                    <tr id="HerramientaData_@herramientas.Nombre">
                                         <td>@herramientas.Material</td>
                                         <td>@herramientas.Precio</td>
                                         <td>
-                                            <button class="btn btn-outline-secondary" nombre="herramientaParaComprar_@herramientas.Nombre" @onclick="@(() => AñadirHerramienta(herramientas))">Add</button>
+                                            <button class="btn btn-outline-secondary" id="herramientaParaComprar_@herramientas.Nombre" @onclick="@(() => AñadirHerramienta(herramientas))">Add</button>
                                         </td>
                                     </tr>
                                 }
@@ -62,14 +63,26 @@
                 }
             </div>
         </div>
-        <div class="col-2">
-            <p>here i will show the compras cart</p>
+        <div class="col-2" hidden="@hideRentingCart">
+            <div class="row">
+                <h3>Shopping Cart</h3>
+            </div>
+            @foreach (CompraItemsDTO item in compra.Items)
+            {
+                <div class="row">
+                    <button type="button" class="btn btn-light" id="quitarHerramienta_@item.NombreHerramienta" @onclick="@(() => QuitarItemDelCarroDeCompra(item))">x @item.NombreHerramienta - @item.PrecioHerramienta€</button>
+                </div>
+            }
+            <div class="row">
+                <button type="button" class="btn btn-primary" id="purchaseHerramientaButton" @onclick=@ComprarHerramientas>Comprar herramientas</button>
+            </div>
         </div>
     </div>
 
 </div>
 
 @code {
+    private bool hideRentingCart { get { return compra.Items.Count == 0; } }
     private ICollection<HerramientasParaComprarDTO> herramientas;
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
@@ -81,7 +94,7 @@
     {
         compraState.AñadirHerramientaAlCarroDeCompra(herramienta);
     }
-    private void RemoveRentalItem(CompraItemsDTO item)
+    private void QuitarItemDelCarroDeCompra(CompraItemsDTO item)
     {
         compraState.QuitarItemDelCarroDeCompra(item);
         if (compra.Items.Count == 0) hiddenRentingCart = true;
@@ -108,6 +121,11 @@
         BuscarHerramientas();
         return base.OnInitializedAsync();
 
+    }
+
+    private void ComprarHerramientas()
+    {
+        navigation.NavigateTo("/Compra/CrearCompra");
     }
 
 }
