@@ -31,20 +31,14 @@ namespace AppForSEII2526.Web
 
         private void NotifyStateChanged() => OnChange?.Invoke();
 
-
-        // PREGUNTARLE A NOELIA SI HAY QUE HACER ALGUNA COMPROBACIÓN,
-        // ADEMÁS DE DONDE TENGO QUE SACAR EL RESTO DE ATRIBUTOS QUE ESPERA UN CompraItemsDTO QUE HerramientasParaComprarDTO NO DA
         public void AñadirHerramientaAlCarroDeCompra(HerramientasParaComprarDTO herramienta)
         {
             // Aquí se pueden hacer comprobaciones adicionales antes de meter los items al carro, pero por ahora no hago ninguna
             Compra.Items.Add(new CompraItemsDTO()
                 {
-                // IdHerramienta = idHerramienta;
                 NombreHerramienta = herramienta.Nombre,
                 MaterialHerramienta = herramienta.Material,
                 PrecioHerramienta = herramienta.Precio
-                // DescripcionHerramienta = descripcionHerramienta;
-                // CantidadHerramienta = cantidadHerramienta;
             }
             );
 
