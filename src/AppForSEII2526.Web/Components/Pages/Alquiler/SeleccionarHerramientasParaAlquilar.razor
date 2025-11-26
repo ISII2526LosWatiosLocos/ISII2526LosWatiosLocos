@@ -1,18 +1,34 @@
 ﻿@page "/Alquiler/SeleccionarHerramientasParaAlquilar"
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<SeleccionarHerramientasParaAlquilar> logger
+
 <h3>SeleccionarHerramientasParaAlquilar</h3>
 <div class="container-fluid">
 
 
-    <div class="row">
+    <div class="row" hidden="@hideErrors">
         <p>Aquí mostraré los errores</p>
     </div>
     <div class="row">
         <div class="col-8">
             <div class="row">
                 <p>Aquí mostraré los filtros</p>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@BuscarHeramientas id="buscarHerramientas">Buscar herramientas</button>
+                </div>
             </div>
             <div class="row">
                 <p>Aquí mostraré la lista de herramientas</p>
+                @if (herramientas == null)
+                {
+                    <p>Cargando herramientas...</p>
+                }
+                else
+                {
+                    <p>Número de herramientas: @herramientas.Count</p>
+                }
             </div>
         </div>
         <div class="col-2">
@@ -22,5 +38,22 @@
 </div>
 
 @code {
-
+    private ICollection<HerramientasParaAlquilarDTO> herramientas;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private string nombre { get; set; }
+    private string material { get; set; }
+    public async void BuscarHeramientas()
+    {
+        try
+        {
+            herramientas = await apiclient.GetHerramientasParaAlquilerAsync(nombre,material);
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error al conectarse al sistema";
+        }
+        StateHasChanged();
+    }
 }
