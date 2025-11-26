@@ -1,14 +1,56 @@
-﻿<h3>DetalleOferta</h3>
+﻿@page "/Ofertar/DetalleOferta"
 
 @using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+@inject AppForHerramientasAPIClient apiclient
+
+<h3>Detalle Oferta</h3>
+
+@attribute [Authorize]
 
 @code {
     [Parameter]
     [SupplyParameterFromQuery]
     public int OfertaID { get; set; }
-    private OfertasParaDetalleDTO oferta;
+    private ICollection<OfertasParaDetalleDTO> oferta;
     private string error = "";
 
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        //we check the user is logged in
+        string userName = "";
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            //we retrieve the id of the user logged in
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("Admin"))
+                {
+                    userName = user.Identity.Name;
+                }
+            }
+        }
+
+        try
+        {
+            oferta = await apiclient.GetDetalleHerramientasParaOfertaAsync(OfertaID);
+        }
+        catch (ApiException exception)
+        {
+            oferta = null;
+        }
+        if ((oferta == null) || (oferta.First().NombreUsuario != userName))
+        {
+            error = $"Error! You are not authorized to see this rental or there is not a rental with id={OfertaID}";
+        }
+
+
+    }
 }
