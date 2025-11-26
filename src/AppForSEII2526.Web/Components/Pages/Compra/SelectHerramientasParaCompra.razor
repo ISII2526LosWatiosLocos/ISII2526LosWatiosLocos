@@ -12,13 +12,23 @@
     <div class="row">
         <div class="col-8">
             <div class="row">
-                <p>here i will show the filters</p>
                 <div class="col">
-                    <button type="button" class="btn btn-primary" @onclick=@SearchHerramientas id="searchHerramientas">Search herramientas</button>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Title</span>
+                        <input type="text" id="inputTitle" @bind=filtroMaterial class="form-control" placeholder="Material" aria-label="Material" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Genre</span>
+                        <input type="text" id="inputGenre" @bind=filtroPrecio class="form-control" placeholder="Precio" aria-label="Precio" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="searchHerramientas">Search herramientas</button>
                 </div>
             </div>
             <div class="row">
-                <p>here i will show the list of herramientas</p>
                 @if (herramientas == null)
                 {
                     <p>Loading herramientas....</p>
@@ -42,7 +52,7 @@
     private string errors = "";
     private string filtroMaterial { get; set; }
     private float filtroPrecio { get; set; }
-    public async void SearchHerramientas()
+    public async void BuscarHerramientas()
     {
         try
         {
@@ -54,6 +64,14 @@
             errors = "Error while connecting to the system";
         }
         StateHasChanged();
+
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+
+        BuscarHerramientas();
+        return base.OnInitializedAsync();
 
     }
 
