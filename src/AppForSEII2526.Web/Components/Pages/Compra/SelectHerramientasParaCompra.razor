@@ -3,6 +3,7 @@
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<SelectHerramientasParaCompra> logger
+@inject CompraStateContainer compraState
 
 <h3>Select Herramientas Para Compra</h3>
 <div class="container-fluid">
@@ -52,6 +53,18 @@
     private string errors = "";
     private string filtroMaterial { get; set; }
     private float filtroPrecio { get; set; }
+    private CrearCompraDTO compra => compraState.Compra;
+    private bool hiddenRentingCart = true;
+    private void AddMovie(HerramientasParaComprarDTO movie)
+    {
+        compraState.AñadirHerramientaAlCarroDeCompra(movie);
+    }
+    private void RemoveRentalItem(CompraItemsDTO item)
+    {
+        compraState.QuitarItemDelCarroDeCompra(item);
+        if (compra.Items.Count == 0) hiddenRentingCart = true;
+    }
+
     public async void BuscarHerramientas()
     {
         try
