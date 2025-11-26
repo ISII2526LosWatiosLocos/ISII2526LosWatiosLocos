@@ -18,7 +18,7 @@ namespace AppForSEII2526.Web
     public class OfertaStateContainer
     {
         // Instancia principal del DTO que se enviará al final
-        public CrearOfertaDTO Oferta { get; private set; } = new CrearOfertaDTO();
+        public CrearOfertaDTO Oferta { get; private set; } = new CrearOfertaDTO { Items = new List<CrearOfertaItemDTO>()};
 
         // Lista enriquecida para usar en la Interfaz (Blazor). 
         // Usamos esta lista en el foreach de la tabla HTML.
