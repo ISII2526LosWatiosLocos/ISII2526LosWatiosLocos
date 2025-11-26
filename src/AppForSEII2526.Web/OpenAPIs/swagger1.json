@@ -1083,6 +1083,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "telefono": {
+            "type": "string",
+            "nullable": true
+          },
           "reparacionesItems": {
             "type": "array",
             "items": {
@@ -1158,6 +1162,10 @@
       "HerramientasParaOfertarDTO": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "nombre": {
             "type": "string",
             "nullable": true
@@ -1291,7 +1299,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "ReparacionesDTO": {
         "type": "object",
@@ -1387,7 +1395,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       }
     }
   }
