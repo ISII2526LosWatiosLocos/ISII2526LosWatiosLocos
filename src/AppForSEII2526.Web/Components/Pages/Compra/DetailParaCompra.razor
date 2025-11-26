@@ -1,0 +1,99 @@
+﻿@page "/Compra/DetailParaCompra"
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<SelectHerramientasParaCompra> logger
+@inject CompraStateContainer compraState
+@inject NavigationManager navigation
+
+<h3>DetalleParaCompra</h3>
+<div class="container-fluid">
+    <div class="row" hidden="@hideErrors">
+        <p>here i will show the errors</p>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">IdCompra</span>
+                        <input type="text" id="IdCompra" @bind=IdCompra class="form-control" placeholder="IdCompra" aria-label="IdCompra" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@BuscarCompra id="searchCompra">Buscar compra</button>
+                </div>
+            </div>
+            <div class="row">
+                @if (compra == null)
+                {
+                    <p>Loading compra...</p>
+                }
+                else
+                {
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfCompras">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Apellidos</th>
+                                    <th>Dirección</th>
+                                    <th>PrecioTotal</th>
+                                    <th>FechaCompra</th>
+                                    <th>Items</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in compra) // flexibilidad por si luego piden modificar y mostrar varias compras
+                                {
+                                    <tr id="CompraData_@c.Nombre">
+                                        <th>@c.Nombre</th>
+                                        <th>@c.Apellidos</th>
+                                        <th>@c.DireccionEnvio</th>
+                                        <th>@c.PrecioTotal</th>
+                                        <th>@c.FechaCompra</th>
+                                        <th>@c.Items</th>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    // la compra es solo una, por lo que no tiene mucho sentido que sea una colección (ICollection),
+    // sin embargo, lo voy a dejar así por no complicar el código y para que haya más flexibilidad
+    private ICollection<ComprasParaDetalleDTO> compra;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private int IdCompra { get; set; }
+
+    public async void BuscarCompra()
+    {
+        try
+        {
+            compra = await apiclient.GetDetalleHerramientasParaCompraAsync(IdCompra);
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+        StateHasChanged();
+
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+
+        BuscarCompra();
+        return base.OnInitializedAsync();
+
+    }
+
+}
