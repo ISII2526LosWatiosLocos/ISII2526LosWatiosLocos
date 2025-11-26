@@ -14,7 +14,19 @@
     <div class="row">
         <div class="col-8">
             <div class="row">
-                <p>Aquí mostraré los filtros</p>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">NombreHerramienta</span>
+                        <input type="text" id="inputNombreHeramienta" @bind=nombre class="form-control" placeholder="Nombre" aria-label="Title" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">MaterialHerramienta</span>
+                        <input type="text" id="inputMaterialHerramienta" @bind=material class="form-control" placeholder="Material" aria-label="Genre" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+               
                 <div class="col">
                     <button type="button" class="btn btn-primary" @onclick=@BuscarHeramientas id="buscarHerramientas">Buscar herramientas</button>
                 </div>
