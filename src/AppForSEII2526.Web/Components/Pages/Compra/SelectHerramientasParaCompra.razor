@@ -1,25 +1,60 @@
 ﻿@page "/Compra/SelectHerramientasParaCompra"
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<SelectHerramientasParaCompra> logger
+
 <h3>Select Herramientas Para Compra</h3>
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" hidden="@hideErrors">
         <p>here i will show the errors</p>
     </div>
     <div class="row">
         <div class="col-8">
             <div class="row">
                 <p>here i will show the filters</p>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@SearchHerramientas id="searchHerramientas">Search herramientas</button>
+                </div>
             </div>
             <div class="row">
-                <p>here i will show the list of movies</p>
+                <p>here i will show the list of herramientas</p>
+                @if (herramientas == null)
+                {
+                    <p>Loading herramientas....</p>
+                }
+                else
+                {
+                    <p>number of herramientas @herramientas.Count</p>
+                }
             </div>
         </div>
         <div class="col-2">
-            <p>here i will show the renting cart</p>
+            <p>here i will show the compras cart</p>
         </div>
     </div>
 
 </div>
 
 @code {
+    private ICollection<HerramientasParaComprarDTO> herramientas;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private string filtroMaterial { get; set; }
+    private float filtroPrecio { get; set; }
+    public async void SearchHerramientas()
+    {
+        try
+        {
+            herramientas = await apiclient.GetHerramientasParaCompraAsync(filtroMaterial, filtroPrecio);
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+        StateHasChanged();
+
+    }
 
 }
