@@ -87,7 +87,7 @@
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
     private string filtroMaterial { get; set; }
-    private float filtroPrecio { get; set; }
+    private float? filtroPrecio { get; set; }
     private CrearCompraDTO compra => compraState.Compra;
     private bool hiddenRentingCart = true;
     private void AñadirHerramienta(HerramientasParaComprarDTO herramienta)
