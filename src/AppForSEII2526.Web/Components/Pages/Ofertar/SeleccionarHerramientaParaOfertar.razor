@@ -13,7 +13,19 @@
     <div class="row">
         <div class="col-8">
             <div class="row">
-                <p>Aquí mostraré los filtros</p>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Nombre Fabricante</span>
+                        <input type="text" id="inputTitle" @bind=nombreFabricante class="form-control" placeholder="Title" aria-label="Title" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Precio</span>
+                        <input type="text" id="inputGenre" @bind=precio class="form-control" placeholder="Genre" aria-label="Genre" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+
                 <div class="col">
                     <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="buscarHerramientas">Buscar Herramientas</button>
                 </div>
@@ -45,6 +57,7 @@
     private string nombreFabricante { get; set; }
     private float precio { get; set; }
 
+
     public async void BuscarHerramientas()
     {
         try
@@ -58,5 +71,14 @@
             errors = "Error while connecting to the system";
         }
         StateHasChanged();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        
+
+        BuscarHerramientas();
+
+        return base.OnInitializedAsync();
     }
 }
