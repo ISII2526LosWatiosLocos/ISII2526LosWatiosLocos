@@ -46,7 +46,10 @@ builder.Services.AddScoped<AppForHerramientasAPIClient>(sp => new AppForHerramie
 builder.Services.AddScoped<OfertaStateContainer>();
 
 
-
+//////////////////////////// AQUI VAN LOS STATECONTAINERS ////////////////////////////
+//adding an In-memory state container service
+//https://learn.microsoft.com/en-us/aspnet/core/blazor/state-management/?view=aspnetcore-8.0#in-memory-state-container-service
+builder.Services.AddScoped<CompraStateContainer>();
 
 var app = builder.Build();
 
