@@ -17,13 +17,13 @@
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Nombre Fabricante</span>
-                        <input type="text" id="inputTitle" @bind=nombreFabricante class="form-control" placeholder="Title" aria-label="Title" aria-describedby="basic-addon1">
+                        <input type="text" id="inputTitle" @bind=nombreFabricante class="form-control" placeholder="Nombre Fabricante" aria-label="Title" aria-describedby="basic-addon1">
                     </div>
                 </div>
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Precio</span>
-                        <input type="text" id="inputGenre" @bind=precio class="form-control" placeholder="Genre" aria-label="Genre" aria-describedby="basic-addon1">
+                        <input type="text" id="inputGenre" @bind=precio class="form-control" placeholder="Precio" aria-label="Genre" aria-describedby="basic-addon1">
                     </div>
                 </div>
 
@@ -38,7 +38,32 @@
                 }
                 else
                 {
-                    <p>Numero de herramientas @herramienta.Count</p>
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfOferta">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Material</th>
+                                    <th>Fabricante</th>
+                                    <th>Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var oferta in herramienta)
+                                {
+                                    <tr id="OfertaData_@oferta.Nombre">
+                                        <td>@oferta.Nombre</td>
+                                        <td>@oferta.Material</td>
+                                        <td>@oferta.Fabricante</td>
+                                        <td>@oferta.Precio</td>
+                                        <td>
+                                            <button class="btn btn-outline-secondary" id="OfertaData_@oferta.Nombre" @onclick="@(() => AddHerramienta(oferta))">Add</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
                 }
             </div>
@@ -56,7 +81,7 @@
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
     private string nombreFabricante { get; set; }
-    private float precio { get; set; }
+    private float? precio { get; set; }
 
 
     public async void BuscarHerramientas()
