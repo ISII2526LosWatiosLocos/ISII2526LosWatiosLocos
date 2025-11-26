@@ -3,6 +3,7 @@
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient ApiClient
 @inject ILogger<SeleccionarHerramientaParaOfertar> Logger
+@inject OfertaStateContainer OfertaStateContainer
 
 <h3>Seleccionar Herramientas Para Ofertar</h3>
 
@@ -80,5 +81,20 @@
         BuscarHerramientas();
 
         return base.OnInitializedAsync();
+    }
+
+    private CrearOfertaDTO oferta => OfertaStateContainer.Oferta;
+
+    private bool hiddenRentingCart = true;
+
+    private void AddHerramienta(HerramientasParaOfertarDTO herramienta)
+    {
+        OfertaStateContainer.AddHerramientaToOferta(herramienta);
+    }
+
+    private void RemoveHerramientaItem(OfertaItemViewModel item)
+    {
+        OfertaStateContainer.RemoveOfertaItem(item);
+        if (oferta.Items.Count == 0) hiddenRentingCart = true;
     }
 }
