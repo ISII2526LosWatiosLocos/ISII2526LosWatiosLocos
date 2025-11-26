@@ -139,11 +139,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
             {
                 var exp = expectedOrdered[i];
                 var act = actualOrdered[i];
-
-                Assert.Equal(exp.Nombre, act.Nombre);
-                Assert.Equal(exp.Material, act.Material);
-                Assert.Equal(exp.Fabricante, act.Fabricante);
-                Assert.True(Math.Abs(exp.Precio - act.Precio) < 0.001f, $"Precio esperado {exp.Precio} pero fue {act.Precio} en {act.Nombre}");
+                Assert.Equal(exp, act);
             }
         }
     }
