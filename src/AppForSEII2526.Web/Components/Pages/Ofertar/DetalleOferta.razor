@@ -1,0 +1,173 @@
+﻿@page "/Ofertar/DetalleOferta"
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject CompraStateContainer compraState
+@inject NavigationManager navigation
+@inject ILogger<DetalleOferta> logger
+
+<h3>DetalleParaOferta</h3>
+
+<div class="container-fluid">
+    @* 1. MOSTRAR ERRORES: Usamos una alerta de Bootstrap para que sea visible *@
+    <div class="row" hidden="@hideErrors">
+        <div class="alert alert-danger" role="alert">
+            @errors
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">IdOferta</span>
+                        @* Agregado type="number" para mejor control *@
+                        <input type="number" id="IdOferta" @bind="IdOferta" class="form-control" placeholder="IdOferta" aria-label="IdOferta">
+                    </div>
+                </div>
+                <div class="col">
+                    @* Quitamos async void del evento *@
+                    <button type="button" class="btn btn-primary" @onclick="BuscarOferta" id="searchOferta">Buscar oferta</button>
+                </div>
+            </div>
+
+            <div class="row">
+                @if (isLoading)
+                {
+                    <p>Cargando oferta...</p>
+                }
+                else if (oferta != null)
+                {
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfOfertas">
+                            <thead>
+                                <tr>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Fecha Oferta</th>
+                                    <th>Metodo Pago</th>
+                                    <th>Tipo Dirigida</th>
+                                    <th>Items</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="align-middle">
+                                    @* --- 1. DATOS GENERALES DE LA OFERTA --- *@
+
+                                    @* Fechas formateadas (dd/MM/yyyy) para quitar la hora 00:00:00 *@
+                                    <td>@oferta.FechaInicio.ToString("dd/MM/yyyy")</td>
+                                    <td>@oferta.FechaFinal.ToString("dd/MM/yyyy")</td>
+                                    <td>@oferta.FechaOferta.ToString("dd/MM/yyyy")</td>
+
+                                    @* Método de pago y Tipo *@
+                                    <td>@oferta.MetodoPago</td>
+                                    <td>
+                                        <span class="badge bg-info text-dark">@oferta.TipoDirigida</span>
+                                    </td>
+
+                                    @* --- 2. LISTA DE HERRAMIENTAS (ITEMS) --- *@
+                                    <td style="min-width: 350px;">
+                                        @if (oferta.Items != null && oferta.Items.Any())
+                                        {
+                                            <ul class="list-group list-group-flush">
+                                                @foreach (var item in oferta.Items)
+                                                {
+                                                    <li class="list-group-item p-2">
+                                                        @* A. Nombre de la herramienta *@
+                                                        <div class="fw-bold text-primary">
+                                                            @item.NombreHerramienta
+                                                        </div>
+
+                                                        @* B. Material y Fabricante *@
+                                                        <div class="small text-muted mb-1">
+                                                            <i class="bi bi-hammer"></i> @item.MaterialHerramienta
+                                                            |
+                                                            <i class="bi bi-building"></i> @item.FabricanteHerramienta
+                                                        </div>
+
+                                                        @* C. Precios (Original vs Oferta) *@
+                                                        <div>
+                                                            @* Precio Original (Tachado) *@
+                                                            <span class="text-decoration-line-through text-secondary me-2">
+                                                                @item.PrecioHerramienta.ToString("C2")
+                                                            </span>
+
+                                                            @* Flechita indicadora *@
+                                                            <span>&rarr;</span>
+
+                                                            @* Precio con Oferta (Verde y Negrita) *@
+                                                            <span class="fw-bold text-success ms-2">
+                                                                @item.PrecioFinalOferta.ToString("C2")
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">No hay herramientas en esta oferta.</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else if (hasSearched)
+                {
+                    <p>No se encontraron resultados para este ID.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // 3. CAMBIO DE TIPO: Ya no es una colección, es un objeto único nullable
+    private OfertasParaDetalleDTO? oferta;
+
+    private bool hideErrors => string.IsNullOrEmpty(errors);
+    private string errors = "";
+
+    // Inicializamos en 0
+    private int IdOferta { get; set; } = 0;
+
+    private bool isLoading = false;
+    private bool hasSearched = false;
+
+    // 4. ASYNC TASK: Correcto manejo de asincronía
+    public async Task BuscarOferta()
+    {
+        isLoading = true;
+        errors = "";
+        oferta = null;
+        hasSearched = true;
+
+        try
+        {
+            if (IdOferta <= 0)
+            {
+                errors = "Por favor ingrese un ID válido";
+                return;
+            }
+
+            // AHORA ESTO FUNCIONARÁ NATIVAMENTE
+            // El cliente generado por el pipeline ya devolverá el objeto directo
+            oferta = await apiclient.GetDetalleHerramientasParaOfertaAsync(IdOferta);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error fetching offer details");
+            errors = "Error al conectar con el sistema.";
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    // Eliminada la llamada en OnInitializedAsync para evitar errores al cargar la página vacía
+}
