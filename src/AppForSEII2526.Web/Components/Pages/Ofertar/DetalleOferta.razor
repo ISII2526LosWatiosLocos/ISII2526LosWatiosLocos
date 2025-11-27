@@ -140,32 +140,31 @@
     // 4. ASYNC TASK: Correcto manejo de asincronía
     public async Task BuscarOferta()
     {
-        // Reseteamos estados
+        isLoading = true;
         errors = "";
         oferta = null;
-        isLoading = true;
         hasSearched = true;
 
         try
         {
             if (IdOferta <= 0)
             {
-                errors = "Por favor, introduce un ID válido.";
+                errors = "Por favor ingrese un ID válido";
                 return;
             }
 
-            // Aquí el apiclient debe estar configurado para devolver un solo objeto.
+            // AHORA ESTO FUNCIONARÁ NATIVAMENTE
+            // El cliente generado por el pipeline ya devolverá el objeto directo
             oferta = await apiclient.GetDetalleHerramientasParaOfertaAsync(IdOferta);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, $"Error obteniendo oferta {IdOferta}");
-            errors = "Error al conectar con el sistema o datos inválidos.";
+            logger.LogError(ex, "Error fetching offer details");
+            errors = "Error al conectar con el sistema.";
         }
         finally
         {
             isLoading = false;
-            // StateHasChanged no es estrictamente necesario en eventos UI, pero no hace daño
             StateHasChanged();
         }
     }
