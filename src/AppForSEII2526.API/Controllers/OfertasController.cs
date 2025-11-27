@@ -25,7 +25,7 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("Detalle-Oferta")]
-        [ProducesResponseType(typeof(IList<OfertasParaDetalleDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(OfertasParaDetalleDTO), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetDetalleHerramientasParaOferta(int id)
         {
 
