@@ -457,8 +457,7 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             // Assert
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            var createdCompraDTO = Assert.IsType<ComprasParaDetalleDTO>(createdAtActionResult.Value); 
-
+            var createdCompraDTO = Assert.IsType<ComprasParaDetalleDTO>(createdAtActionResult.Value);
             Assert.Equal(compraDTO.Nombre, createdCompraDTO.Nombre);
             Assert.Equal(compraDTO.Apellidos, createdCompraDTO.Apellidos);
             Assert.Equal(compraDTO.DireccionEnvio, createdCompraDTO.DireccionEnvio);

@@ -63,7 +63,7 @@
                 }
             </div>
         </div>
-        <div class="col-2" hidden="@hideRentingCart">
+        <div class="col-2" hidden="@hideCompraCart">
             <div class="row">
                 <h3>Shopping Cart</h3>
             </div>
@@ -82,14 +82,14 @@
 </div>
 
 @code {
-    private bool hideRentingCart { get { return compra.Items.Count == 0; } }
+    private bool hideCompraCart { get { return compra.Items.Count == 0; } }
     private ICollection<HerramientasParaComprarDTO> herramientas;
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
     private string filtroMaterial { get; set; }
-    private float filtroPrecio { get; set; }
+    private float? filtroPrecio { get; set; }
     private CrearCompraDTO compra => compraState.Compra;
-    private bool hiddenRentingCart = true;
+    private bool hiddenCompraCart = true;
     private void AñadirHerramienta(HerramientasParaComprarDTO herramienta)
     {
         compraState.AñadirHerramientaAlCarroDeCompra(herramienta);
@@ -97,7 +97,7 @@
     private void QuitarItemDelCarroDeCompra(CompraItemsDTO item)
     {
         compraState.QuitarItemDelCarroDeCompra(item);
-        if (compra.Items.Count == 0) hiddenRentingCart = true;
+        if (compra.Items.Count == 0) hiddenCompraCart = true;
     }
 
     public async void BuscarHerramientas()
