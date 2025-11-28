@@ -79,7 +79,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("DetalleCompra")]
         // El tipo de respuesta es una lista de ComprasParaDetalleDTO
-        [ProducesResponseType(typeof(IList<ComprasParaDetalleDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ComprasParaDetalleDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetDetalleHerramientasParaCompra(int id)
         {
