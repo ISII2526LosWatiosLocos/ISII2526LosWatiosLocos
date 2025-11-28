@@ -203,6 +203,11 @@ namespace AppForSEII2526.API.Controllers
                 Usuario = Usuario
             };
 
+            // validar dirección de envío
+            if ((nuevaCompra.DireccionEnvio == null) || (nuevaCompra.DireccionEnvio == "")){
+                ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La compra debe tener una dirección de envío.");
+            }
+
             // --- PRE-CHECK: cantidades totales solicitadas por herramienta (una sola vez) ---
             // Construimos un diccionario IdHerramienta -> cantidad total solicitada en el DTO
             var cantidadesSolicitadasPorHerramienta = CrearCompraDTO.Items
