@@ -15,6 +15,20 @@
             Items = new List<CrearOfertaItemDTO>();
         }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is CrearOfertaDTO dTO &&
+                   FechaInicio.Equals(dTO.FechaInicio) &&
+                   FechaFinal.Equals(dTO.FechaFinal) &&
+                   TipoDirigida == dTO.TipoDirigida &&
+                   MetodoPagoId == dTO.MetodoPagoId &&
+                   nombreUsuario == dTO.nombreUsuario &&
+                   EqualityComparer<List<CrearOfertaItemDTO>>.Default.Equals(Items, dTO.Items);
+        }
 
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(FechaInicio, FechaFinal, TipoDirigida, MetodoPagoId, nombreUsuario, Items);
+        }
     }
 }

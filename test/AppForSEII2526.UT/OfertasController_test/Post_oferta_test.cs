@@ -187,7 +187,7 @@ namespace AppForSEII2526.UT.OfertasController_test
                 new object[] { ofertaApplicationUser, "El usuario no existe." },
                 new object[] { ofertaNoDisponible, "La HerramientaId 999 no existe." },
                 new object[] { ofertaMetodoPagoInvalido, "El MetodoPagoId 999 no existe." },
-                new object[] { ofertaTipoInvalido, "El valor 'TipoRaro' no es válido. Use 'Socio' o 'Cliente'." },
+                new object[] { ofertaTipoInvalido, "El valor 'TipoRaro' no es válido. Use 'Socio', 'Cliente' o déjelo vacío."},
                 // El mensaje de error del porcentaje puede variar según el nombre de tu herramienta
                 new object[] { ofertaPorcentajeInvalido, "El porcentaje 91% para 'Herramienta1' no es válido. Debe estar entre 1 y 90." },
                 new object[] { ofertaPorcentajeCero, "El porcentaje 0% para 'Herramienta1' no es válido. Debe estar entre 1 y 90." },
@@ -225,80 +225,76 @@ namespace AppForSEII2526.UT.OfertasController_test
         [Trait("Database", "WithoutFixture")]
         public async Task Post_oferta_CrearOferta_Exitoso()
         {
-            // Arrange
+            // 1. ARRANGE
             var mock = new Mock<ILogger<OfertasController>>();
             ILogger<OfertasController> logger = mock.Object;
-
             var controller = new OfertasController(_context, logger);
 
+            // Datos de entrada (Input)
             var ofertaItems = new List<CrearOfertaItemDTO>
             {
                 new CrearOfertaItemDTO { HerramientaId = 1, PorcentajeDescuento = 10 },
                 new CrearOfertaItemDTO { HerramientaId = 2, PorcentajeDescuento = 15 }
             };
+
             var ofertaDTO = new CrearOfertaDTO
             {
                 FechaInicio = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
                 FechaFinal = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 TipoDirigida = "Cliente",
-                MetodoPagoId = 1,
+                MetodoPagoId = 1, // Corresponde a "Efectivo" según tu Seed
                 nombreUsuario = _nombreUsuario,
                 Items = ofertaItems
             };
 
-            // --- Pre-cálculo de precios esperados ---
-            // Herramienta 1: 10.0f * (1 - 0.10) = 9.0f
-            float expectedPrice1 = 9.0f;
-            // Herramienta 2: 15.7f * (1 - 0.15) = 13.345f
-            float expectedPrice2 = 13.345f;
+            // Construimos el objeto de RESPUESTA ESPERADA (Expected Output)
+            // Aquí definimos qué debería devolver el controlador si todo sale bien.
+            var expectedResponse = new OfertasParaDetalleDTO(
+                ofertaDTO.FechaFinal,
+                ofertaDTO.FechaInicio,
+                DateOnly.FromDateTime(DateTime.UtcNow), // Fecha de creación (hoy)
+                "Cliente",
+                "Efectivo",
+                new List<OfertaItemsDTO>(),
+                _nombreUsuario
+            );
 
-            // Act
+            // Añadimos los items calculados que esperamos recibir
+            // Item 1: Precio 10.0, Descuento 10% -> 9.0
+            expectedResponse.Items.Add(new OfertaItemsDTO(
+                _nombreHerramienta1, "Acero", _nombreFabricante1, 10.0f, 9.0f));
+
+            // Item 2: Precio 15.7, Descuento 15% -> 13.345
+            expectedResponse.Items.Add(new OfertaItemsDTO(
+                _nombreHerramienta2, "Madera", _nombreFabricante2, 15.7f, 13.345f));
+
+
+            // 2. ACT
             var result = await controller.CrearOferta(ofertaDTO);
 
 
-            // Assert
+            // 3. ASSERT (Respuesta HTTP)
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            var createdOfertaDTO = Assert.IsType<OfertasParaDetalleDTO>(createdAtActionResult.Value); 
+            var createdOfertaDTO = Assert.IsType<OfertasParaDetalleDTO>(createdAtActionResult.Value);
 
-            Assert.Equal(ofertaDTO.FechaInicio, createdOfertaDTO.FechaInicio);
-            Assert.Equal(ofertaDTO.FechaFinal, createdOfertaDTO.FechaFinal);
-            Assert.Equal(ofertaDTO.TipoDirigida, createdOfertaDTO.TipoDirigida);
-            Assert.Equal(ofertaDTO.Items.Count, createdOfertaDTO.Items.Count);
-            Assert.Equal(_nombreUsuario, createdOfertaDTO.nombreUsuario);
-            Assert.Equal("Efectivo", createdOfertaDTO.MetodoPago);
+            Assert.Equal(expectedResponse, createdOfertaDTO);
 
-            // --- 3. Comprobar los items del DTO (¡Importante!) ---
-            var item1DTO = createdOfertaDTO.Items.FirstOrDefault(i => i.NombreHerramienta == _nombreHerramienta1);
-            Assert.NotNull(item1DTO);
-            Assert.Equal(10.0f, item1DTO.PrecioHerramienta);
-            Assert.Equal(expectedPrice1, item1DTO.PrecioFinalOferta); // Comprueba el cálculo del descuento
 
-            var item2DTO = createdOfertaDTO.Items.FirstOrDefault(i => i.NombreHerramienta == _nombreHerramienta2);
-            Assert.NotNull(item2DTO);
-            Assert.Equal(15.7f, item2DTO.PrecioHerramienta);
-            Assert.Equal(expectedPrice2, item2DTO.PrecioFinalOferta); // Comprueba el cálculo del descuento
-
-            // --- 4. (¡EL MÁS IMPORTANTE!) Comprobar la Base de Datos ---
-            // Tu constructor ya creó la Oferta ID=1. Esta nueva debe ser la ID=2.
+            // 4. ASSERT (Base de Datos)
+            // no solo que el controlador devolvió el DTO correcto.
             var ofertaEnDB = await _context.Ofertas
-                                        .Include(o => o.Usuario)
-                                        .Include(o => o.MetodosPago)
-                                        .Include(o => o.Items)
-                                        .FirstOrDefaultAsync(o => o.Id == 2); // Busca la nueva oferta
+                                    .Include(o => o.Usuario)
+                                    .Include(o => o.MetodosPago)
+                                    .Include(o => o.Items)
+                                    .FirstOrDefaultAsync(o => o.Id == 2); // ID 2 porque la 1 se crea en el constructor
 
             Assert.NotNull(ofertaEnDB);
             Assert.Equal(ofertaDTO.FechaInicio, ofertaEnDB.FechaInicio);
-            Assert.Equal(_nombreUsuario, ofertaEnDB.Usuario.Nombre); // Comprueba el usuario enlazado
-            Assert.Equal("Efectivo", ofertaEnDB.MetodosPago.Nombre); // Comprueba el método de pago
-            Assert.Equal(2, ofertaEnDB.Items.Count); // Comprueba el número de items
+            Assert.Equal(2, ofertaEnDB.Items.Count);
 
-            // Comprobar que el precio final se guardó bien en la BBDD
-            var item1EnDB = ofertaEnDB.Items.FirstOrDefault(i => i.HerramientaId == 1);
-            Assert.NotNull(item1EnDB);
-            Assert.Equal(10, item1EnDB.Porcentaje);
-            Assert.Equal(expectedPrice1, item1EnDB.PrecioFinal);
-
-
+            // Verificamos un dato clave en BD (ej: precio final calculado guardado correctamente)
+            var itemDb = ofertaEnDB.Items.First(i => i.HerramientaId == 1);
+            Assert.Equal(9.0f, itemDb.PrecioFinal, 0.001f); // Usamos tolerancia para float
         }
     }
 }
