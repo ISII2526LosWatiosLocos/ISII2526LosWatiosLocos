@@ -4,7 +4,7 @@
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<SeleccionarHerramientasParaAlquilar> logger
 @inject AlquilerStateContainer alquilerState
-
+@inject NavigationManager navegacion
 
 
 
@@ -36,7 +36,6 @@
                 </div>
             </div>
             <div class="row">
-                <p>Aquí mostraré la lista de herramientas</p>
                 @if (herramientas == null)
                 {
                     <p>Cargando herramientas...</p>
@@ -47,11 +46,11 @@
                         <table class="table table-condensed table-hover" id="TablaDeHerramientas">
                             <thead>
                                 <tr>
-                                    <th>Title</th>
-                                    <th>Genre</th>
-                                    <th>Release Date</th>
-                                    <th>Price For Renting</th>
-                                    <th>Rent</th>
+                                    <th>Nombre</th>
+                                    <th>Material</th>
+                                    <th>Fabricante</th>
+                                    <th>Precio</th>
+                                    <th>Alquilar</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -73,13 +72,26 @@
                 }
             </div>
         </div>
-        <div class="col-2">
-            <p>Aquí mostraré el carrito de alquileres</p>
+        <div class="col-2" hidden="@ocultarCarritoAlquiler">
+            <div class="row">
+                <h3>Carrito de Alquileres</h3>
+            </div>
+            @foreach (CrearAlquilerItemDTO item in alquiler.Items)
+            {
+                
+                <div class="row">
+                    <button type="button" class="btn btn-light" id="removeMovie_@item.HerramientaId" @onclick="@(() => BorrarHerramienta(item))">x @item.HerramientaId - @item.HerramientaPrecio</button> <!-- poner en lugar de id nombre -->
+                </div>
+            }
+            <div class="row">
+                <button type="button" class="btn btn-primary" id="purchaseMovieButton" @onclick=@AlquilarHerramientas>Alquilar Herramientas</button>
+            </div>
         </div>
     </div>
 </div>
 
 @code {
+    private bool ocultarCarritoAlquiler { get { return alquiler.Items.Count == 0; } }
     private ICollection<HerramientasParaAlquilarDTO> herramientas;
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
@@ -101,7 +113,10 @@
         if (alquiler.Items.Count == 0) carritoAlquilerOculto = true;
     }
 
-
+    private void AlquilarHerramientas()
+    {
+        navegacion.NavigateTo("/Alquiler/CrearAlquiler");
+    }
     public async void BuscarHeramientas()
     {
         try
