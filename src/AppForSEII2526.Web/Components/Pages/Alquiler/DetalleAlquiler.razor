@@ -30,6 +30,39 @@ else
             <th>Precio Total</th>
             <td id="PrecioTotal">@Alquiler.PrecioTotal</td>
         </tr>
+        <tr>
+            <th>Items</th>
+            <td id="Items">@Alquiler.Items</td>
+        </tr>
+    </table>
+
+    <h4>Herramientas Alquiladas</h4>
+
+    <table class="table" id="RentedMovies">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Genre</th>
+                <th scope="col">Price for Renting</th>
+                <th scope="col">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (AlquilarItemsDTO item in Alquiler.Items)
+            {
+                <tr id="RentalItem_@item.NombreItem">
+                    <td>@item.NombreItem</td>
+                    <td>@item.MaterialItem</td>
+                    <td>@item.PrecioItem</td>
+                    <td>@item.CantidadItem</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            @*colspan is used to state that TWO columns are collapsed*@
+        <th scope="row" colspan="2" class="text-end">Precio Total</th>
+        <td id="PrecioTotal">@Alquiler.PrecioTotal €</td>
+        </tfoot>
     </table>
 }
 
