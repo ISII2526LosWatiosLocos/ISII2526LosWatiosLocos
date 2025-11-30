@@ -3,6 +3,10 @@
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<SeleccionarHerramientasParaAlquilar> logger
+@inject AlquilerStateContainer alquilerState
+
+
+
 
 <h3>SeleccionarHerramientasParaAlquilar</h3>
 <div class="container-fluid">
@@ -55,6 +59,23 @@
     private string errors = "";
     private string nombre { get; set; }
     private string material { get; set; }
+
+    private CrearAlquilerDTO alquiler => alquilerState.Alquilar;
+
+    private bool carritoAlquilerOculto = true;
+
+    private void AddHerramienta(HerramientasParaAlquilarDTO herramienta)
+    {
+        alquilerState.AddHerramientaToAlquiler(herramienta);
+    }
+
+    private void BorrarHerramienta(CrearAlquilerItemDTO item)
+    {
+        alquilerState.BorraItemParaAlquilar(item);
+        if (alquiler.Items.Count == 0) carritoAlquilerOculto = true;
+    }
+
+
     public async void BuscarHeramientas()
     {
         try
