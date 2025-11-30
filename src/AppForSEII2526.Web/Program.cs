@@ -50,6 +50,7 @@ builder.Services.AddScoped<OfertaStateContainer>();
 //adding an In-memory state container service
 //https://learn.microsoft.com/en-us/aspnet/core/blazor/state-management/?view=aspnetcore-8.0#in-memory-state-container-service
 builder.Services.AddScoped<CompraStateContainer>();
+builder.Services.AddScoped<AlquilerStateContainer>();
 
 var app = builder.Build();
 
