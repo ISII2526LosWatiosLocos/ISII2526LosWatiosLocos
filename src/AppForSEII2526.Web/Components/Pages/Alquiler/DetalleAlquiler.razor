@@ -13,6 +13,24 @@
 }
 else
 {
+    <table class="table table-borderless table-sm">
+        <tr>
+            <th>Nombre y Apellidos and Surname</th>
+            <td id="NombreApellidos">@Alquiler.Nombre @Alquiler.Apellidos</td>
+        </tr>
+        <tr>
+            <th>Dirección</th>
+            <td id="Direccion">@Alquiler.Direccion</td>
+        </tr>
+        <tr>
+            <th>Fecha</th>
+            <td id="Fecha">@Alquiler.FechaAlquiler.ToString("dd/MM/yyyy")</td>
+        </tr>
+        <tr>
+            <th>Precio Total</th>
+            <td id="PrecioTotal">@Alquiler.PrecioTotal</td>
+        </tr>
+    </table>
 }
 
 
