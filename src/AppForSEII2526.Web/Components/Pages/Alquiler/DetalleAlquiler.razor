@@ -7,6 +7,15 @@
 
 @attribute [Authorize]
 
+@if (Alquiler == null)
+{
+    <p>@error</p>
+}
+else
+{
+}
+
+
 @code {
     [Parameter]
     [SupplyParameterFromQuery]
