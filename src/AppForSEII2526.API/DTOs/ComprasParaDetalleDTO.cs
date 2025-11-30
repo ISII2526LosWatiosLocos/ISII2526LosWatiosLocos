@@ -27,7 +27,9 @@
                    DireccionEnvio == dTO.DireccionEnvio &&
                    PrecioTotal == dTO.PrecioTotal &&
                    FechaCompra.Equals(dTO.FechaCompra) &&
-                   EqualityComparer<IList<CompraItemsDTO>>.Default.Equals(Items, dTO.Items);
+                   // La anterior implementación comparaba la dirección de memoria, no el contenido
+                   Items.OrderBy(i => i.IdHerramienta).SequenceEqual(dTO.Items.OrderBy(i => i.IdHerramienta));
+
         }
 
         public override int GetHashCode()

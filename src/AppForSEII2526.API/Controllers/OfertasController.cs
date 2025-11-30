@@ -25,7 +25,7 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("Detalle-Oferta")]
-        [ProducesResponseType(typeof(IList<OfertasParaDetalleDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(OfertasParaDetalleDTO), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetDetalleHerramientasParaOferta(int id)
         {
 
@@ -106,11 +106,19 @@ namespace AppForSEII2526.API.Controllers
                 ModelState.AddModelError(nameof(crearOfertaDTO.MetodoPagoId), $"El MetodoPagoId {crearOfertaDTO.MetodoPagoId} no existe.");
 
             // b. Validar Enum de TipoDirigida (si se proporcionó)
-            tipoDirigidaOferta tipoDirigido = tipoDirigidaOferta.Cliente; // Valor por defecto (asumiendo que Clientes es tu "todo el mundo")
+            tipoDirigidaOferta? tipoDirigido = null;
             if (!string.IsNullOrEmpty(crearOfertaDTO.TipoDirigida))
             {
-                if (!Enum.TryParse<tipoDirigidaOferta>(crearOfertaDTO.TipoDirigida, true, out tipoDirigido))
-                    ModelState.AddModelError(nameof(crearOfertaDTO.TipoDirigida), $"El valor '{crearOfertaDTO.TipoDirigida}' no es válido. Use 'Socio' o 'Cliente'.");
+                // Solo intentamos parsear si el usuario escribió algo
+                if (Enum.TryParse<tipoDirigidaOferta>(crearOfertaDTO.TipoDirigida, true, out var result))
+                {
+                    tipoDirigido = result;
+                }
+                else
+                {
+                    // Si escribió algo pero no coincide con los valores del Enum
+                    ModelState.AddModelError(nameof(crearOfertaDTO.TipoDirigida), $"El valor '{crearOfertaDTO.TipoDirigida}' no es válido. Use 'Socio', 'Cliente' o déjelo vacío.");
+                }
             }
 
             //c. Validar Usuario
