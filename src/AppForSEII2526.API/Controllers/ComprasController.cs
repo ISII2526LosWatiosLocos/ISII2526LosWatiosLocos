@@ -158,7 +158,7 @@ namespace AppForSEII2526.API.Controllers
                 ModelState.AddModelError(nameof(CrearCompraDTO.MetodoPagoId), $"El MetodoPagoId {CrearCompraDTO.MetodoPagoId} no existe.");
 
             // b. Buscar Usuario
-            var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos);
+            var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos && u.NumeroTelefono == CrearCompraDTO.NumeroTelefono && u.CorreoElectronico == CrearCompraDTO.CorreoElectronico);
             if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El usuario no existe.");
 
             // c. Validar items del DTO (que no tengan valores imposibles)
