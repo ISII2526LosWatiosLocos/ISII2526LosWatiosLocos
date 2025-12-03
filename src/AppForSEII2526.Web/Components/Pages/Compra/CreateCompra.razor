@@ -50,9 +50,9 @@
             <div class="form-floating">
                 @*a dropdown for selecting the payment method*@
                 <InputSelect class="form-select" @bind-Value="@compra.MetodoPagoId" id="PaymentMethod">
-                    <option value="@PaymentMethodType.CreditCard" default> CreditCard</option>
-                    <option value="@PaymentMethodType.PayPal"> PayPal</option>
-                    <option value="@PaymentMethodType.Cash"> Cash</option>
+                    <option value=2 default> Tarjeta</option>
+                    <option value=1> PayPal</option>
+                    <option value=0> Efectivo</option>
                 </InputSelect>
                 <label for="PaymentMethod">Payment Method</label>
             </div>
@@ -68,7 +68,7 @@
     </div>
 
 
-    <h4>Rental detail</h4>
+    <h4>Compra detail</h4>
     <p>
         <b>Precio total:</b> @TotalCost €
         <button class="btn btn-outline-primary" type="submit" @onclick="ModifyCompraItems" id="ModifyHerramientas">
@@ -128,9 +128,9 @@
             return Convert.ToDecimal(price);
         }
     }
-    private void ModifyRentalItems()
+    private void ModifyCompraItems()
     {
-        navigation.NavigateTo("/rental/selectmoviesforrental");
+        navigation.NavigateTo("/Compra/SelectHerramientasParaCompra");
     }
 
     private CrearCompraDTO compra => compraState.Compra;
