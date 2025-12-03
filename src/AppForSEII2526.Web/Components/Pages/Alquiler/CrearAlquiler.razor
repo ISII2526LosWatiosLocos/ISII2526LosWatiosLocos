@@ -6,6 +6,27 @@
 
 <h3>CrearAlquiler</h3>
 
+@* rental is the object that will be edited thanks to the form *@
+<EditForm Model="alquiler" OnValidSubmit="OpenDialog">
+    <div class="row">
+
+        <div class="col-md">
+            <div class="form-floating">
+                @*este boton se usara para decir al usuario que si quiere alquilar las herramientas*@
+                <button class="btn btn-primary" type="submit" id="Submit">
+                    Alquila tus herramientas
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
 @code {
     private CrearAlquilerDTO alquiler => container.Alquilar;
+    private void OpenDialog()
+        {
+
+        }
+    }
 }
+
