@@ -11,6 +11,56 @@
 @* rental is the object that will be edited thanks to the form *@
 <EditForm Model="oferta" OnValidSubmit="OpenDialog">
     <div class="row">
+        
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        @* Campos de entrada de datos obligatorios para la OFERTA general (Paso 5) *@
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="form-floating mb-3">
+                    @* Fecha de Inicio de la oferta (Obligatorio) *@
+                    <InputDate @bind-Value="oferta.FechaInicio" class="form-control" id="FechaInicio" />
+                    <label for="FechaInicio">Fecha Inicio (Obligatorio)</label>
+                    <ValidationMessage For="@(() => oferta.FechaInicio)" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating mb-3">
+                    @* Fecha de Fin de la oferta (Obligatorio) *@
+                    <InputDate @bind-Value="oferta.FechaFinal" class="form-control" id="FechaFin" />
+                    <label for="FechaFin">Fecha Fin (Obligatorio)</label>
+                    <ValidationMessage For="@(() => oferta.FechaFinal)" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating mb-3">
+                    @* Método de Pago (Obligatorio) - Implementado con opciones estáticas *@
+                    <InputSelect @bind-Value="oferta.MetodoPagoId" class="form-select" id="MetodoPago">
+                        <option value="">Seleccione Método de Pago (Obligatorio)</option>
+                        <option value="TarjetaCredito">Tarjeta de Crédito</option>
+                        <option value="PayPal">PayPal</option>
+                        <option value="Efectivo">Metálico / Efectivo</option>
+                    </InputSelect>
+                    <label for="MetodoPago">Método de Pago</label>
+                    <ValidationMessage For="@(() => oferta.MetodoPagoId)" />
+                </div>
+            </div>
+        </div>
+
+        @* Campo opcional: A quién va dirigida la oferta (Paso 5) *@
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="form-floating mb-3">
+                    <InputSelect @bind-Value="oferta.TipoDirigida" class="form-select" id="DirigidaA">
+                        <option value="">Dirigida A (Opcional)</option>
+                        <option value="Socios">Socios</option>
+                        <option value="Clientes">Todo el Mundo</option>
+                    </InputSelect>
+                    <label for="DirigidaA">Dirigida A</label>
+                </div>
+            </div>
+        </div>
 
         <div class="col-md">
             <div class="form-floating">
@@ -60,6 +110,7 @@
 @code {
     private CrearOfertaDTO oferta => ofertaState.Oferta;
     private bool DialogIsOpen;
+    private object? errores;
     private void OpenDialog()
     {
         DialogIsOpen = true;
