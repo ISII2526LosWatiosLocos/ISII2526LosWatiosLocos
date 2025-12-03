@@ -82,14 +82,14 @@
                 <div class="row">
                     <h3>Shopping Cart</h3>
                 </div>
-                @foreach (OfertaItemViewModel item in OfertaStateContainer.ItemsVisuales)
+                @foreach (OfertaItemsDTO item in oferta.Items)
                 {
                     <div class="row">
-                        <button type="button" class="btn btn-light" id="removeHerramienta_@item.InfoVisual.Nombre" @onclick="@(() => RemoveHerramientaItem(item))">x @item.InfoVisual.Nombre - @item.InfoVisual.Precio€</button>
+                        <button type="button" class="btn btn-light" id="removeHerramienta_@item.NombreHerramienta" @onclick="@(() => RemoveHerramientaItem(item))">x @item.NombreHerramienta - @item.PrecioHerramienta€</button>
                     </div>
                 }
                 <div class="row">
-                    <button type="button" class="btn btn-primary" id="purchaseHerramienta" @onclick=@comprarHerramienta>Rent movies</button>
+                    <button type="button" class="btn btn-primary" id="purchaseHerramienta" @onclick=@ofertarHerramientas>Rent movies</button>
                 </div>
             </div>
 
@@ -101,7 +101,7 @@
 
     private string fabricanteSelected;
     private ICollection<string>? fabricantes = new List<string>();
-    private bool hideRentingCart { get {return OfertaStateContainer.ItemsVisuales.Count == 0; } }
+    private bool hideRentingCart { get {return oferta.Items.Count == 0; } }
     private ICollection<HerramientasParaOfertarDTO> herramienta;
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
@@ -158,13 +158,13 @@
         OfertaStateContainer.AddHerramientaToOferta(herramienta);
     }
 
-    private void RemoveHerramientaItem(OfertaItemViewModel item)
+    private void RemoveHerramientaItem(OfertaItemsDTO item)
     {
         OfertaStateContainer.RemoveOfertaItem(item);
         if (oferta.Items.Count == 0) hiddenRentingCart = true;
     }
 
-    private void comprarHerramienta()
+    private void ofertarHerramientas()
     {
         navigation.NavigateTo("/Oferta/CrearOferta");
     }

@@ -1069,23 +1069,9 @@
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CrearOfertaItemDTO"
+              "$ref": "#/components/schemas/OfertaItemsDTO"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CrearOfertaItemDTO": {
-        "type": "object",
-        "properties": {
-          "herramientaId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "porcentajeDescuento": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1271,6 +1257,14 @@
           "precioFinalOferta": {
             "type": "number",
             "format": "float"
+          },
+          "herramientaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "porcentajeDescuento": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
