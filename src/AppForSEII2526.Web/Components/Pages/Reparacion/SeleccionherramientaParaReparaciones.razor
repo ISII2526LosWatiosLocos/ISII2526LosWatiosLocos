@@ -13,7 +13,21 @@
     <div class="row">
         <div class="col-8">
             <div class="row">
-                <p>Aquí voy a mostrar los filtros</p>
+
+
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Nombre</span>
+                        <input type="text" id="inputTitle" @bind=Nombre class="form-control" placeholder="Title" aria-label="Title" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">TiempoReparacion</span>
+                        <input type="text" id="inputGenre" @bind=TiempoReparacion class="form-control" placeholder="Genre" aria-label="Genre" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+
                 <div class="col">
                     <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="buscarHerramientas">Buscar Herramientas</button>
                 </div>
@@ -58,6 +72,15 @@
             errors = "Error mientras que se conect con el sistema";
         }
         StateHasChanged();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+
+
+        BuscarHerramientas();
+
+        return base.OnInitializedAsync();
     }
 
 }
