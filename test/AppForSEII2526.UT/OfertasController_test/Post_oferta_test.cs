@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.OfertasDTOs;
 using AppForSEII2526.API.Models;
 
 namespace AppForSEII2526.UT.OfertasController_test
@@ -63,13 +63,13 @@ namespace AppForSEII2526.UT.OfertasController_test
                 TipoDirigida = "Cliente",
                 MetodoPagoId = 1,
                 nombreUsuario = _nombreUsuario,
-                Items = new List<CrearOfertaItemDTO>()
+                Items = new List<OfertaItemsDTO>()
             };
 
-            var ofertaItems = new List<CrearOfertaItemDTO>
+            var ofertaItems = new List<OfertaItemsDTO>
             {
-                new CrearOfertaItemDTO { HerramientaId = 1, PorcentajeDescuento = 10 },
-                new CrearOfertaItemDTO { HerramientaId = 2, PorcentajeDescuento = 15 }
+                new OfertaItemsDTO (1, 10),
+                new OfertaItemsDTO (2, 15)
             };
 
             var ofertaFromBeforeToday = new CrearOfertaDTO
@@ -109,10 +109,10 @@ namespace AppForSEII2526.UT.OfertasController_test
                 TipoDirigida = "Cliente",
                 MetodoPagoId = 1,
                 nombreUsuario = _nombreUsuario,
-                Items = new List<CrearOfertaItemDTO>
+                Items = new List<OfertaItemsDTO>
                 {
-                    new CrearOfertaItemDTO { HerramientaId = 1, PorcentajeDescuento = 10 },
-                    new CrearOfertaItemDTO { HerramientaId = 999, PorcentajeDescuento = 15 } // Herramienta no existente
+                    new OfertaItemsDTO (1, 10),
+                    new OfertaItemsDTO (999, 15) // Herramienta no existente
                 }
             };
 
@@ -143,10 +143,10 @@ namespace AppForSEII2526.UT.OfertasController_test
                 TipoDirigida = "Cliente",
                 MetodoPagoId = 1,
                 nombreUsuario = _nombreUsuario,
-                Items = new List<CrearOfertaItemDTO>
+                Items = new List<OfertaItemsDTO>
                 {
                 // El porcentaje 91 no es válido (debe ser <= 90)
-                new CrearOfertaItemDTO { HerramientaId = 1, PorcentajeDescuento = 91 }
+                new OfertaItemsDTO (1, 91)
                 }
             };
 
@@ -157,10 +157,10 @@ namespace AppForSEII2526.UT.OfertasController_test
                 TipoDirigida = "Cliente",
                 MetodoPagoId = 1,
                 nombreUsuario = _nombreUsuario,
-                Items = new List<CrearOfertaItemDTO> 
+                Items = new List<OfertaItemsDTO> 
                 {
                 // El porcentaje 0 no es válido (debe ser > 0)
-                new CrearOfertaItemDTO { HerramientaId = 1, PorcentajeDescuento = 0 }
+                new OfertaItemsDTO (1, 0)
                 
                 }
             };
@@ -172,9 +172,9 @@ namespace AppForSEII2526.UT.OfertasController_test
                 TipoDirigida = "Cliente",
                 MetodoPagoId = 1,
                 nombreUsuario = _nombreUsuario,
-                Items = new List<CrearOfertaItemDTO>
+                Items = new List<OfertaItemsDTO>
                 {
-                new CrearOfertaItemDTO { HerramientaId = 1, PorcentajeDescuento = 10 }
+                new OfertaItemsDTO (1, 10)
 
                 }
             };
@@ -231,10 +231,10 @@ namespace AppForSEII2526.UT.OfertasController_test
             var controller = new OfertasController(_context, logger);
 
             // Datos de entrada (Input)
-            var ofertaItems = new List<CrearOfertaItemDTO>
+            var ofertaItems = new List<OfertaItemsDTO>
             {
-                new CrearOfertaItemDTO { HerramientaId = 1, PorcentajeDescuento = 10 },
-                new CrearOfertaItemDTO { HerramientaId = 2, PorcentajeDescuento = 15 }
+                new OfertaItemsDTO (1, 10),
+                new OfertaItemsDTO (2, 15)
             };
 
             var ofertaDTO = new CrearOfertaDTO
