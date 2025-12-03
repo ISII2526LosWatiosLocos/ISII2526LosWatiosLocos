@@ -1,6 +1,11 @@
 ﻿@page "/Alquiler/CrearAlquiler"
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<CrearAlquiler> logger
+@inject AlquilerStateContainer container
+
 <h3>CrearAlquiler</h3>
 
 @code {
-
+    private CrearAlquilerDTO alquiler => container.Alquilar;
 }
