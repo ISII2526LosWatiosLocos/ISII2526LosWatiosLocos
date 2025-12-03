@@ -1,4 +1,4 @@
-﻿namespace AppForSEII2526.API.DTOs
+﻿namespace AppForSEII2526.API.DTOs.OfertasDTOs
 {
     public class CrearOfertaDTO
     {
@@ -8,11 +8,11 @@
         public int MetodoPagoId { get; set; }
 
         public string nombreUsuario { get; set; }   
-        public List<CrearOfertaItemDTO> Items { get; set; }
+        public List<OfertaItemsDTO> Items { get; set; }
 
         public CrearOfertaDTO()
         {
-            Items = new List<CrearOfertaItemDTO>();
+            Items = new List<OfertaItemsDTO>();
         }
 
         public override bool Equals(object? obj)
@@ -23,7 +23,7 @@
                    TipoDirigida == dTO.TipoDirigida &&
                    MetodoPagoId == dTO.MetodoPagoId &&
                    nombreUsuario == dTO.nombreUsuario &&
-                   EqualityComparer<List<CrearOfertaItemDTO>>.Default.Equals(Items, dTO.Items);
+                   EqualityComparer<List<OfertaItemsDTO>>.Default.Equals(Items, dTO.Items);
         }
 
         public override int GetHashCode()
