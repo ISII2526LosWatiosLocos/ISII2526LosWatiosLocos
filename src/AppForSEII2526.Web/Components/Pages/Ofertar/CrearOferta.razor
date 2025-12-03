@@ -7,6 +7,25 @@
 
 <h3>CrearOferta</h3>
 
+@* rental is the object that will be edited thanks to the form *@
+<EditForm Model="oferta" OnValidSubmit="OpenDialog">
+    <div class="row">
+
+        <div class="col-md">
+            <div class="form-floating">
+                @*this button will be used to ask the user if he want to proceed to rent the movies*@
+                <button class="btn btn-primary" type="submit" id="Submit">
+                    Crear Ofertas
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
 @code {
     private CrearOfertaDTO oferta => ofertaState.Oferta;
+    private void OpenDialog()
+    {
+
+    }
 }
