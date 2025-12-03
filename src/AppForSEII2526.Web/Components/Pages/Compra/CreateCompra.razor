@@ -7,6 +7,28 @@
 
 <h3>CrearCompra</h3>
 
+@* compra is the object that will be edited thanks to the form *@
+<EditForm Model="compra" OnValidSubmit="OpenDialog">
+    <div class="row">
+
+        <div class="col-md">
+            <div class="form-floating">
+                @*this button will be used to ask the user if he want to proceed to comprar las herramientas*@
+                <button class="btn btn-primary" type="submit" id="Submit">
+                    Compra tus herramientas
+                </button>
+            </div>
+        </div>
+
+    </div>
+</EditForm>
+
 @code {
     private CrearCompraDTO compra => compraState.Compra;
+
+    private void OpenDialog()
+    {
+
+    }
+
 }
