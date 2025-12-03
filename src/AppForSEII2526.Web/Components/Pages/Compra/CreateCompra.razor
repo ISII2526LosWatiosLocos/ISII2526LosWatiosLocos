@@ -1,5 +1,6 @@
 ﻿@page "/Compra/CrearCompra"
 
+@using AppForSEII2526.Web.Components.Shared
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<CreateCompra> logger
@@ -21,14 +22,61 @@
         </div>
 
     </div>
+    <div class="mh-100 table-responsive">
+        <table class="table table-condensed table-hover" id="TableOfCompraItems">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Price For Buying</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in compra.CompraItems)
+                {
+                    <tr id="MovieData_@item.Title">
+                        <td>@item.Title</td>
+                        <td>@item.Genre</td>
+                        <td>@item.PriceForRenting</td>
+                        <td><InputText @bind-Value="item.Description" class="form-control" id="@($"description_{item.MovieID}")" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </EditForm>
 
+@*a modal popup dialog for checking if user wants to proceed to rent*@
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Comprar herramientas"
+    Message="¿Quieres proceder con tu compra?"
+    OnClose="@OnDialogClose"
+    Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
 @code {
+
+    private bool DialogIsOpen;
+
     private CrearCompraDTO compra => compraState.Compra;
 
     private void OpenDialog()
     {
+        DialogIsOpen = true;
+    }
 
+    private async Task OnDialogClose(bool isOk)
+    {
+
+        DialogIsOpen = false;
+        if (isOk)
+        {
+            // Process the data introduced by the user if they are valid
+
+        }
     }
 
 }
