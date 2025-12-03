@@ -1,7 +1,12 @@
 ﻿@page "/Ofertar/CrearOferta"
 
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<CrearOferta> logger
+@inject OfertaStateContainer ofertaState
+
 <h3>CrearOferta</h3>
 
 @code {
-
+    private CrearOfertaDTO oferta => ofertaState.Oferta;
 }
