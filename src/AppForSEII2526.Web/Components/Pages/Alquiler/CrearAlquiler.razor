@@ -1,5 +1,6 @@
 ﻿@page "/Alquiler/CrearAlquiler"
 @using AppForSEII2526.Web.API
+@using AppForSEII2526.Web.Components.Shared
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<CrearAlquiler> logger
 @inject AlquilerStateContainer container
@@ -21,11 +22,32 @@
     </div>
 </EditForm>
 
+@*a modal popup dialog for checking if user wants to proceed to rent*@
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Rental movies"
+    Message="Do you want to proceed to rent the selected movies?"
+    OnClose="@OnDialogClose"
+    Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
 @code {
+
+    private bool DialogIsOpen;
     private CrearAlquilerDTO alquiler => container.Alquilar;
     private void OpenDialog()
         {
+            DialogIsOpen = true;
+        }
 
+    private async Task OnDialogClose(bool isOk)
+    {
+
+        DialogIsOpen = false;
+        if (isOk)
+        {
+            // Procesa la info del usuario si es valid
         }
     }
 }
