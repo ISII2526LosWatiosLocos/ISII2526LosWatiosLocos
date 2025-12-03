@@ -1,5 +1,6 @@
 ﻿@page "/Compra/CrearCompra"
 
+@inject NavigationManager navigation
 @using AppForSEII2526.Web.Components.Shared
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient apiclient
@@ -61,6 +62,14 @@
     </div>
 
 
+    <h4>Rental detail</h4>
+    <p>
+        <b>Precio total:</b> @TotalCost €
+        <button class="btn btn-outline-primary" type="submit" @onclick="ModifyCompraItems" id="ModifyHerramientas">
+            Modifica herramientas
+        </button>
+    </p>
+
 
     <div class="mh-100 table-responsive">
         <table class="table table-condensed table-hover" id="TableOfCompraItems">
@@ -75,7 +84,7 @@
             <tbody>
                 @foreach (var item in compra.Items)
                 {
-                    <tr id="MovieData_@item.MaterialHerramienta">
+                    <tr id="MovieData_@item.NombreHerramienta">
                         <td>@item.MaterialHerramienta</td>
                         <td>@item.CantidadHerramienta</td>
                         <td>@item.PrecioHerramienta</td>
@@ -100,6 +109,19 @@
 @code {
 
     private bool DialogIsOpen;
+
+    private decimal TotalCost
+    {
+        get
+        {
+            double price = compra.Items.Sum(i => i.PrecioHerramienta);
+            return Convert.ToDecimal(price);
+        }
+    }
+    private void ModifyRentalItems()
+    {
+        navigation.NavigateTo("/rental/selectmoviesforrental");
+    }
 
     private CrearCompraDTO compra => compraState.Compra;
 
