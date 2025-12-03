@@ -4,6 +4,7 @@
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<CrearOferta> logger
 @inject OfertaStateContainer ofertaState
+@using AppForSEII2526.Web.Components.Shared
 
 <h3>CrearOferta</h3>
 
@@ -22,10 +23,32 @@
     </div>
 </EditForm>
 
+
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Rental movies"
+    Message="Do you want to proceed to rent the selected movies?"
+    OnClose="@OnDialogClose"
+    Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
 @code {
     private CrearOfertaDTO oferta => ofertaState.Oferta;
+    private bool DialogIsOpen;
     private void OpenDialog()
     {
+        DialogIsOpen = true;
+    }
 
+    private async Task OnDialogClose(bool isOk)
+    {
+
+        DialogIsOpen = false;
+        if (isOk)
+        {
+            // Process the data introduced by the user if they are valid
+
+        }
     }
 }
