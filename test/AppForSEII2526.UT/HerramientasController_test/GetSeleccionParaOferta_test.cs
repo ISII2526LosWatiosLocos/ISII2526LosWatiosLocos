@@ -1,5 +1,5 @@
 ﻿using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.OfertasDTOs;
 using AppForSEII2526.UT;
 using RabbitMQ.Client;
 using System;
