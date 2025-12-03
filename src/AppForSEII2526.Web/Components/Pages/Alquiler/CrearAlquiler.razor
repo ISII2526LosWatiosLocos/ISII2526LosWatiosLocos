@@ -20,6 +20,31 @@
             </div>
         </div>
     </div>
+    
+    <div class="mh-100 table-responsive">
+        <table class="table table-condensed table-hover" id="TableOfRentalItems">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Price For Renting</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in alquiler.Items)
+                {   
+                    <!-- 
+                        MIRAR LO DE LOS DTOS PARA PONER LOS ATRIBUTOS NECESARIOS!!!
+                    -->
+                    <tr id="MovieData_@item.HerramientaId">
+                        <td>@item.HerramientaId</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
 </EditForm>
 
 @*a modal popup dialog for checking if user wants to proceed to rent*@
