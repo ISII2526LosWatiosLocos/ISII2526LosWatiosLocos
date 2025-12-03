@@ -31,12 +31,12 @@ namespace AppForSEII2526.Web
 
             public void AgregarHerramientaAReparacion(HerramientasParaReparaciónDTO herramienta)
             {
-            Reparacion.ReparacionesItems.Add(new CrearReparacionItemDTO()
-            {
-                HerramientaId = herramienta.Id,
+                Reparacion.ReparacionesItems.Add(new CrearReparacionItemDTO()
+                {
+                    
                     HerramientaDescripcion = $"Reparar {herramienta.Nombre}",
-                HerramientaCantidad = 1
-            }); 
+                    HerramientaCantidad = 1
+                });
 
                 NotifyStateChanged();
             }
@@ -71,7 +71,8 @@ namespace AppForSEII2526.Web
                 NotifyStateChanged();
             }
 
-         
+          
+
             public void ActualizarMetodoPago(int metodoPagoId)
             {
                 Reparacion.MetodoPagoId = metodoPagoId;
