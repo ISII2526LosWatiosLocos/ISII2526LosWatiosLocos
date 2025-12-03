@@ -104,6 +104,7 @@ namespace AppForSEII2526.API.Controllers
             }
 
             var compraDto = new ComprasParaDetalleDTO( // Construye el DTO
+                compra.Id,
                 compra.Usuario.Nombre,
                 compra.Usuario.Apellidos,
                 compra.DireccionEnvio,
@@ -357,6 +358,7 @@ namespace AppForSEII2526.API.Controllers
             // Construimos el DTO de detalle con los objetos que ya tenemos
 
             var compraDTORespuesta = new ComprasParaDetalleDTO(
+                nuevaCompra.Id,
                 nuevaCompra.Usuario.Nombre,
                 nuevaCompra.Usuario.Apellidos,
                 nuevaCompra.DireccionEnvio,
