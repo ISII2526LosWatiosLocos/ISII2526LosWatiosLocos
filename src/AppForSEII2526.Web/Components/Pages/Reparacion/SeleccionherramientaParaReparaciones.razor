@@ -1,27 +1,63 @@
 ﻿
-@page "/Reparaciones/seleccionherramientaparareparacion"
-<h3>Select Movies For Rental</h3>
+@page "/Reparacion/SeleccionHerramientaParaReparaciones"
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient ApiClient
+@inject ILogger<SeleccionherramientaParaReparaciones> Logger
+
+<h3>Seleccionar herramientas para reparar</h3>
 
 <div class="container-fluid">
-    <div class="row">
-        <p>here i will show the errors</p>
+    <div class="row" hidden="@hideErrors">
+        <p>hAquí voy a mostrar los errores</p>
     </div>
     <div class="row">
         <div class="col-8">
             <div class="row">
-                <p>here i will show the filters</p>
+                <p>Aquí voy a mostrar los filtros</p>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="buscarHerramientas">Buscar Herramientas</button>
+                </div>
             </div>
             <div class="row">
-                <p>here i will show the list of tools</p>
+                <p>Aquí voy a mostrar la lista de herraminetas</p>
+                @if (herramienta == null)
+                {
+                    <p>Cargando herramientas....</p>
+                }
+                else
+                {
+                    <p>Numero de herramientas @herramienta.Count</p>
+
+                }
             </div>
         </div>
         <div class="col-2">
-            <p>here i will show the renting cart</p>
+            <p>Aquí voy a mostrar el carrito de reparaciones</p>
         </div>
 
     </div>
 
 </div>
 @code {
+    private ICollection<HerramientasParaReparaciónDTO> herramienta;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private string Nombre { get; set; }
+    private int TiempoReparacion { get; set; }
+
+    public async void BuscarHerramientas()
+    {
+        try
+        {
+            herramienta = await ApiClient.GetHerramientasParaReparaciónAsync(Nombre, TiempoReparacion);
+
+        }
+        catch (ApiException ex)
+        {
+            Logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error mientras que se conect con el sistema";
+        }
+        StateHasChanged();
+    }
 
 }
