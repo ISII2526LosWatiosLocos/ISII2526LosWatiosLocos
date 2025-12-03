@@ -168,32 +168,9 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             Assert.Single(reparacionesDTOList);
             var reparacionDTOActual = reparacionesDTOList[0];
 
-            // 4. Comprueba las propiedades simples (string, DateOnly, float, etc.)
-            //    Usamos el DTO esperado contra el DTO actual
-            Assert.Equal(expectedReparacion.nombre, reparacionDTOActual.nombre);
-            Assert.Equal(expectedReparacion.apellidos, reparacionDTOActual.apellidos);
-            Assert.Equal(expectedReparacion.FechaEntrega, reparacionDTOActual.FechaEntrega);
-            Assert.Equal(expectedReparacion.FechaRecogida, reparacionDTOActual.FechaRecogida);
-            Assert.Equal(expectedReparacion.PrecioTotal, reparacionDTOActual.PrecioTotal);
 
-            // 5. Comprueba las listas o colecciones (los items)
-            Assert.Equal(expectedReparacion.ReparacionesItems.Count, reparacionDTOActual.ReparacionesItems.Count);
+            Assert.Equal(expectedReparacion, reparacionDTOActual);
 
-            // 6. Comprueba los elementos DENTRO de las listas
-            //    Ordenamos por nombre para asegurar que el orden de BBDD no afecte al test
-            var expectedItems = expectedReparacion.ReparacionesItems.OrderBy(i => i.HerramientaNombre).ToList();
-            var actualItems = reparacionDTOActual.ReparacionesItems.OrderBy(i => i.HerramientaNombre).ToList();
-
-            // Comparamos item por item
-            Assert.Equal(expectedItems[0].HerramientaNombre, actualItems[0].HerramientaNombre);
-            Assert.Equal(expectedItems[0].HerramientaDescripcion, actualItems[0].HerramientaDescripcion);
-            Assert.Equal(expectedItems[0].HerramientaCantidad, actualItems[0].HerramientaCantidad);
-            Assert.Equal(expectedItems[0].HerramientaPrecio, actualItems[0].HerramientaPrecio);
-
-            Assert.Equal(expectedItems[1].HerramientaNombre, actualItems[1].HerramientaNombre);
-            Assert.Equal(expectedItems[1].HerramientaDescripcion, actualItems[1].HerramientaDescripcion);
-            Assert.Equal(expectedItems[1].HerramientaCantidad, actualItems[1].HerramientaCantidad);
-            Assert.Equal(expectedItems[1].HerramientaPrecio, actualItems[1].HerramientaPrecio);
         }
     }
 }
