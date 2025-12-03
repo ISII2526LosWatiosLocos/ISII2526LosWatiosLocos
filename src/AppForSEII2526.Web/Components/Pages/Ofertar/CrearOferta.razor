@@ -1,95 +1,121 @@
 ﻿@page "/Ofertar/CrearOferta"
+@implements IDisposable
 
 @using AppForSEII2526.Web.API
+@using System.ComponentModel.DataAnnotations 
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<CrearOferta> logger
 @inject OfertaStateContainer ofertaState
 @using AppForSEII2526.Web.Components.Shared
+@inject NavigationManager navigation
 
-<h3>CrearOferta</h3>
+<h3>Crear Oferta</h3>
 
-@* rental is the object that will be edited thanks to the form *@
+@if (oferta.Items.Count == 0)
+{
+    <p class="alert alert-info">Aún no ha añadido herramientas a la oferta. Por favor, añada algunas.</p>
+}
+
 <EditForm Model="oferta" OnValidSubmit="OpenDialog">
     <div class="row">
-        
         <DataAnnotationsValidator />
         <ValidationSummary />
+    </div>
 
-        @* Campos de entrada de datos obligatorios para la OFERTA general (Paso 5) *@
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="form-floating mb-3">
-                    @* Fecha de Inicio de la oferta (Obligatorio) *@
-                    <InputDate @bind-Value="oferta.FechaInicio" class="form-control" id="FechaInicio" />
-                    <label for="FechaInicio">Fecha Inicio (Obligatorio)</label>
-                    <ValidationMessage For="@(() => oferta.FechaInicio)" />
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-floating mb-3">
-                    @* Fecha de Fin de la oferta (Obligatorio) *@
-                    <InputDate @bind-Value="oferta.FechaFinal" class="form-control" id="FechaFin" />
-                    <label for="FechaFin">Fecha Fin (Obligatorio)</label>
-                    <ValidationMessage For="@(() => oferta.FechaFinal)" />
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-floating mb-3">
-                    @* Método de Pago (Obligatorio) - Implementado con opciones estáticas *@
-                    <InputSelect @bind-Value="oferta.MetodoPagoId" class="form-select" id="MetodoPago">
-                        <option value="">Seleccione Método de Pago (Obligatorio)</option>
-                        <option value="TarjetaCredito">Tarjeta de Crédito</option>
-                        <option value="PayPal">PayPal</option>
-                        <option value="Efectivo">Metálico / Efectivo</option>
-                    </InputSelect>
-                    <label for="MetodoPago">Método de Pago</label>
-                    <ValidationMessage For="@(() => oferta.MetodoPagoId)" />
-                </div>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="oferta.FechaInicio" class="form-control" id="FechaInicio" />
+                <label for="FechaInicio">Fecha Inicio (Obligatorio)</label>
+                <ValidationMessage For="@(() => oferta.FechaInicio)" />
             </div>
         </div>
-
-        @* Campo opcional: A quién va dirigida la oferta (Paso 5) *@
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="form-floating mb-3">
-                    <InputSelect @bind-Value="oferta.TipoDirigida" class="form-select" id="DirigidaA">
-                        <option value="">Dirigida A (Opcional)</option>
-                        <option value="Socios">Socios</option>
-                        <option value="Clientes">Todo el Mundo</option>
-                    </InputSelect>
-                    <label for="DirigidaA">Dirigida A</label>
-                </div>
+        <div class="col-md-4">
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="oferta.FechaFinal" class="form-control" id="FechaFin" />
+                <label for="FechaFin">Fecha Fin (Obligatorio)</label>
+                <ValidationMessage For="@(() => oferta.FechaFinal)" />
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="form-floating mb-3">
+                <InputSelect @bind-Value="oferta.MetodoPagoId" class="form-select" id="MetodoPago">
+                    <option value="0">Seleccione Método de Pago (Obligatorio)</option>
+                    <option value="1">Tarjeta de Crédito</option>
+                    <option value="2">PayPal</option>
+                    <option value="3">Metálico / Efectivo</option>
+                </InputSelect>
+                <label for="MetodoPago">Método de Pago</label>
+                <ValidationMessage For="@(() => oferta.MetodoPagoId)" />
+            </div>
+        </div>
+    </div>
 
-        <div class="col-md">
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="form-floating mb-3">
+                <InputSelect @bind-Value="oferta.TipoDirigida" class="form-select" id="DirigidaA">
+                    <option value="">Dirigida A (Opcional)</option>
+                    <option value="Socios">Socios</option>
+                    <option value="Clientes">Clientes</option>
+                </InputSelect>
+                <label for="DirigidaA">Dirigida A</label>
+            </div>
+        </div>
+        
+        <div class="col-md-8 d-flex align-items-end justify-content-end">
             <div class="form-floating">
-                @*this button will be used to ask the user if he want to proceed to rent the movies*@
-                <button class="btn btn-primary" type="submit" id="Submit">
-                    Crear Ofertas
+                <button class="btn btn-primary me-2" type="submit" id="Submit" disabled="@(oferta.Items.Count == 0)">
+                    Crear Ofertas (Total: @ofertaState.PrecioFinal.ToString("C"))
+                </button>
+                <button class="btn btn-outline-danger" type="button" @onclick="ClearOferta" id="ClearCart">
+                    Vaciar Oferta
                 </button>
             </div>
         </div>
     </div>
 
+    <h4 class="mt-4">Detalle de Herramientas</h4>
     <div class="mh-100 table-responsive">
-        <table class="table table-condensed table-hover" id="TableOfRentalItems">
+        <table class="table table-condensed table-hover" id="TableOfOfertaItems">
             <thead>
                 <tr>
                     <th>Nombre</th>
                     <th>Material</th>
-                    <th>Precio</th>
-                    <th>Porcentaje</th>
+                    <th>Precio Base</th>
+                    <th style="width: 15%">Porcentaje Descuento (%)</th>
+                    <th>Precio Final Oferta</th>
+                    <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in oferta.Items)
                 {
-                    <tr id="MovieData_@item.NombreHerramienta">
+                    <tr id="Herramienta_@item.HerramientaId">
                         <td>@item.NombreHerramienta</td>
                         <td>@item.MaterialHerramienta</td>
-                        <td>@item.PrecioHerramienta</td>
-                        <td><InputNumber @bind-Value="item.PorcentajeDescuento" class="form-control" id="@($"Porcentaje_{item.HerramientaId}")" /></td>
+                        <td>@item.PrecioHerramienta.ToString("C")</td>
+                        
+                        <td>
+                            <InputNumber Value="item.PorcentajeDescuento"
+                                ValueExpression="() => item.PorcentajeDescuento"
+                                ValueChanged="@((int val) => { 
+                                item.PorcentajeDescuento = val; 
+                                UpdateItemPrice(item); 
+                                   })"
+                                class="form-control"
+                                id="@($"Porcentaje_{item.HerramientaId}")" />
+                     
+                                <ValidationMessage For="@(() => item.PorcentajeDescuento)" />
+                        </td>
+                        
+                        <td>@item.PrecioFinalOferta.ToString("C")</td>
+
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger" @onclick="() => RemoveItem(item)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -101,16 +127,47 @@
 @if (DialogIsOpen)
 {
     <Dialog Caption="Crear Ofertas"
-    Message="Deseas continuar el proceso de crear ofertas?"
+    Message="¿Desea continuar el proceso de crear ofertas?"
     OnClose="@OnDialogClose"
     Type=Dialog.Category.SaveNot>
     </Dialog>
 }
 
 @code {
+
     private CrearOfertaDTO oferta => ofertaState.Oferta;
     private bool DialogIsOpen;
     private object? errores;
+
+    protected override void OnInitialized()
+    {
+        ofertaState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        ofertaState.OnChange -= StateHasChanged;
+    }
+
+    private void UpdateItemPrice(OfertaItemsDTO item)
+    {
+        if (item.PorcentajeDescuento < 0) item.PorcentajeDescuento = 0;
+        if (item.PorcentajeDescuento > 100) item.PorcentajeDescuento = 100;
+
+        item.PrecioFinalOferta = item.PrecioHerramienta * (1 - (item.PorcentajeDescuento / 100f));
+        
+    }
+
+    private void RemoveItem(OfertaItemsDTO item)
+    {
+        ofertaState.RemoveOfertaItem(item);
+    }
+
+    private void ClearOferta()
+    {
+        ofertaState.ClearOfertaCart();
+    }
+
     private void OpenDialog()
     {
         DialogIsOpen = true;
@@ -118,12 +175,24 @@
 
     private async Task OnDialogClose(bool isOk)
     {
-
         DialogIsOpen = false;
+        
         if (isOk)
         {
-            // Process the data introduced by the user if they are valid
+            try
+            {
+                logger.LogInformation("Enviando oferta al API: {@Oferta}", oferta);
+                
+                var ofertado = await apiclient.CrearOfertaAsync(oferta);
 
+                ofertaState.OfertaProcesada();
+                
+                navigation.NavigateTo($"/Ofertar/DetalleOferta/?Id={ofertado.Id}"); 
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error al procesar la oferta.");
+            }
         }
     }
 }

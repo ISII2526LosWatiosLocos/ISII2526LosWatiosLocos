@@ -10,7 +10,7 @@ namespace AppForSEII2526.Web
     public class OfertaStateContainer
     {
         // Instancia principal del DTO que se enviará al final
-        public CrearOfertaDTO Oferta { get; private set; } = new CrearOfertaDTO { Items = new List<OfertaItemsDTO>()};
+        public CrearOfertaDTO Oferta { get; private set; } = new CrearOfertaDTO { Items = new List<OfertaItemsDTO>() };
 
         public float PrecioFinal
         {
@@ -28,37 +28,41 @@ namespace AppForSEII2526.Web
         // PASO 3: Añadir herramienta al carrito de ofertas
         public void AddHerramientaToOferta(HerramientasParaOfertarDTO herramienta)
         {
-            if (!Oferta.Items.Any(item => item.HerramientaId == herramienta.Id))
+            if (!Oferta.Items.Any(item => item.NombreHerramienta == herramienta.Nombre))
             {
                 Oferta.Items.Add(new OfertaItemsDTO
                 {
-                    HerramientaId = herramienta.Id,
                     NombreHerramienta = herramienta.Nombre,
                     MaterialHerramienta = herramienta.Material,
-                    PrecioHerramienta = herramienta.Precio                
-                }
-                );
+                    PrecioHerramienta = herramienta.Precio,
+                    // Se inicializa el PrecioFinalOferta con el PrecioHerramienta.
+                    PrecioFinalOferta = herramienta.Precio
+                });
             }
+
+            NotifyStateChanged();
         }
-                
+
         // FLUJO ALTERNATIVO 2: Borrar herramienta de la oferta
         public void RemoveOfertaItem(OfertaItemsDTO item)
         {
             Oferta.Items.Remove(item);
-
+            NotifyStateChanged();
         }
 
         // Limpiar todo el carrito
         public void ClearOfertaCart()
         {
             Oferta.Items.Clear();
+            NotifyStateChanged();
         }
 
         // PASO 6/7: Al terminar el proceso, reseteamos todo
         public void OfertaProcesada()
         {
-            
-            Oferta = new CrearOfertaDTO { Items = new List<OfertaItemsDTO>()};
+
+            Oferta = new CrearOfertaDTO { Items = new List<OfertaItemsDTO>() };
+            NotifyStateChanged();
         }
     }
 }

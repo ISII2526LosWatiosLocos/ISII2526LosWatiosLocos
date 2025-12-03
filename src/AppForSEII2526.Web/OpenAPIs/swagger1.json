@@ -1272,6 +1272,10 @@
       "OfertasParaDetalleDTO": {
         "type": "object",
         "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "fechaFinal": {
             "type": "string",
             "format": "date"

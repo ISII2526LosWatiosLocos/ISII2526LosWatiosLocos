@@ -2,6 +2,8 @@
 {
     public class OfertasParaDetalleDTO
     {
+        [JsonPropertyName("Id")]
+        public int Id { get; set; }
         public DateOnly FechaFinal { get; set; }
         public DateOnly FechaInicio { get; set; }
         public DateOnly FechaOferta { get; set; }
@@ -24,6 +26,21 @@
             Items = items;
             this.nombreUsuario = nombreUsuario;
         }
+
+        public OfertasParaDetalleDTO(int id, DateOnly fechaFinal, DateOnly fechaInicio, DateOnly fechaOferta, string tipoDirigida, string metodoPago, IList<OfertaItemsDTO> items, string nombreUsuario)
+
+        {
+            Id = id;    
+            FechaFinal = fechaFinal;
+            FechaInicio = fechaInicio;
+            FechaOferta = fechaOferta;
+            TipoDirigida = tipoDirigida;
+            MetodoPago = metodoPago;
+            Items = items;
+            this.nombreUsuario = nombreUsuario;
+        }
+
+
 
         public override bool Equals(object? obj)
         {

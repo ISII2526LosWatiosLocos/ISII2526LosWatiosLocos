@@ -1,4 +1,5 @@
 ﻿@page "/Ofertar/SeleccionarHerramientaParaOfertar"
+@implements IDisposable
 
 @using Microsoft.AspNetCore.Authorization
 @using AppForSEII2526.Web.API
@@ -12,7 +13,7 @@
 
 <div class="container-fluid">
     <div class="row" hidden="@hideErrors">
-        <p>Aquí voy a mostrar los errores</p>
+        <p class="alert alert-danger">@errors</p>
     </div>
     <div class="row">
         <div class="col-8">
@@ -22,9 +23,12 @@
                         <span class="input-group-text" id="basic-addon1">Nombre Fabricante</span>
                         <select class="form-select" aria-label="Default select" @bind="fabricanteSelected" id="fabricanteSelected">
                             <option value="All" selected>All</option>
-                            @foreach (string fabricanteNombre in fabricantes)
+                            @if (fabricantes != null)
                             {
-                                <option value="@fabricanteNombre" id="fabricanteSelected_@fabricanteNombre">@fabricanteNombre</option>
+                                @foreach (string fabricanteNombre in fabricantes)
+                                {
+                                    <option value="@fabricanteNombre" id="fabricanteSelected_@fabricanteNombre">@fabricanteNombre</option>
+                                }
                             }
                         </select>
                     </div>
@@ -32,7 +36,7 @@
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Precio</span>
-                        <input type="text" id="inputGenre" @bind=precio class="form-control" placeholder="Precio" aria-label="Genre" aria-describedby="basic-addon1">
+                        <input type="number" id="inputPrecio" @bind=precio class="form-control" placeholder="Precio" aria-label="Precio" aria-describedby="basic-addon1">
                     </div>
                 </div>
 
@@ -41,7 +45,7 @@
                 </div>
             </div>
             <div class="row">
-                @if (herramienta == null)
+                @if (herramientas == null)
                 {
                     <p>Loading herramientas....</p>
                 }
@@ -55,18 +59,19 @@
                                     <th>Material</th>
                                     <th>Fabricante</th>
                                     <th>Precio</th>
+                                    <th>Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var oferta in herramienta)
+                                @foreach (var her in herramientas) @* Cambiado 'oferta' a 'her' para claridad *@
                                 {
-                                    <tr id="OfertaData_@oferta.Nombre">
-                                        <td>@oferta.Nombre</td>
-                                        <td>@oferta.Material</td>
-                                        <td>@oferta.Fabricante</td>
-                                        <td>@oferta.Precio</td>
+                                    <tr id="OfertaData_@her.Nombre">
+                                        <td>@her.Nombre</td>
+                                        <td>@her.Material</td>
+                                        <td>@her.Fabricante</td>
+                                        <td>@her.Precio</td>
                                         <td>
-                                            <button class="btn btn-outline-secondary" id="OfertaData_@oferta.Nombre" @onclick="@(() => AddHerramienta(oferta))">Add</button>
+                                            <button class="btn btn-outline-secondary" id="OfertaData_@her.Nombre" @onclick="@(() => AddHerramienta(her))">Add</button>
                                         </td>
                                     </tr>
                                 }
@@ -77,19 +82,27 @@
                 }
             </div>
         </div>
-        <div class="col-2">
-            <div class="col-2" hidden="@hideRentingCart">
+
+        <div class="col-4">
+            <div class="col-12" hidden="@hideRentingCart">
                 <div class="row">
-                    <h3>Shopping Cart</h3>
+                    <h3>Carrito de Ofertas</h3>
                 </div>
-                @foreach (OfertaItemsDTO item in oferta.Items)
+                <div class="row mb-3">
+                    <p>Total: @OfertaStateContainer.PrecioFinal.ToString("C")</p>
+                </div>
+                @foreach (OfertaItemsDTO item in OfertaStateContainer.Oferta.Items) 
                 {
-                    <div class="row">
-                        <button type="button" class="btn btn-light" id="removeHerramienta_@item.NombreHerramienta" @onclick="@(() => RemoveHerramientaItem(item))">x @item.NombreHerramienta - @item.PrecioHerramienta€</button>
+                    <div class="row mb-1">
+                        <button type="button" class="btn btn-light" id="removeHerramienta_@item.NombreHerramienta" @onclick="@(() => RemoveHerramientaItem(item))">
+                            <span class="oi oi-trash"></span> @item.NombreHerramienta - @item.PrecioHerramienta€
+                        </button>
                     </div>
                 }
-                <div class="row">
-                    <button type="button" class="btn btn-primary" id="purchaseHerramienta" @onclick=@ofertarHerramientas>Rent movies</button>
+                <div class="row mt-3">
+                    <button type="button" class="btn btn-success" id="purchaseHerramienta" @onclick=@ofertarHerramientas disabled="@(oferta.Items.Count == 0)">
+                        Continuar a Crear Oferta
+                    </button>
                 </div>
             </div>
 
@@ -99,28 +112,50 @@
 
 @code {
 
-    private string fabricanteSelected;
+    private string fabricanteSelected = "All";
     private ICollection<string>? fabricantes = new List<string>();
-    private bool hideRentingCart { get {return oferta.Items.Count == 0; } }
-    private ICollection<HerramientasParaOfertarDTO> herramienta;
-    private bool hideErrors { get { return errors.Length == 0; } }
+    // Propiedad computada que usa el estado del contenedor
+    private bool hideRentingCart => OfertaStateContainer.Oferta.Items.Count == 0;
+    private ICollection<HerramientasParaOfertarDTO>? herramientas;
+    private bool hideErrors => string.IsNullOrEmpty(errors); 
     private string errors = "";
-    private string nombreFabricante { get; set; }
-    private float? precio { get; set; }
+    private float? precio;
 
+    private CrearOfertaDTO oferta => OfertaStateContainer.Oferta;
 
-    public async void BuscarHerramientas()
+    protected override async Task OnInitializedAsync()
     {
+        OfertaStateContainer.OnChange += StateHasChanged;
 
-        nombreFabricante = fabricanteSelected == "All" ? null : fabricanteSelected;
-
-        if (precio == 0)
-        {
-            precio = null;
-        }
         try
         {
-            herramienta = await ApiClient.GetHerramientasParaOfertaAsync(nombreFabricante, precio);
+            fabricantes = await ApiClient.GetFabricantesAsync(null);
+        }
+        catch (ApiException ex)
+        {
+            Logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+
+        await BuscarHerramientas();
+    }
+
+    public void Dispose()
+    {
+        OfertaStateContainer.OnChange -= StateHasChanged;
+    }
+
+
+    public async Task BuscarHerramientas()
+    {
+
+        string? nombreFabricante = fabricanteSelected == "All" ? null : fabricanteSelected;
+
+        float? precioFiltro = precio is 0 ? null : precio;
+
+        try
+        {
+            herramientas = await ApiClient.GetHerramientasParaOfertaAsync(nombreFabricante, precioFiltro);
 
         }
         catch (ApiException ex)
@@ -128,30 +163,8 @@
             Logger.LogError($"{DateTime.Now} Error: {ex}");
             errors = "Error while connecting to the system";
         }
-        StateHasChanged();
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            fabricantes = await ApiClient.GetFabricantesAsync(null);
-        }catch (ApiException ex)
-        {
-            Logger.LogError($"{DateTime.Now} Error: {ex}");
-            errors = "Error while connecting to thes system";
-        }
-
-
-
-        BuscarHerramientas();
-
-        //return base.OnInitializedAsync();
-    }
-
-    private CrearOfertaDTO oferta => OfertaStateContainer.Oferta;
-
-    private bool hiddenRentingCart = true;
 
     private void AddHerramienta(HerramientasParaOfertarDTO herramienta)
     {
@@ -161,11 +174,11 @@
     private void RemoveHerramientaItem(OfertaItemsDTO item)
     {
         OfertaStateContainer.RemoveOfertaItem(item);
-        if (oferta.Items.Count == 0) hiddenRentingCart = true;
     }
 
     private void ofertarHerramientas()
     {
-        navigation.NavigateTo("/Oferta/CrearOferta");
+        // Se asegura que la ruta sea correcta
+        navigation.NavigateTo("/Ofertar/CrearOferta");
     }
 }
