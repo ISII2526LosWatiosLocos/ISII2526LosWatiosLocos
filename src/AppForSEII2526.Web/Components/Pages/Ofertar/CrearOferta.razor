@@ -22,14 +22,36 @@
         </div>
     </div>
 
-
+    <div class="mh-100 table-responsive">
+        <table class="table table-condensed table-hover" id="TableOfRentalItems">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Material</th>
+                    <th>Precio</th>
+                    <th>Porcentaje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in oferta.Items)
+                {
+                    <tr id="MovieData_@item.NombreHerramienta">
+                        <td>@item.NombreHerramienta</td>
+                        <td>@item.MaterialHerramienta</td>
+                        <td>@item.PrecioHerramienta</td>
+                        <td><InputNumber @bind-Value="item.PorcentajeDescuento" class="form-control" id="@($"Porcentaje_{item.HerramientaId}")" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </EditForm>
 
 
 @if (DialogIsOpen)
 {
-    <Dialog Caption="Rental movies"
-    Message="Do you want to proceed to rent the selected movies?"
+    <Dialog Caption="Crear Ofertas"
+    Message="Deseas continuar el proceso de crear ofertas?"
     OnClose="@OnDialogClose"
     Type=Dialog.Category.SaveNot>
     </Dialog>
