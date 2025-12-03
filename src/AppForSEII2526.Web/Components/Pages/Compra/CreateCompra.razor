@@ -11,7 +11,29 @@
 @* compra is the object that will be edited thanks to the form *@
 <EditForm Model="compra" OnValidSubmit="OpenDialog">
     <div class="row">
-
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+    </div>
+    <div class="row g-3">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="compra.Nombre" class="form-control" id="Name" />
+                <label for="Name">Name </label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="compra.Apellidos" class="form-control" id="Surname" />
+                <label for="Name">Name </label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="compra.DireccionEnvio" class="form-control" id="DeliveryAddress" />
+                <label for="DeliveryAddress">Delivery Address</label>
+            </div>
+        </div>
+    </div>
         <div class="col-md">
             <div class="form-floating">
                 @*this button will be used to ask the user if he want to proceed to comprar las herramientas*@
@@ -20,8 +42,6 @@
                 </button>
             </div>
         </div>
-
-    </div>
     <div class="mh-100 table-responsive">
         <table class="table table-condensed table-hover" id="TableOfCompraItems">
             <thead>
@@ -61,6 +81,7 @@
 
     private bool DialogIsOpen;
 
+    private object? errors;
     private CrearCompraDTO compra => compraState.Compra;
 
     private void OpenDialog()
