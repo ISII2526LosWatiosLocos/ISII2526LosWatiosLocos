@@ -17,6 +17,9 @@
     <div class="row">
         <DataAnnotationsValidator />
         <ValidationSummary class="row alert alert-danger" />
+        <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+            <p id="ErrorsShown">Errors: @messageError</p>
+        </div>
     </div>
 
 
@@ -111,6 +114,10 @@
 
 @code {
 
+    private string messageError = "";
+
+    private bool hideErrors { get { return messageError.Length == 0; } }
+
     private bool DialogIsOpen;
 
     private decimal TotalCost
@@ -140,7 +147,27 @@
         if (isOk)
         {
             // Process the data introduced by the user if they are valid
+            if (compra.Items.Count > 0)
+            {
+                try
+                {
+                    var comprado = await apiclient.CrearCompraAsync(compra);
+                    compraState.CompraProcesada();
+                    navigation.NavigateTo($"/Compra/DetalleCompra/?CompraID={comprado.Id}");
+                }
+                catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
+                {
 
+                    if (apiexceptionvalidation.Result.Errors.Values != null)
+                    {
+                        messageError = "";
+                        foreach (var errors in apiexceptionvalidation.Result.Errors.Values)
+                            //https://learn.microsoft.com/en-us/dotnet/api/system.string.join?view=net-7.0
+                            messageError = string.Join("(*) ", messageError, string.Join(" (*) ", errors));
+                    }
+                }
+
+            }
         }
     }
 
