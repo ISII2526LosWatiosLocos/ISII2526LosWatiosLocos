@@ -158,8 +158,16 @@ namespace AppForSEII2526.API.Controllers
                 ModelState.AddModelError(nameof(CrearCompraDTO.MetodoPagoId), $"El MetodoPagoId {CrearCompraDTO.MetodoPagoId} no existe.");
 
             // b. Buscar Usuario
-            var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos && u.NumeroTelefono == CrearCompraDTO.NumeroTelefono && u.CorreoElectronico == CrearCompraDTO.CorreoElectronico);
+            var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos);
             if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El usuario no existe.");
+            //sobreescribo las variables opcionales si son proporcionadas, tal y como me ha dicho Noelia
+            if ((CrearCompraDTO.NumeroTelefono != null) && (CrearCompraDTO.NumeroTelefono != "")){
+                Usuario.NumeroTelefono = CrearCompraDTO.NumeroTelefono;
+            }
+            if ((CrearCompraDTO.CorreoElectronico != null) && (CrearCompraDTO.CorreoElectronico != ""))
+            {
+                Usuario.CorreoElectronico = CrearCompraDTO.CorreoElectronico;
+            }
 
             // c. Validar items del DTO (que no tengan valores imposibles)
             // Solo comprobación estructural mínima aquí: existencia de la lista y validación básica del IdHerramienta.
