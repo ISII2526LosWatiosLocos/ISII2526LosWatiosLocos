@@ -70,7 +70,7 @@
             @foreach (CompraItemsDTO item in compra.Items)
             {
                 <div class="row">
-                    <button type="button" class="btn btn-light" id="quitarHerramienta_@item.NombreHerramienta" @onclick="@(() => QuitarItemDelCarroDeCompra(item))">x @item.NombreHerramienta - @item.PrecioHerramienta€</button>
+                    <button type="button" class="btn btn-light" id="quitarHerramienta_@item.NombreHerramienta"> (@item.CantidadHerramienta)x @item.NombreHerramienta - @item.PrecioHerramienta€ </button>
                 </div>
             }
             <div class="row">
