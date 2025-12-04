@@ -1,0 +1,16 @@
+﻿<h3>DetalleReparacion</h3>
+
+<h3>DetalleOferta</h3>
+
+@using AppForSEII2526.Web.API
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int ReparacionID { get; set; }
+    private ReparacionesDTO reparacion;
+    private string error = "";
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+}
