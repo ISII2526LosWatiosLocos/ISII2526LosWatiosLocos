@@ -1,0 +1,11 @@
+﻿@page "/Reparacion/CreateReparacion"
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<CreateReparacion> logger
+@inject ReparacionStateContainer ReparacionStateContainer
+<h3>CreateReparacion</h3>
+
+@code {
+    private CrearReparacionDTO compra => ReparacionStateContainer.Reparacion;
+}
