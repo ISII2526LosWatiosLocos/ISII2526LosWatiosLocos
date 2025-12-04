@@ -10,9 +10,9 @@ namespace LogViewer
 {
     public class Subscriber
     {
-        private readonly string _exchangeName = "logs";
+        private readonly string _exchangeName = "logs_topic";
 
-        public void StartReceiving()
+        public void StartReceiving(string subscriptionTopic)
         {
             var factory = new ConnectionFactory() { HostName = "10.154.14.250" };
 
@@ -21,7 +21,7 @@ namespace LogViewer
 
             channel.ExchangeDeclare(
                 exchange: _exchangeName,
-                type: ExchangeType.Fanout,
+                type: ExchangeType.Topic,
                 durable: true);
 
             var queueName = channel.QueueDeclare(
@@ -34,7 +34,7 @@ namespace LogViewer
             channel.QueueBind(
                 queue: queueName,
                 exchange: _exchangeName,
-                routingKey: "");
+                routingKey: subscriptionTopic);
 
             Console.WriteLine($"[*] Suscrito a '{_exchangeName}'. Cola: {queueName}. Esperando logs...");
 
@@ -44,6 +44,7 @@ namespace LogViewer
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
+                var routingKey = ea.RoutingKey;
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"[LOG RECIBIDO]: {message}");
