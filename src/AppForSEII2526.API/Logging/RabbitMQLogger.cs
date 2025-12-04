@@ -17,7 +17,7 @@ public class RabbitMQLogger : ILogger, IDisposable
     {
         _name = name ?? throw new ArgumentNullException(nameof(name));
         _config = config ?? throw new ArgumentNullException(nameof(config));
-        
+
         ValidateConfiguration(_config);
 
         var factory = new ConnectionFactory
@@ -73,6 +73,11 @@ public class RabbitMQLogger : ILogger, IDisposable
 
         try
         {
+            // --- INICIO DE MODIFICACIÓN ---
+            // 1. Crear la clave de enrutamiento (RoutingKey)
+            var routingKey = $"{logLevel.ToString().ToLower()}.{_name}";
+            // --- FIN DE MODIFICACIÓN ---
+
             var logEntry = new
             {
                 Timestamp = DateTime.UtcNow,
@@ -82,21 +87,21 @@ public class RabbitMQLogger : ILogger, IDisposable
                 EventName = eventId.Name,
                 Message = formatter(state, exception),
                 Exception = exception?.ToString()
-                
+
 
             };
 
             var json = JsonSerializer.Serialize(logEntry);
             var body = Encoding.UTF8.GetBytes(json);
 
+            // --- INICIO DE MODIFICACIÓN ---
+            // 2. Usar la clave de enrutamiento en BasicPublish
             _channel.BasicPublish(
                 exchange: _config.Exchange,
-                routingKey: "",
+                routingKey: routingKey, 
                 basicProperties: _properties,
                 body: body);
-
-
-
+            // --- FIN DE MODIFICACIÓN ---
 
         }
         catch (Exception ex)
