@@ -9,6 +9,16 @@
 
 @attribute [Authorize]
 
+@if (reparacion == null)
+{
+    <p>@error</p>
+}
+else
+{
+
+
+}
+
 @code {
     [Parameter]
     [SupplyParameterFromQuery]
