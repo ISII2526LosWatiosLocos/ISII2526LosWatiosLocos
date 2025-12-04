@@ -33,16 +33,30 @@ namespace AppForSEII2526.Web
 
         public void AñadirHerramientaAlCarroDeCompra(HerramientasParaComprarDTO herramienta)
         {
-            // Aquí se pueden hacer comprobaciones adicionales antes de meter los items al carro, pero por ahora no hago ninguna
-            Compra.Items.Add(new CompraItemsDTO()
-                {
-                NombreHerramienta = herramienta.Nombre,
-                MaterialHerramienta = herramienta.Material,
-                PrecioHerramienta = herramienta.Precio
-            }
-            );
+            // Buscar si la herramienta ya está en el carrito
+            var itemExistente = Compra.Items
+                .FirstOrDefault(i => i.NombreHerramienta == herramienta.Nombre);
 
+            if (itemExistente != null)
+            {
+                // Si existe, aumentamos la cantidad
+                itemExistente.CantidadHerramienta++;
+            }
+            else
+            {
+                // Si no existe, la agregamos con cantidad 1
+                Compra.Items.Add(new CompraItemsDTO()
+                {
+                    NombreHerramienta = herramienta.Nombre,
+                    MaterialHerramienta = herramienta.Material,
+                    PrecioHerramienta = herramienta.Precio,
+                    CantidadHerramienta = 1
+                });
+            }
+
+            NotifyStateChanged();
         }
+
 
         // Elimina solo las herramientas seleccionadas de la compra (el item, más bien)
         public void QuitarItemDelCarroDeCompra(CompraItemsDTO item)
