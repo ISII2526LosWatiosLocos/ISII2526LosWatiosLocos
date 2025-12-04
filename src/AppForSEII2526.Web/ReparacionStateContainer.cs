@@ -10,9 +10,9 @@ namespace AppForSEII2526.Web
    
         {
             // EXACTAMENTE como tu compañero
-            public CrearReparacionDTO Reparacion { get; private set; } = new CrearReparacionDTO()
+            public ReparacionesDTO Reparacion { get; private set; } = new CrearReparacionDTO()
             {
-                ReparacionesItems = new List<CrearReparacionItemDTO>()
+                ReparacionesItems = new List<ReparacionesItemDTO>()
             };
 
             public float PrecioTotal
@@ -31,7 +31,7 @@ namespace AppForSEII2526.Web
 
             public void AgregarHerramientaAReparacion(HerramientasParaReparaciónDTO herramienta)
             {
-                Reparacion.ReparacionesItems.Add(new CrearReparacionItemDTO()
+                Reparacion.ReparacionesItems.Add(new ReparacionesItemDTO()
                 {
                     
                     HerramientaDescripcion = $"Reparar {herramienta.Nombre}",
@@ -41,7 +41,7 @@ namespace AppForSEII2526.Web
                 NotifyStateChanged();
             }
 
-            public void QuitarItemDeReparacion(CrearReparacionItemDTO item)
+            public void QuitarItemDeReparacion(ReparacionesItemDTO item)
             {
                 Reparacion.ReparacionesItems.Remove(item);
                 NotifyStateChanged();
@@ -55,9 +55,9 @@ namespace AppForSEII2526.Web
 
             public void ReparacionProcesada()
             {
-                Reparacion = new CrearReparacionDTO()
+                Reparacion = new ReparacionesDTO()
                 {
-                    ReparacionesItems = new List<CrearReparacionItemDTO>()
+                    ReparacionesItems = new List<ReparacionesItemDTO>()
                 };
                 NotifyStateChanged();
             }
