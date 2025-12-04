@@ -15,7 +15,39 @@
 }
 else
 {
+ 
+    
 
+
+    @foreach (var reparacion in reparacion)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                Reparación: @reparacion.Nombre
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless table-sm">
+                    <tr>
+                        <th>Nombre y Apellidos</th>
+                        <td>@reparacion.Nombre @reparacion.Apellidos</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Entrega</th>
+                        <td id="FechaEntrega">@reparacion.FechaEntrega.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    </tr>
+                    <tr>
+                        
+                        <th>Fecha de Recogida</th>
+                        <td>@reparacion.FechaRecogida.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    </tr>
+                    <tr>
+                        <th>Período de Reparación</th>
+                        <td id="PrecioTotal">@reparacion.PrecioTotal.ToString("C")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+}
 
 }
 
