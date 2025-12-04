@@ -1,4 +1,6 @@
 ﻿@page "/Ofertar/DetalleOferta"
+@* 1. AÑADIMOS ESTA RUTA PARA ACEPTAR EL ID *@
+@page "/Ofertar/DetalleOferta/{IdRecibido:int}"
 
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient apiclient
@@ -9,7 +11,6 @@
 <h3>DetalleParaOferta</h3>
 
 <div class="container-fluid">
-    @* 1. MOSTRAR ERRORES: Usamos una alerta de Bootstrap para que sea visible *@
     <div class="row" hidden="@hideErrors">
         <div class="alert alert-danger" role="alert">
             @errors
@@ -22,12 +23,10 @@
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">IdOferta</span>
-                        @* Agregado type="number" para mejor control *@
                         <input type="number" id="IdOferta" @bind="IdOferta" class="form-control" placeholder="IdOferta" aria-label="IdOferta">
                     </div>
                 </div>
                 <div class="col">
-                    @* Quitamos async void del evento *@
                     <button type="button" class="btn btn-primary" @onclick="BuscarOferta" id="searchOferta">Buscar oferta</button>
                 </div>
             </div>
@@ -53,20 +52,13 @@
                             </thead>
                             <tbody>
                                 <tr class="align-middle">
-                                    @* --- 1. DATOS GENERALES DE LA OFERTA --- *@
-
-                                    @* Fechas formateadas (dd/MM/yyyy) para quitar la hora 00:00:00 *@
                                     <td>@oferta.FechaInicio.ToString("dd/MM/yyyy")</td>
                                     <td>@oferta.FechaFinal.ToString("dd/MM/yyyy")</td>
                                     <td>@oferta.FechaOferta.ToString("dd/MM/yyyy")</td>
-
-                                    @* Método de pago y Tipo *@
                                     <td>@oferta.MetodoPago</td>
                                     <td>
                                         <span class="badge bg-info text-dark">@oferta.TipoDirigida</span>
                                     </td>
-
-                                    @* --- 2. LISTA DE HERRAMIENTAS (ITEMS) --- *@
                                     <td style="min-width: 350px;">
                                         @if (oferta.Items != null && oferta.Items.Any())
                                         {
@@ -74,29 +66,19 @@
                                                 @foreach (var item in oferta.Items)
                                                 {
                                                     <li class="list-group-item p-2">
-                                                        @* A. Nombre de la herramienta *@
                                                         <div class="fw-bold text-primary">
                                                             @item.NombreHerramienta
                                                         </div>
-
-                                                        @* B. Material y Fabricante *@
                                                         <div class="small text-muted mb-1">
                                                             <i class="bi bi-hammer"></i> @item.MaterialHerramienta
                                                             |
                                                             <i class="bi bi-building"></i> @item.FabricanteHerramienta
                                                         </div>
-
-                                                        @* C. Precios (Original vs Oferta) *@
                                                         <div>
-                                                            @* Precio Original (Tachado) *@
                                                             <span class="text-decoration-line-through text-secondary me-2">
                                                                 @item.PrecioHerramienta.ToString("C2")
                                                             </span>
-
-                                                            @* Flechita indicadora *@
                                                             <span>&rarr;</span>
-
-                                                            @* Precio con Oferta (Verde y Negrita) *@
                                                             <span class="fw-bold text-success ms-2">
                                                                 @item.PrecioFinalOferta.ToString("C2")
                                                             </span>
@@ -125,19 +107,29 @@
 </div>
 
 @code {
-    // 3. CAMBIO DE TIPO: Ya no es una colección, es un objeto único nullable
-    private OfertasParaDetalleDTO? oferta;
+    // 2. CAPTURAMOS EL ID QUE VIENE POR LA URL
+    [Parameter]
+    public int? IdRecibido { get; set; }
 
+    private OfertasParaDetalleDTO? oferta;
     private bool hideErrors => string.IsNullOrEmpty(errors);
     private string errors = "";
-
-    // Inicializamos en 0
     private int IdOferta { get; set; } = 0;
-
     private bool isLoading = false;
     private bool hasSearched = false;
 
-    // 4. ASYNC TASK: Correcto manejo de asincronía
+    // 3. AUTOMATIZACIÓN: Si recibimos un ID por URL, buscamos automáticamente
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IdRecibido.HasValue && IdRecibido.Value > 0)
+        {
+            // Asignamos el valor al input
+            IdOferta = IdRecibido.Value;
+            // Ejecutamos la búsqueda sin esperar click
+            await BuscarOferta();
+        }
+    }
+
     public async Task BuscarOferta()
     {
         isLoading = true;
@@ -153,8 +145,6 @@
                 return;
             }
 
-            // AHORA ESTO FUNCIONARÁ NATIVAMENTE
-            // El cliente generado por el pipeline ya devolverá el objeto directo
             oferta = await apiclient.GetDetalleHerramientasParaOfertaAsync(IdOferta);
         }
         catch (Exception ex)
@@ -168,6 +158,4 @@
             StateHasChanged();
         }
     }
-
-    // Eliminada la llamada en OnInitializedAsync para evitar errores al cargar la página vacía
 }
