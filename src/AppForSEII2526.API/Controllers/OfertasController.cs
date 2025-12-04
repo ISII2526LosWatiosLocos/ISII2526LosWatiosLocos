@@ -224,6 +224,8 @@ namespace AppForSEII2526.API.Controllers
                 nuevaOferta.Usuario.Nombre
             );
 
+            ofertaDTORespuesta.Id = nuevaOferta.Id;
+
             // Devolvemos el DTO de detalle
             return CreatedAtAction(
                 nameof(GetDetalleHerramientasParaOferta), // Nombre del método GET

@@ -33,7 +33,7 @@ namespace AppForSEII2526.API.Controllers
                 .Where (h => (filtroFabricante == null || h.Fabricante.Nombre == filtroFabricante) &&
                             (filtroPrecio == null || h.Precio <= filtroPrecio))
                 .Select(h => new HerramientasParaOfertarDTO(
-                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
+                    h.Id, h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
                 .ToListAsync();
             return Ok(herramientas);
 

@@ -64,8 +64,8 @@
             <div class="form-floating mb-3">
                 <InputSelect @bind-Value="oferta.TipoDirigida" class="form-select" id="DirigidaA">
                     <option value="">Dirigida A (Opcional)</option>
-                    <option value="Socios">Socio</option>
-                    <option value="Clientes">Cliente</option>
+                    <option value="Socio">Socio</option>
+                    <option value="Cliente">Cliente</option>
                 </InputSelect>
                 <label for="DirigidaA">Dirigida A</label>
             </div>
@@ -203,7 +203,7 @@
 
                 ofertaState.OfertaProcesada();
                 
-                navigation.NavigateTo($"/Ofertar/DetalleOferta/?Id={ofertado.Id}"); 
+                navigation.NavigateTo($"/Ofertar/DetalleOferta/{ofertado.Id}"); 
             }
             catch(ApiException<ValidationProblemDetails> apiexceptionvalidation)
                 {
