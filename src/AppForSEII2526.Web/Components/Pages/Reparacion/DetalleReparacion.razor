@@ -47,6 +47,37 @@ else
                 </table>
             </div>
         </div>
+
+        <h4>Herramientas en Reparación</h4>
+
+        <table class="table" id="HerramientasReparacion">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var herramienta in reparacion.ReparacionesItems)
+                {
+                    <tr id="Herramienta_@herramienta.HerramientaId">
+                        <td>@herramienta.HerramientaId</td>
+                        <td>@herramienta.HerramientaNombre</td>
+                        <td>@herramienta.HerramientaPrecio.ToString("N2")€</td>
+                        <td>@herramienta.HerramientaCantidad</td>
+                        <td>@herramienta.HerramientaDescripcion</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                @* colspan=4 porque hay 5 columnas, la primera (ID) no se incluye en el colspan *@
+            <th scope="row" colspan="4" class="text-end">Total Reparación</th>
+            <td id="TotalPrice">@reparacion.PrecioTotal.ToString("N2")€</td>
+            </tfoot>
+        </table>
 }
 
 }
