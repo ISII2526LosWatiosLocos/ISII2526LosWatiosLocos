@@ -32,6 +32,7 @@ namespace AppForSEII2526.Web
             {
                 Oferta.Items.Add(new OfertaItemsDTO
                 {
+                    FabricanteHerramienta = herramienta.Fabricante,
                     NombreHerramienta = herramienta.Nombre,
                     MaterialHerramienta = herramienta.Material,
                     PrecioHerramienta = herramienta.Precio,
