@@ -79,7 +79,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("DetalleCompra")]
         // El tipo de respuesta es una lista de ComprasParaDetalleDTO
-        [ProducesResponseType(typeof(IList<ComprasParaDetalleDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ComprasParaDetalleDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetDetalleHerramientasParaCompra(int id)
         {
@@ -202,6 +202,11 @@ namespace AppForSEII2526.API.Controllers
                 MetodoPago = metodoPago!, // Sabemos que no es null por la validación anterior
                 Usuario = Usuario
             };
+
+            // validar dirección de envío
+            if ((nuevaCompra.DireccionEnvio == null) || (nuevaCompra.DireccionEnvio == "")){
+                ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La compra debe tener una dirección de envío.");
+            }
 
             // --- PRE-CHECK: cantidades totales solicitadas por herramienta (una sola vez) ---
             // Construimos un diccionario IdHerramienta -> cantidad total solicitada en el DTO

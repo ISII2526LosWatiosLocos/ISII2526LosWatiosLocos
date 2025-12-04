@@ -144,6 +144,15 @@ namespace AppForSEII2526.UT.ComprasController_test
                 DireccionEnvio = "DireccionEnvio - Compra1"
             };
 
+            var compraSinDireccionEnvio = new CrearCompraDTO
+            {
+                Nombre = "Fulanito",
+                Apellidos = "De Tal",
+                MetodoPagoId = 1,
+                Items = compraItems,
+                DireccionEnvio = "" // String vacío o null
+            };
+
             var compraItemDescripcionNula = new CrearCompraDTO
             {
                 Nombre = "Fulanito",
@@ -367,6 +376,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 new object[] { compraSinUsuario, "El usuario no existe." },
                 new object[] { compraMetodoPagoInvalido, "El MetodoPagoId 999 no existe." },
                 new object[] { compraNoItem, "La compra debe incluir al menos una herramienta." },
+                new object[] { compraSinDireccionEnvio, "La compra debe tener una dirección de envío." },
                 // Los mensajes de error de las herramientas pueden variar según el nombre de ésta:
                 new object[] { compraItemDescripcionNula, "La herramienta Nombre - Herramienta3 no tiene descipción." },
                 new object[] { compraItemCantidadCero, "La herramienta Nombre - Herramienta3 tiene cantidad cero." },
@@ -457,8 +467,7 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             // Assert
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            var createdCompraDTO = Assert.IsType<ComprasParaDetalleDTO>(createdAtActionResult.Value); 
-
+            var createdCompraDTO = Assert.IsType<ComprasParaDetalleDTO>(createdAtActionResult.Value);
             Assert.Equal(compraDTO.Nombre, createdCompraDTO.Nombre);
             Assert.Equal(compraDTO.Apellidos, createdCompraDTO.Apellidos);
             Assert.Equal(compraDTO.DireccionEnvio, createdCompraDTO.DireccionEnvio);

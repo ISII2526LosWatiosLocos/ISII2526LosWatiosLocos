@@ -127,7 +127,7 @@ namespace AppForSEII2526.UT.ComprasController_test
             );
             expectedCompra.Items.Add(new CompraItemsDTO
             (
-                100,
+                1,
                 "Nombre - Herramienta1",
                 "Material - Herramientas1y2",
                 (float)10.99,
@@ -146,27 +146,19 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             var compraDTOActual = Assert.IsType<ComprasParaDetalleDTO>(okResult.Value);
 
-            // 2. Comprueba las propiedades simples (string, DateOnly, int, etc.)
-            Assert.Equal(expectedCompra.Nombre, compraDTOActual.Nombre);
-            Assert.Equal(expectedCompra.Apellidos, compraDTOActual.Apellidos);
-            Assert.Equal(expectedCompra.DireccionEnvio, compraDTOActual.DireccionEnvio);
-            Assert.Equal(expectedCompra.PrecioTotal, compraDTOActual.PrecioTotal);
-            Assert.Equal(expectedCompra.FechaCompra, compraDTOActual.FechaCompra);
+            // 2. Comprueba la compra
+            Assert.Equal(expectedCompra, compraDTOActual);
 
             // 3. Comprueba las listas o colecciones
             //    Primero, comprueba que tengan el mismo número de elementos
             Assert.Equal(expectedCompra.Items.Count, compraDTOActual.Items.Count);
 
             // 4. Comprueba los elementos DENTRO de las listas
-            //    (En este test, sabes que solo hay un item, en la posición [0])
+            //    En este test, sabemos que solo hay un item, en la posición [0] (de haber más se haría un bucle for)
             var expectedItem = expectedCompra.Items[0];
             var actualItem = compraDTOActual.Items[0];
 
-            Assert.Equal(expectedItem.NombreHerramienta, actualItem.NombreHerramienta);
-            Assert.Equal(expectedItem.MaterialHerramienta, actualItem.MaterialHerramienta);
-            Assert.Equal(expectedItem.PrecioHerramienta, actualItem.PrecioHerramienta);
-            Assert.Equal(expectedItem.DescripcionHerramienta, actualItem.DescripcionHerramienta);
-            Assert.Equal(expectedItem.CantidadHerramienta, actualItem.CantidadHerramienta);
+            Assert.Equal(expectedItem, actualItem);
         }
     }
 }

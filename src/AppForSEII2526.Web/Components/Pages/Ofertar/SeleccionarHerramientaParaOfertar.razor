@@ -1,0 +1,171 @@
+﻿@page "/Ofertar/SeleccionarHerramientaParaOfertar"
+
+@using Microsoft.AspNetCore.Authorization
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient ApiClient
+@inject ILogger<SeleccionarHerramientaParaOfertar> Logger
+@inject OfertaStateContainer OfertaStateContainer
+@inject NavigationManager navigation
+
+
+<h3>Seleccionar Herramientas Para Ofertar</h3>
+
+<div class="container-fluid">
+    <div class="row" hidden="@hideErrors">
+        <p>Aquí voy a mostrar los errores</p>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Nombre Fabricante</span>
+                        <select class="form-select" aria-label="Default select" @bind="fabricanteSelected" id="fabricanteSelected">
+                            <option value="All" selected>All</option>
+                            @foreach (string fabricanteNombre in fabricantes)
+                            {
+                                <option value="@fabricanteNombre" id="fabricanteSelected_@fabricanteNombre">@fabricanteNombre</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Precio</span>
+                        <input type="text" id="inputGenre" @bind=precio class="form-control" placeholder="Precio" aria-label="Genre" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="buscarHerramientas">Buscar Herramientas</button>
+                </div>
+            </div>
+            <div class="row">
+                @if (herramienta == null)
+                {
+                    <p>Loading herramientas....</p>
+                }
+                else
+                {
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfOferta">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Material</th>
+                                    <th>Fabricante</th>
+                                    <th>Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var oferta in herramienta)
+                                {
+                                    <tr id="OfertaData_@oferta.Nombre">
+                                        <td>@oferta.Nombre</td>
+                                        <td>@oferta.Material</td>
+                                        <td>@oferta.Fabricante</td>
+                                        <td>@oferta.Precio</td>
+                                        <td>
+                                            <button class="btn btn-outline-secondary" id="OfertaData_@oferta.Nombre" @onclick="@(() => AddHerramienta(oferta))">Add</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                }
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="col-2" hidden="@hideRentingCart">
+                <div class="row">
+                    <h3>Shopping Cart</h3>
+                </div>
+                @foreach (OfertaItemViewModel item in OfertaStateContainer.ItemsVisuales)
+                {
+                    <div class="row">
+                        <button type="button" class="btn btn-light" id="removeHerramienta_@item.InfoVisual.Nombre" @onclick="@(() => RemoveHerramientaItem(item))">x @item.InfoVisual.Nombre - @item.InfoVisual.Precio€</button>
+                    </div>
+                }
+                <div class="row">
+                    <button type="button" class="btn btn-primary" id="purchaseHerramienta" @onclick=@comprarHerramienta>Rent movies</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private string fabricanteSelected;
+    private ICollection<string>? fabricantes = new List<string>();
+    private bool hideRentingCart { get {return OfertaStateContainer.ItemsVisuales.Count == 0; } }
+    private ICollection<HerramientasParaOfertarDTO> herramienta;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private string nombreFabricante { get; set; }
+    private float? precio { get; set; }
+
+
+    public async void BuscarHerramientas()
+    {
+
+        nombreFabricante = fabricanteSelected == "All" ? null : fabricanteSelected;
+
+        if (precio == 0)
+        {
+            precio = null;
+        }
+        try
+        {
+            herramienta = await ApiClient.GetHerramientasParaOfertaAsync(nombreFabricante, precio);
+
+        }
+        catch (ApiException ex)
+        {
+            Logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            fabricantes = await ApiClient.GetFabricantesAsync(null);
+        }catch (ApiException ex)
+        {
+            Logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to thes system";
+        }
+
+
+
+        BuscarHerramientas();
+
+        //return base.OnInitializedAsync();
+    }
+
+    private CrearOfertaDTO oferta => OfertaStateContainer.Oferta;
+
+    private bool hiddenRentingCart = true;
+
+    private void AddHerramienta(HerramientasParaOfertarDTO herramienta)
+    {
+        OfertaStateContainer.AddHerramientaToOferta(herramienta);
+    }
+
+    private void RemoveHerramientaItem(OfertaItemViewModel item)
+    {
+        OfertaStateContainer.RemoveOfertaItem(item);
+        if (oferta.Items.Count == 0) hiddenRentingCart = true;
+    }
+
+    private void comprarHerramienta()
+    {
+        navigation.NavigateTo("/Oferta/CrearOferta");
+    }
+}

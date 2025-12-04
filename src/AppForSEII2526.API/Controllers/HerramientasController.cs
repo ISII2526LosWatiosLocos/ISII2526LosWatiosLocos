@@ -1,4 +1,5 @@
 ﻿using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.OfertasDTOs;
 using AppForSEII2526.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -82,7 +83,7 @@ namespace AppForSEII2526.API.Controllers
         {
             var herramientas = await _context.Herramientas
                 .Include(h => h.Fabricante)
-                .Where(h => (filtroNombre == null || h.Fabricante.Nombre == filtroNombre) &&
+                .Where(h => (filtroNombre == null || h.Nombre == filtroNombre) &&
                     (filtroTiempoReparacion == null || h.TiempoReparacion <= filtroTiempoReparacion))
                 .Select(h => new HerramientasParaReparaciónDTO(
                     h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio, h.TiempoReparacion))
