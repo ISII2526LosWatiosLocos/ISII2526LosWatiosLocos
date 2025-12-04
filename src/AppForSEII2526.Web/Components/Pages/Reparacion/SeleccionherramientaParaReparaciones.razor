@@ -3,6 +3,7 @@
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient ApiClient
 @inject ILogger<SeleccionherramientaParaReparaciones> Logger
+@inject ReparacionStateContainer ReparacionStateContainer
 
 <h3>Seleccionar herramientas para reparar</h3>
 
@@ -40,7 +41,33 @@
                 }
                 else
                 {
-                    <p>Numero de herramientas @herramienta.Count</p>
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableReparacion">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Material</th>
+                                    <th>Fabricante</th>
+                                    <th>Precio</th>
+                                 
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var reparacion in herramienta)
+                                {
+                                    <tr id="ReparacionData_@reparacion.Nombre">
+                                        <td>@reparacion.Nombre</td>
+                                        <td>@reparacion.Material</td>
+                                        <td>@reparacion.Fabricante</td>
+                                        <td>@reparacion.Precio</td>
+                                        <td>
+                                            <button class="btn btn-outline-secondary" id="OfertaData_@reparacion.Nombre" @onclick="@(() => AñadirHerramienta(reparacion))">Add</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
                 }
             </div>
@@ -59,6 +86,25 @@
     private string Nombre { get; set; }
     private int TiempoReparacion { get; set; }
 
+
+    private CrearReparacionDTO reparación => ReparacionStateContainer.Reparacion;
+
+    private bool hiddenRentingCart = true;
+
+
+
+    private void AñadirHerramienta(HerramientasParaReparaciónDTO herramienta)
+    {
+        ReparacionStateContainer.AgregarHerramientaAReparacion(herramienta);
+    }
+
+
+    private void EliminarHerramienta(CrearReparacionItemDTO item)
+    {
+        ReparacionStateContainer.QuitarItemDeReparacion(item);
+        if (reparación.ReparacionesItems.Count == 0) hiddenRentingCart = true;
+    }
+
     public async void BuscarHerramientas()
     {
         try
@@ -66,6 +112,8 @@
             herramienta = await ApiClient.GetHerramientasParaReparaciónAsync(Nombre, TiempoReparacion);
 
         }
+
+
         catch (ApiException ex)
         {
             Logger.LogError($"{DateTime.Now} Error: {ex}");
