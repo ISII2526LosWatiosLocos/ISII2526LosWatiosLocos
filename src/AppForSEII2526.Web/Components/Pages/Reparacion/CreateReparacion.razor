@@ -22,7 +22,35 @@
         </div>
     </div>
 </EditForm>
-
+<div class="mh-100 table-responsive">
+    <table class="table table-condensed table-hover" id="TableOfReparacionItems">
+        <thead>
+            <tr>
+                <th>Id</th>
+               
+                <th>Cantidad</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in reparacion.ReparacionesItems)
+            {
+                <tr id="HerramientaData_@item.HerramientaId">
+                    <td>@item.HerramientaId</td>
+                    <td>@item.HerramientaDescripcion</td>
+                    <td>@item.HerramientaCantidad</td>
+                    
+                    <td>
+                        <InputText @bind-Value="item.HerramientaDescripcion"
+                                   class="form-control form-control-sm"
+                                   id="@($"descripcion_{item.HerramientaId}")"
+                           />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 
 @if (DialogIsOpen)
