@@ -47,6 +47,7 @@ namespace AppForSEII2526.Web
                 // Si no existe, la agregamos con cantidad 1
                 Compra.Items.Add(new CompraItemsDTO()
                 {
+                    IdHerramienta = herramienta.Id,   // ← ESTE FALTABA
                     NombreHerramienta = herramienta.Nombre,
                     MaterialHerramienta = herramienta.Material,
                     PrecioHerramienta = herramienta.Precio,
