@@ -22,7 +22,9 @@ INSERT INTO [dbo].[Herramientas] ([Id], [Nombre], [Material], [Precio], [Stock],
 SET IDENTITY_INSERT [dbo].[Herramientas] OFF
 
 SET IDENTITY_INSERT [dbo].[MetodosPagos] ON
+INSERT INTO [dbo].[MetodosPagos] ([Id], [Nombre], [TipoDePago]) VALUES (0, N'Efectivo', N'Efectivo')
 INSERT INTO [dbo].[MetodosPagos] ([Id], [Nombre], [TipoDePago]) VALUES (1, N'Paypal', N'PayPal')
+INSERT INTO [dbo].[MetodosPagos] ([Id], [Nombre], [TipoDePago]) VALUES (2, N'Tarjeta', N'Tarjeta')
 SET IDENTITY_INSERT [dbo].[MetodosPagos] OFF
 
 SET IDENTITY_INSERT [dbo].[Compras] ON
