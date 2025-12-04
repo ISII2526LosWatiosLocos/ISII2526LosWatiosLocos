@@ -38,7 +38,8 @@ namespace AppForSEII2526.API.DTOs
                    PrecioTotal == dTO.PrecioTotal &&
                    nombre == dTO.nombre &&
                    apellidos == dTO.apellidos &&
-                   EqualityComparer<IList<ReparacionesItemDTO>>.Default.Equals(ReparacionesItems, dTO.ReparacionesItems);
+                    (ReparacionesItems?.SequenceEqual(dTO.ReparacionesItems ?? new List<ReparacionesItemDTO>()) ??
+            dTO.ReparacionesItems == null);
         }
 
         public override int GetHashCode()
