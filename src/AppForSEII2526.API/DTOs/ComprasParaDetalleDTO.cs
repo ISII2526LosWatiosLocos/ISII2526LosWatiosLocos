@@ -38,7 +38,6 @@
         public override bool Equals(object? obj)
         {
             return obj is ComprasParaDetalleDTO dTO &&
-                   Id == dTO.Id &&
                    Nombre == dTO.Nombre &&
                    Apellidos == dTO.Apellidos &&
                    DireccionEnvio == dTO.DireccionEnvio &&
@@ -51,7 +50,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, Nombre, Apellidos, DireccionEnvio, PrecioTotal, FechaCompra, Items);
+            return HashCode.Combine(Nombre, Apellidos, DireccionEnvio, PrecioTotal, FechaCompra, Items);
         }
     }
 }
