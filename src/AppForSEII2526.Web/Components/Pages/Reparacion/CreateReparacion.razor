@@ -1,5 +1,7 @@
 ﻿@page "/Reparacion/CreateReparacion"
 
+
+@using AppForSEII2526.Web.Components.Shared
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<CreateReparacion> logger
@@ -21,12 +23,40 @@
     </div>
 </EditForm>
 
+
+
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Reparar Herramientas"
+            Message="¿quieres prodecer a seleccionar las herramientas para reparar?"
+            OnClose="@OnDialogClose"
+            Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
 @code {
+
+
+      private bool DialogIsOpen; 
+
     private CrearReparacionDTO reparacion => ReparacionStateContainer.Reparacion;
 
 
     private void OpenDialog()
     {
 
+
+        DialogIsOpen = true;
+    }
+
+    private async Task OnDialogClose(bool isOk)
+    {
+
+        DialogIsOpen = false;
+        if (isOk)
+        {
+            // Process the data introduced by the user if they are valid
+
+        }
     }
 }
