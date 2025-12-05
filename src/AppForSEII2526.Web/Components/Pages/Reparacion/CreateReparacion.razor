@@ -47,6 +47,26 @@
 
 
 
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating">
+                    @* Un dropdown para seleccionar el método de pago *@
+                    @* MIRAR *@
+                    <InputSelect class="form-select" @bind-Value="@reparacion.MetodoPagoId" id="MetodoPago">
+                        <option value="">Seleccionar método</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="PayPal">PayPal</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Transferencia">Transferencia</option>
+                    </InputSelect>
+                    <label for="MetodoPago">Método de Pago</label>
+                </div>
+            </div>
+        </div>
+
+
+
+
 
 
 
