@@ -1,5 +1,4 @@
 ﻿using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.DTOs;
 using AppForSEII2526.API.Models;
 using Humanizer.Localisation;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AppForSEII2526.API.DTOs.ComprasDTOs;
 
 namespace AppForSEII2526.UT.HerramientasController_test
 {
