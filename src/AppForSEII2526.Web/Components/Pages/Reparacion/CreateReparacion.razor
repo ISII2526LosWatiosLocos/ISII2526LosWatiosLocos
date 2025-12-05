@@ -12,11 +12,49 @@
 <EditForm Model="reparacion" OnValidSubmit="OpenDialog">
     <div class="row">
 
+
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+    
+        </div>
+    <div class="row g-3">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="reparacion.Nombre"
+                   class="form-control" id="Nombre" />
+                <label for="Nombre">Nombre </label>
+            </div>
+
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="reparacion.Apellidos" class="form-control" id="Apellidos" />
+                <label for="Nombre">Nombre </label>
+         
+            </div>
+        </div>
+
+            <div class="row g-3">
+                <div class="col-md">
+                    <div class="form-floating mb-3">
+                        <InputDate @bind-Value="reparacion.FechaEntrega" class="form-control" id="FechaEntrega" />
+                        <label for="FechaEntrega">Fecha de Entrega</label>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
         <div class="col-md">
             <div class="form-floating">
                 @*this button will be used to ask the user if he want to proceed to repare the tools*@
                 <button class="btn btn-primary" type="submit" id="Submit">
-                    Rent your movies
+                    Repara tus herramientas
                 </button>
             </div>
         </div>
