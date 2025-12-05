@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
+// para ejecutarlo en la carpeta LogViewer hay que hacer:
+// dotnet run -- "#"
+// -- "#" es para suscribirte a todas las colas
+
 namespace LogViewer
 {
     public class Subscriber
@@ -14,6 +18,8 @@ namespace LogViewer
 
         public void StartReceiving(string subscriptionTopic)
         {
+            // reemplazar localhost por la IP del ordenador ejecutando la API, ejemplo: 10.194.97.164
+            // para probar la conectividad se pondría en el buscador HostName:Puerto, ejemplo: http://10.194.97.164:15672/ (15672 es el puerto por defecto)
             var factory = new ConnectionFactory() { HostName = "localhost" };
 
             var connection = factory.CreateConnection();
