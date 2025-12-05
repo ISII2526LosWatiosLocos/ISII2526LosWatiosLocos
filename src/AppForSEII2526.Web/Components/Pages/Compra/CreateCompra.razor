@@ -160,7 +160,7 @@
                     logger.LogWarning("<<< Respuesta del backend CrearCompra: {@Respuesta}", comprado);
 
                     compraState.CompraProcesada();
-                    navigation.NavigateTo($"/Compra/DetailParaCompra/?IdCompra={comprado.Id}");
+                    navigation.NavigateTo($"/Compra/DetailParaCompra/{comprado.Id}");
                 }
                 catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
                 {
