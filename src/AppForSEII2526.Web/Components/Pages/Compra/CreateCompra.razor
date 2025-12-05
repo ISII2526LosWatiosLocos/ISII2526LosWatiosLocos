@@ -106,9 +106,9 @@
 @if (DialogIsOpen)
 {
     <Dialog Caption="Comprar herramientas"
-    Message="¿Quieres proceder con tu compra?"
-    OnClose="@OnDialogClose"
-    Type=Dialog.Category.SaveNot>
+            Message="¿Quieres proceder con tu compra?"
+            OnClose="@OnDialogClose"
+            Type=Dialog.Category.SaveNot>
     </Dialog>
 }
 
@@ -124,7 +124,7 @@
     {
         get
         {
-            double price = compra.Items.Sum(i => i.PrecioHerramienta);
+            double price = compra.Items.Sum(i => i.PrecioHerramienta * i.CantidadHerramienta);
             return Convert.ToDecimal(price);
         }
     }
@@ -151,9 +151,16 @@
             {
                 try
                 {
+                    // LOG antes de enviar la compra
+                    logger.LogWarning(">>> Enviando compra al backend: {@Compra}", compra);
+
                     var comprado = await apiclient.CrearCompraAsync(compra);
+
+                    // LOG después de recibir la respuesta
+                    logger.LogWarning("<<< Respuesta del backend CrearCompra: {@Respuesta}", comprado);
+
                     compraState.CompraProcesada();
-                    navigation.NavigateTo($"/Compra/DetailParaCompra/?IdCompra={comprado.Id}");
+                    navigation.NavigateTo($"/Compra/DetailParaCompra/{comprado.Id}");
                 }
                 catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
                 {
