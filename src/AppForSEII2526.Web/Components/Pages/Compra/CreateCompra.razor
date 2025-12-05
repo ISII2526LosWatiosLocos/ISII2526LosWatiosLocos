@@ -124,7 +124,7 @@
     {
         get
         {
-            double price = compra.Items.Sum(i => i.PrecioHerramienta);
+            double price = compra.Items.Sum(i => i.PrecioHerramienta * i.CantidadHerramienta);
             return Convert.ToDecimal(price);
         }
     }
