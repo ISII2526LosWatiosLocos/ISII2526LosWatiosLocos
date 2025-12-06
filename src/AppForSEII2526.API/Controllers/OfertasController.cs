@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AppForSEII2526.API.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq; 
+using System.Linq;
+using System.Net; // Asegúrate de que este using esté presente
 
 namespace AppForSEII2526.API.Controllers
 {
@@ -11,10 +12,7 @@ namespace AppForSEII2526.API.Controllers
     [ApiController]
     public class OfertasController : ControllerBase
     {
-        //used to enable your controller to access to the database
         private readonly ApplicationDbContext _context;
-
-        //used to log any information when your system is running
         private readonly ILogger<OfertasController> _logger;
 
         public OfertasController(ApplicationDbContext context, ILogger<OfertasController> logger)
@@ -28,13 +26,22 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(IList<OfertasParaDetalleDTO>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetDetalleHerramientasParaOferta(int id)
         {
+            // --- INYECCIÓN DE LOG DE ADVERTENCIA Y CRÍTICO ---
+            if (id == 0)
+            {
+                // Advertencia: Posible error de cliente, pero no detiene la ejecución.
+                _logger.LogWarning("Se recibió una solicitud GET para Detalle-Oferta con ID 0. Esto podría indicar un error de llamada.");
+                // Opcional: Podríamos detener la ejecución aquí si ID 0 no es válido, pero continuamos para probar el NotFound.
+            }
 
             if (_context.Ofertas == null)
             {
+                // Un error grave si un DbSet está nulo
+                _logger.LogCritical("CRITICAL ERROR: El DbSet Ofertas es nulo. Verifique la configuración del DbContext.");
                 _logger.LogError("Error: La tabla no existe.");
-                _logger.LogWarning("Warning: La tabla Ofertas no existe en la base de datos.");
                 return NotFound();
             }
+            // --- FIN INYECCIÓN ---
 
             var ofertas = await _context.Ofertas
                 .Include(o => o.MetodosPago)
@@ -42,7 +49,7 @@ namespace AppForSEII2526.API.Controllers
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.Herramienta)
                         .ThenInclude(h => h.Fabricante)
-                .Where(o=> o.Id == id)
+                .Where(o => o.Id == id)
                 .ToListAsync();
 
 
@@ -64,11 +71,12 @@ namespace AppForSEII2526.API.Controllers
 
             if (ofertasDTO == null)
             {
-                _logger.LogError("Error: No se encontraron ofertas.");
+                _logger.LogError("Error: No se encontraron ofertas para el ID {OfertaId}.", id);
                 return NotFound();
             }
 
-            _logger.LogInformation("Oferta obtenida correctamente.");
+            // --- INYECCIÓN DE LOG DE INFORMACIÓN ---
+            _logger.LogInformation("Oferta obtenida correctamente. ID: {OfertaId}", id);
             return Ok(ofertasDTO);
         }
 
@@ -79,12 +87,12 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
         public async Task<IActionResult> CrearOferta([FromBody] CrearOfertaDTO crearOfertaDTO)
         {
-            // --- 1. VALIDACIONES DE LÓGICA (Patrón del ejemplo) ---
+            // --- 1. VALIDACIONES DE LÓGICA ---
 
             if (_context.Ofertas == null || _context.Herramientas == null || _context.MetodosPagos == null)
             {
-                // Este es un error 500
-                _logger.LogError("Error: Faltan DbSets (Ofertas, Herramientas o MetodosPagos) en el DbContext.");
+                // Log Crítico: Error de configuración interno
+                _logger.LogCritical("CRITICAL ERROR: Faltan DbSets (Ofertas, Herramientas o MetodosPagos) en el DbContext.");
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
@@ -97,15 +105,19 @@ namespace AppForSEII2526.API.Controllers
             if (crearOfertaDTO.Items == null || !crearOfertaDTO.Items.Any())
                 ModelState.AddModelError(nameof(crearOfertaDTO.Items), "La oferta debe incluir al menos una herramienta.");
 
-            // --- 2. VALIDAR ENTIDADES RELACIONADAS (Patrón del ejemplo) ---
+            // --- 2. VALIDAR ENTIDADES RELACIONADAS ---
 
             // a. Buscar Método de Pago
             var metodoPago = await _context.MetodosPagos.FindAsync(crearOfertaDTO.MetodoPagoId);
             if (metodoPago == null)
+            {
+                // Log Error: Entidad requerida no encontrada
+                _logger.LogError("MetodoPagoId {MetodoPagoId} no existe.", crearOfertaDTO.MetodoPagoId);
                 ModelState.AddModelError(nameof(crearOfertaDTO.MetodoPagoId), $"El MetodoPagoId {crearOfertaDTO.MetodoPagoId} no existe.");
+            }
 
             // b. Validar Enum de TipoDirigida (si se proporcionó)
-            tipoDirigidaOferta tipoDirigido = tipoDirigidaOferta.Cliente; // Valor por defecto (asumiendo que Clientes es tu "todo el mundo")
+            tipoDirigidaOferta tipoDirigido = tipoDirigidaOferta.Cliente;
             if (!string.IsNullOrEmpty(crearOfertaDTO.TipoDirigida))
             {
                 if (!Enum.TryParse<tipoDirigidaOferta>(crearOfertaDTO.TipoDirigida, true, out tipoDirigido))
@@ -116,27 +128,25 @@ namespace AppForSEII2526.API.Controllers
             var usuario = await _context.Users
                 .FirstOrDefaultAsync(u => u.Nombre == crearOfertaDTO.nombreUsuario);
             if (usuario == null)
+            {
+                // Log Error: Entidad requerida no encontrada
+                _logger.LogError("Usuario con nombre '{NombreUsuario}' no encontrado.", crearOfertaDTO.nombreUsuario);
                 ModelState.AddModelError(nameof(crearOfertaDTO.nombreUsuario), "El usuario no existe.");
+            }
 
             // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
-            // --- 3. CONSULTA ÚNICA (Patrón del ejemplo) ---
+            // --- 3. CONSULTA ÚNICA ---
 
-            // a. Coger todos los IDs del DTO
             var herramientaIds = crearOfertaDTO.Items.Select(i => i.HerramientaId).Distinct().ToList();
-
-            // b. Hacer UNA sola llamada a la BBDD para traer todas las herramientas
-            //    e incluir su Fabricante (para construir el DTO de respuesta después)
             var herramientasEnDB = await _context.Herramientas
                 .Include(h => h.Fabricante)
                 .Where(h => herramientaIds.Contains(h.Id))
-                .ToDictionaryAsync(h => h.Id); // Convertir a Diccionario para búsquedas rápidas en memoria
+                .ToDictionaryAsync(h => h.Id);
 
-            // --- 4. CONSTRUCCIÓN EN MEMORIA (Patrón del ejemplo) ---
-
-          
+            // --- 4. CONSTRUCCIÓN EN MEMORIA ---
             var nuevaOferta = new Oferta(
                 crearOfertaDTO.FechaFinal,
                 crearOfertaDTO.FechaInicio,
@@ -147,22 +157,26 @@ namespace AppForSEII2526.API.Controllers
                 usuario
             );
 
-            // --- 5. BUCLE EN MEMORIA (Patrón del ejemplo) ---
+            // --- 5. BUCLE EN MEMORIA (Validaciones Item por Item) ---
             foreach (var itemDTO in crearOfertaDTO.Items)
             {
-                // Buscar la herramienta en la lista local (el Diccionario)
                 if (!herramientasEnDB.TryGetValue(itemDTO.HerramientaId, out var herramienta))
                 {
-                    // La herramienta no se encontró en nuestra consulta
+                    // Log Error: Problema en la integridad del DTO
+                    _logger.LogError("HerramientaId {HerramientaId} no existe. Fallo de integridad en la creación de la oferta.", itemDTO.HerramientaId);
                     ModelState.AddModelError(nameof(crearOfertaDTO.Items), $"La HerramientaId {itemDTO.HerramientaId} no existe.");
                 }
-                else if (itemDTO.PorcentajeDescuento <= 0 || itemDTO.PorcentajeDescuento > 90) // Lógica de negocio
+                else if (itemDTO.PorcentajeDescuento <= 0 || itemDTO.PorcentajeDescuento > 90)
                 {
+                    // Log Advertencia: Descuento demasiado alto (lógica de negocio cuestionable)
+                    if (itemDTO.PorcentajeDescuento > 50)
+                    {
+                        _logger.LogWarning("Aplicando un descuento muy alto ({Descuento}%) a la herramienta '{HerramientaNombre}'.", itemDTO.PorcentajeDescuento, herramienta.Nombre);
+                    }
                     ModelState.AddModelError(nameof(crearOfertaDTO.Items), $"El porcentaje {itemDTO.PorcentajeDescuento}% para '{herramienta.Nombre}' no es válido. Debe estar entre 1 y 90.");
                 }
                 else
                 {
-                    // Todo correcto para este item
                     float precioFinal = herramienta.Precio * (1 - (itemDTO.PorcentajeDescuento / 100.0f));
 
                     var nuevoItem = new OfertaItem(
@@ -175,12 +189,15 @@ namespace AppForSEII2526.API.Controllers
                 }
             }
 
-            // --- 6. VALIDACIÓN FINAL (Patrón del ejemplo) ---
-            // Comprobar si se añadieron errores *dentro* del bucle
+            // --- 6. VALIDACIÓN FINAL ---
             if (ModelState.ErrorCount > 0)
+            {
+                // Log Advertencia: Petición mal formada devuelta al cliente
+                _logger.LogWarning("Se recibió una solicitud de CrearOferta mal formada. {ErrorCount} errores de validación.", ModelState.ErrorCount);
                 return BadRequest(new ValidationProblemDetails(ModelState));
+            }
 
-            // --- 7. GUARDADO ÚNICO (Patrón del ejemplo) ---
+            // --- 7. GUARDADO ÚNICO ---
             _context.Ofertas.Add(nuevaOferta);
 
             try
@@ -189,39 +206,38 @@ namespace AppForSEII2526.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al guardar la nueva oferta en la base de datos.");
+                // Log Crítico/Error: Error fatal al guardar en la DB
+                _logger.LogCritical(ex, "CRITICAL: No se pudo guardar la nueva oferta. Fallo de conexión o restricción de DB.");
                 return Conflict($"Ocurrió un error al guardar la oferta: {ex.Message}");
             }
 
-            // --- 8. RESPUESTA SIN RECARGAR (Patrón del ejemplo) ---
-            // Construimos el DTO de detalle con los objetos que ya tenemos
-
+            // --- 8. RESPUESTA SIN RECARGAR ---
             var ofertaDTORespuesta = new OfertasParaDetalleDTO(
                 nuevaOferta.FechaFinal,
                 nuevaOferta.FechaInicio,
                 nuevaOferta.FechaOferta,
                 nuevaOferta.TipoDirigida.ToString(),
                 // El tipo de MetodoPago (ej. "PayPal", "TarjetaCredito")
-                nuevaOferta.MetodosPago.GetType().Name,
+                metodoPago!.GetType().Name, // Usamos el objeto metodoPago que ya incluimos arriba
 
                 // Mapeamos los items desde los objetos en memoria
                 nuevaOferta.Items.Select(oi => new OfertaItemsDTO(
                     oi.Herramienta.Nombre,
                     oi.Herramienta.Material,
-                    oi.Herramienta.Fabricante.Nombre, // Esto funciona gracias al .Include() que hicimos
+                    herramientasEnDB[oi.Herramienta.Id].Fabricante.Nombre, // Usamos el diccionario para el fabricante
                     oi.Herramienta.Precio,
                     oi.PrecioFinal
                 )).ToList(),
-                nuevaOferta.Usuario.Nombre
+                usuario!.Nombre // Usamos el objeto usuario que ya incluimos arriba
             );
 
-            _logger.LogInformation($"Oferta creada con éxito. ID: {nuevaOferta.Id}");
+            // Log Información: Éxito
+            _logger.LogInformation("Oferta creada con éxito. ID: {OfertaId}", nuevaOferta.Id);
 
-            // Devolvemos el DTO de detalle
             return CreatedAtAction(
-                nameof(GetDetalleHerramientasParaOferta), // Nombre del método GET
-                new { id = nuevaOferta.Id }, // Parámetro de ruta para el método GET
-                ofertaDTORespuesta); // El cuerpo de la respuesta
+                nameof(GetDetalleHerramientasParaOferta),
+                new { id = nuevaOferta.Id },
+                ofertaDTORespuesta);
         }
     }
 }
