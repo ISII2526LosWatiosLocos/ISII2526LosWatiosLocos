@@ -12,6 +12,9 @@ namespace AppForSEII2526.UIT.CU_Oferta
         By inputfabricante = By.Id("fabricanteSelected");
         By inputprecio = By.Id("inputPrecio");
         By buttonSelectHerramientasOferta = By.Id("buscarHerramientas");
+        By tableOfHerramientasBy = By.Id("TableOfOferta");
+        By errorShownBy = By.Id("ErrorsShown");
+        By buttonAlquilerHerramienta = By.Id("alquilerHerramientaButton");
 
         public SelectHerramientasParaOfertar_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
@@ -30,6 +33,36 @@ namespace AppForSEII2526.UIT.CU_Oferta
             SelectElement selectElement = new SelectElement(_driver.FindElement(inputfabricante));
             selectElement.SelectByText(Nombrefabricante);
             _driver.FindElement(buttonSelectHerramientasOferta).Click();
+        }
+
+        public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
+        {
+            return CheckBodyTable(expectedHerramientas, tableOfHerramientasBy);
+        }
+
+        public bool CheckMessageError(string errorMessage)
+        {
+            IWebElement actualErrorShown = _driver.FindElement(errorShownBy);
+            _output.WriteLine($"actual Message shown:{actualErrorShown.Text}");
+            return actualErrorShown.Text.Contains(errorMessage);
+        }
+
+        public void AddHerramientaToAlquilerCart(string herramientaTitle)
+        {
+            WaitForBeingClickable(By.Id("herramientaToAlquiler_" + herramientaTitle));
+
+            _driver.FindElement(By.Id("herramientaToAlquiler" + herramientaTitle)).Click();
+        }
+
+        public void RemoveHerramientaFromAlquilerCart(string herramientaTitle)
+        {
+            WaitForBeingClickable(By.Id("removeHerramienta_" + herramientaTitle));
+            _driver.FindElement(By.Id("removeHerramienta" + herramientaTitle)).Click();
+        }
+
+        public bool AlquilerNotAvailable()
+        {
+            return _driver.FindElement(buttonAlquilerHerramienta).Displayed == false;
         }
     }
 }
