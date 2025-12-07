@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.0.11205.157 d18.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
@@ -16,6 +16,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppForSEII2526.UIT", "test\AppForSEII2526.UIT\AppForSEII2526.UIT.csproj", "{8786EB0A-81B1-4ED2-A1FA-70CFAEEE7F88}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppForSEII2526.Maui", "src\AppForSEII2526.Maui\AppForSEII2526.Maui.csproj", "{9A8C18DB-2D24-48C7-9EEF-9ABFFEC2A58C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Users\90gra\Downloads\Plan de Pruebas_LosWatiosLocos.pdf = ..\..\Users\90gra\Downloads\Plan de Pruebas_LosWatiosLocos.pdf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Casos de Prueba", "Casos de Prueba", "{CB20A8A0-BDD7-4B46-AFFD-DFBDA68F9349}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Users\90gra\Downloads\Casos de Prueba_Ofertas.pdf = ..\..\Users\90gra\Downloads\Casos de Prueba_Ofertas.pdf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +113,7 @@ Global
 		{9C8D9A00-DD76-4050-8D89-2A496B806EFF} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
 		{8786EB0A-81B1-4ED2-A1FA-70CFAEEE7F88} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
 		{9A8C18DB-2D24-48C7-9EEF-9ABFFEC2A58C} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{CB20A8A0-BDD7-4B46-AFFD-DFBDA68F9349} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF18902E-8899-4375-8786-C12A067D08EB}
