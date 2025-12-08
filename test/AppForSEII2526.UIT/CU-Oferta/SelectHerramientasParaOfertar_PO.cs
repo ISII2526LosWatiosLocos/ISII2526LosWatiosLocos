@@ -1,68 +1,57 @@
-﻿using System;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using AppForSEII2526.UIT.Shared;
+using Xunit.Abstractions;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AppForSEII2526.UIT.CU_Oferta
 {
-    internal class SelectHerramientasParaOfertar_PO : PageObject
+    public class SelectHerramientasParaOfertar_PO : PageObject
     {
-        By inputfabricante = By.Id("fabricanteSelected");
-        By inputprecio = By.Id("inputPrecio");
-        By buttonSelectHerramientasOferta = By.Id("buscarHerramientas");
-        By tableOfHerramientasBy = By.Id("TableOfOferta");
-        By errorShownBy = By.Id("ErrorsShown");
-        By buttonAlquilerHerramienta = By.Id("alquilerHerramientaButton");
+        private By inputfabricante = By.Id("fabricanteSelected");
+        private By buttonBuscar = By.Id("buscarHerramientas");
+        private By tableOferta = By.Id("TableOfOferta");
+
+        // Nuevo ID más claro
+        private By buttonContinuar = By.Id("btn_continuar_oferta");
 
         public SelectHerramientasParaOfertar_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
-            
         }
 
-        public void searchHerramientas(string Nombrefabricante, float precio)
+        public void SearchHerramientas(string nombreFabricante)
         {
-            //wait for the webelement to be clickable
             WaitForBeingClickable(inputfabricante);
-            _driver.FindElement(inputfabricante).SendKeys(Nombrefabricante);
-            if (Nombrefabricante == "")
-            {
-                Nombrefabricante = "All";
-            }
-            SelectElement selectElement = new SelectElement(_driver.FindElement(inputfabricante));
-            selectElement.SelectByText(Nombrefabricante);
-            _driver.FindElement(buttonSelectHerramientasOferta).Click();
+
+            if (string.IsNullOrEmpty(nombreFabricante)) nombreFabricante = "All";
+
+            new SelectElement(_driver.FindElement(inputfabricante)).SelectByText(nombreFabricante);
+            _driver.FindElement(buttonBuscar).Click();
         }
 
         public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
         {
-            return CheckBodyTable(expectedHerramientas, tableOfHerramientasBy);
+            return CheckBodyTable(expectedHerramientas, tableOferta);
         }
 
-        public bool CheckMessageError(string errorMessage)
+        public void AddHerramientaToOfertaCart(string nombreHerramienta)
         {
-            IWebElement actualErrorShown = _driver.FindElement(errorShownBy);
-            _output.WriteLine($"actual Message shown:{actualErrorShown.Text}");
-            return actualErrorShown.Text.Contains(errorMessage);
+            By btnAddLocator = By.Id($"btn_add_{nombreHerramienta}");
+
+            // Esperar y clicar
+            WaitForBeingClickable(btnAddLocator);
+            _driver.FindElement(btnAddLocator).Click();
+
+            By btnRemoveLocator = By.Id($"removeHerramienta_{nombreHerramienta}");
+
+            WaitForBeingVisible(btnRemoveLocator);
         }
 
-        public void AddHerramientaToAlquilerCart(string herramientaTitle)
+        public void PressContinuar()
         {
-            WaitForBeingClickable(By.Id("herramientaToAlquiler_" + herramientaTitle));
-
-            _driver.FindElement(By.Id("herramientaToAlquiler" + herramientaTitle)).Click();
-        }
-
-        public void RemoveHerramientaFromAlquilerCart(string herramientaTitle)
-        {
-            WaitForBeingClickable(By.Id("removeHerramienta_" + herramientaTitle));
-            _driver.FindElement(By.Id("removeHerramienta" + herramientaTitle)).Click();
-        }
-
-        public bool AlquilerNotAvailable()
-        {
-            return _driver.FindElement(buttonAlquilerHerramienta).Displayed == false;
+            // Como hemos esperado al carrito arriba, este botón ya debería estar habilitado
+            WaitForBeingClickable(buttonContinuar);
+            _driver.FindElement(buttonContinuar).Click();
         }
     }
 }
