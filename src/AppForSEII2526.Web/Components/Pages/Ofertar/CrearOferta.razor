@@ -41,7 +41,7 @@
         <div class="col-md-4">
             <div class="form-floating mb-3">
                 <InputSelect @bind-Value="oferta.MetodoPagoId" class="form-select" id="MetodoPago">
-                    <option>Seleccione Método de Pago (Obligatorio)</option>
+                    <option value="">Seleccione Método de Pago (Obligatorio)</option>
                     <option value="0">Tarjeta de Crédito</option>
                     <option value="1">PayPal</option>
                     <option value="2">Metálico / Efectivo</option>
@@ -157,6 +157,8 @@
     private bool DialogIsOpen;
     private string errores;
     private bool hideErrors { get { return string.IsNullOrEmpty(errores); } }
+    [Required(ErrorMessage = "Debe seleccionar un método de pago")]
+    public int? MetodoPagoId { get; set; }
 
     private float precioTotal
     {
