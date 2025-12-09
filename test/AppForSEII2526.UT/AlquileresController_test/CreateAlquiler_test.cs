@@ -65,13 +65,13 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 "Calle Balsa Botin", 
                 "123456722", 
                 "abc@hello.com", 
-                new List<CrearAlquilerItemDTO>());
+                new List<AlquilarItemsDTO>());
 
 
-            var alquilerItems = new List<CrearAlquilerItemDTO>
+            var alquilerItems = new List<AlquilarItemsDTO>
             {
-                new CrearAlquilerItemDTO (4, 10), // id, cantidad
-                new CrearAlquilerItemDTO(7, 15)
+                new AlquilarItemsDTO (4, 10), // id, cantidad
+                new AlquilarItemsDTO(7, 15)
             };
 
             var alquilerDireccionInvalida = new CrearAlquilerDTO(
@@ -100,10 +100,10 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 "Calle Soto Solitario",
                 "123456722",
                 "abc@hello.com",
-                new List<CrearAlquilerItemDTO>
+                new List<AlquilarItemsDTO>
                                 {
-                                new CrearAlquilerItemDTO (4, 10), // id, cantidad
-                                new CrearAlquilerItemDTO(7, 15)
+                                new AlquilarItemsDTO (4, 10), // id, cantidad
+                                new AlquilarItemsDTO(7, 15)
                                 }
             );
 
@@ -164,10 +164,10 @@ namespace AppForSEII2526.UT.AlquileresController_test
 
             var controller = new AlquileresController(_context, logger);
 
-            var alquilerItems = new List<CrearAlquilerItemDTO>
+            var alquilerItems = new List<AlquilarItemsDTO>
             {
-                new CrearAlquilerItemDTO(1,10),
-                new CrearAlquilerItemDTO (2, 15)
+                new AlquilarItemsDTO(1,10),
+                new AlquilarItemsDTO (2, 15)
             };
             var alquilerDTO = new CrearAlquilerDTO(
 

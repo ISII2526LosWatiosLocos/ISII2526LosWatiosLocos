@@ -2,7 +2,7 @@
 {
     public class CrearAlquilerDTO 
     {
-        public CrearAlquilerDTO(string nombre, string apellidos, int metodoPagoId, string direccion, string telefono, string? correo, List<CrearAlquilerItemDTO> items)
+        public CrearAlquilerDTO(string nombre, string apellidos, int metodoPagoId, string direccion, string telefono, string? correo, List<AlquilarItemsDTO> items)
         {
             Nombre = nombre;
             Apellidos = apellidos;
@@ -19,7 +19,7 @@
         public string Direccion {  get; set; }
         public string telefono { get; set; }
         public string? correo { get; set; }
-        public List<CrearAlquilerItemDTO> Items { get; set; }
+        public List<AlquilarItemsDTO> Items { get; set; }
 
         public override bool Equals(object? obj)
         {
@@ -30,7 +30,7 @@
                    Direccion == dTO.Direccion &&
                    telefono == dTO.telefono &&
                    correo == dTO.correo &&
-                   EqualityComparer<List<CrearAlquilerItemDTO>>.Default.Equals(Items, dTO.Items);
+                   EqualityComparer<List<AlquilarItemsDTO>>.Default.Equals(Items, dTO.Items);
         }
 
         public override int GetHashCode()

@@ -1,7 +1,11 @@
-﻿namespace AppForSEII2526.API.DTOs.AlquileresDTOs
+﻿using AppForSEII2526.API.Models;
+
+namespace AppForSEII2526.API.DTOs.AlquileresDTOs
 {
     public class AlquilarItemsDTO
     {
+        public int IdItem { get; set; }
+
         public string NombreItem { get; set; }
         public string MaterialItem { get; set; }
         public float PrecioItem { get; set; }
@@ -13,10 +17,23 @@
             PrecioItem = precioItem;
             CantidadItem = cantidadItem;
         }
+        public AlquilarItemsDTO(float herramientaPrecio, int herramientaId, int herramientaCantidad)
+        {
+            PrecioItem = herramientaPrecio;
+            IdItem = herramientaId;
+            CantidadItem = herramientaCantidad;
+        }
+        public AlquilarItemsDTO(int herramientaId, int herramientaCantidad)
+        {
+            IdItem = herramientaId;
+            CantidadItem = herramientaCantidad;
+        }
+        public AlquilarItemsDTO() { }
 
         public override bool Equals(object? obj)
         {
             return obj is AlquilarItemsDTO dTO &&
+                   IdItem == dTO.IdItem &&
                    NombreItem == dTO.NombreItem &&
                    MaterialItem == dTO.MaterialItem &&
                    PrecioItem == dTO.PrecioItem &&
@@ -25,7 +42,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(NombreItem, MaterialItem, PrecioItem, CantidadItem);
+            return HashCode.Combine(IdItem, NombreItem, MaterialItem, PrecioItem, CantidadItem);
         }
     }
 }

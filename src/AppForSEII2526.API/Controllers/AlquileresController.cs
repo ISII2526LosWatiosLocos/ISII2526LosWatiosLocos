@@ -108,7 +108,7 @@ namespace AppForSEII2526.API.Controllers
             // Consulta única
 
             // Hacer una sola llamada a la BBDD para traer todas las herramientas
-            var herramientaIds = crearAlquilerDTO.Items.Select(i => i.HerramientaId).Distinct().ToList();
+            var herramientaIds = crearAlquilerDTO.Items.Select(i => i.IdItem).Distinct().ToList();
             var herramientasEnDB = await _context.Herramientas
                 .Include(h => h.Fabricante)
                 .Where(h => herramientaIds.Contains(h.Id))
@@ -130,16 +130,16 @@ namespace AppForSEII2526.API.Controllers
             foreach (var itemDTO in crearAlquilerDTO.Items)
             {
                 // Buscar la herramienta en la lista local (el Diccionario)
-                if (!herramientasEnDB.TryGetValue(itemDTO.HerramientaId, out var herramienta))
+                if (!herramientasEnDB.TryGetValue(itemDTO.IdItem, out var herramienta))
                 {
                     // La herramienta no se encontró en nuestra consulta
-                    ModelState.AddModelError(nameof(CrearAlquilerDTO.Items), $"La HerramientaId {itemDTO.HerramientaId} no existe.");
+                    ModelState.AddModelError(nameof(CrearAlquilerDTO.Items), $"La HerramientaId {itemDTO.IdItem} no existe.");
                 }
                 else
                 {
                     var nuevoItem = new AlquilarItem(
                         herramienta.Precio,               // <-- usar precio unitario
-                        itemDTO.HerramientaCantidad,
+                        itemDTO.CantidadItem,
                         nuevoAlquiler,
                         herramienta
                     );
