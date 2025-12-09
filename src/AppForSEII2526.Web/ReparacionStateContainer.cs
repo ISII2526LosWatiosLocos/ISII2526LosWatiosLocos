@@ -9,7 +9,7 @@ namespace AppForSEII2526.Web
     public class ReparacionStateContainer
    
         {
-            // EXACTAMENTE como tu compañero
+          
             public CrearReparacionDTO Reparacion { get; private set; } = new CrearReparacionDTO()
             {
                 ReparacionesItems = new List<ReparacionesItemDTO>()
@@ -19,8 +19,7 @@ namespace AppForSEII2526.Web
             {
                 get
                 {
-                    // Aquí deberías calcular basado en precios reales
-                    // Por ahora devuelve 0 o el valor que ya tenga el DTO
+                   
                     return Reparacion.PrecioTotal;
                 }
             }
@@ -62,7 +61,7 @@ namespace AppForSEII2526.Web
                 NotifyStateChanged();
             }
 
-            // Métodos adicionales que necesitas (pero tu compañero no tiene):
+         
             
           
 
