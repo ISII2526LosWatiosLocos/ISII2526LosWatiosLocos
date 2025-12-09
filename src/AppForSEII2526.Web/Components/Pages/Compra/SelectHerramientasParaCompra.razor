@@ -6,7 +6,7 @@
 @inject CompraStateContainer compraState
 @inject NavigationManager navigation
 
-<h3>Select Herramientas Para Compra</h3>
+<h3>Selecciona tus herramientas</h3>
 <div class="container-fluid">
     <div class="row" hidden="@hideErrors">
         <p>here i will show the errors</p>
@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="col">
-                    <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="searchHerramientas">Search herramientas</button>
+                    <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="BuscarHerramientas">Buscar herramientas</button>
                 </div>
             </div>
             <div class="row">
@@ -41,9 +41,9 @@
                         <table class="table table-condensed table-hover" id="TableOfCompras">
                             <thead>
                                 <tr>
-                                    <th>Material</th>
+                                    <th>Nombre</th>
                                     <th>Precio</th>
-                                    <th>Compra</th>
+                                    <th>Material</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,7 +55,7 @@
                                         <td>@herramienta.Material</td>
                                         <td>@herramienta.Precio</td>
                                         <td>
-                                            <button class="btn btn-outline-secondary" id="herramientaParaComprar_@herramienta.Nombre" @onclick="@(() => AñadirHerramienta(herramienta))">Add</button>
+                                            <button class="btn btn-outline-secondary" id="herramientaParaComprar_@herramienta.Nombre" @onclick="@(() => AñadirHerramienta(herramienta))">Añadir</button>
                                         </td>
                                     </tr>
                                 }
@@ -76,7 +76,7 @@
                             class="btn btn-light"
                             id="quitarHerramienta_@item.NombreHerramienta"
                             @onclick="@(() => QuitarItemDelCarroDeCompra(item))">
-                        ❌ (@item.CantidadHerramienta)x @item.NombreHerramienta - @item.PrecioHerramienta€
+                        ❌ @item.NombreHerramienta - @item.PrecioHerramienta€ (@item.CantidadHerramienta)
                         <!-- El iconito de la X dejadlo porque antes ni veía la opción -->
                     </button>
                 </div>
