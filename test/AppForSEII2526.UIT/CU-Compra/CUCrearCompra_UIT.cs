@@ -23,7 +23,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         // -------------------------------------------------------------------
         [Fact]
         [Trait("Category", "UIT")]
-        public void UC1_1_CrearCompra_FlujoBasico_Exito()
+        public void UC1_0_CrearCompra_FlujoBasico_Exito()
         {
             // 1. ARRANGE
             string nombre = "Yoel";
@@ -38,7 +38,7 @@ namespace AppForSEII2526.UIT.CU_Compra
 
             // 2. ACT
             // Navegar
-            _driver.Navigate().GoToUrl(_URI + "Compra/SeleccionarHerramientaParaCompra");
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
 
             // Buscar y Seleccionar
             _selectPO.BuscarHerramientas(material, precio);
@@ -67,7 +67,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         [Trait("Category", "UIT")]
         [InlineData("")] // Caso: String vacío
         [InlineData(null)]  // Caso: null
-        public void UC1_2_CrearCompra_DescripcionInvalida_Error(string descripcionInvalida)
+        public void UC1_1_CrearCompra_DescripcionInvalida_Error(string descripcionInvalida)
         {
             // 1. ARRANGE
             string nombre = "Yoel";
@@ -81,7 +81,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             string precio = "10";
 
             // 2. ACT (Pasos idénticos hasta el formulario)
-            _driver.Navigate().GoToUrl(_URI + "Compra/SeleccionarHerramientaParaCompra");
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
             _selectPO.BuscarHerramientas(material, precio);
             _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
             _selectPO.Continuar();
@@ -105,7 +105,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         // -------------------------------------------------------------------
         [Fact]
         [Trait("Category", "UIT")]
-        public void UC1_3_UsuarioNoExistente_Error()
+        public void UC1_2_UsuarioNoExistente_Error()
         {
             // 1. ARRANGE
             string nombre = "Eloy";
@@ -119,7 +119,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             string precio = "10";
 
             // 2. ACT
-            _driver.Navigate().GoToUrl(_URI + "Compra/SeleccionarHerramientaParaCompra");
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
             _selectPO.BuscarHerramientas(material, precio);
             _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
             _selectPO.Continuar();
@@ -143,10 +143,10 @@ namespace AppForSEII2526.UIT.CU_Compra
         // -------------------------------------------------------------------
         [Fact]
         [Trait("Category", "UIT")]
-        public void UC1_4_CarritoVacio_Error()
+        public void UC1_3_CarritoVacio_Error()
         {
             // 1. ARRANGE
-            _driver.Navigate().GoToUrl(_URI + "Compra/SeleccionarHerramientaParaCompra");
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
 
             // 2. ACT - Intentar pulsar continuar SIN añadir nada
             try
@@ -156,7 +156,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             catch (Exception) { /* Ignoramos si falla el click por estar disabled */ }
 
             // 3. ASSERT
-            bool seguimosEnSeleccion = _driver.Url.Contains("/Compra/SeleccionarHerramientaParaCompra");
+            bool seguimosEnSeleccion = _driver.Url.Contains("/Compra/SelectHerramientasParaCompra");
             Assert.True(seguimosEnSeleccion, "El sistema permitió continuar con el carrito vacío.");
         }
     }
