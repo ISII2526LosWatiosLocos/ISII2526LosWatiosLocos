@@ -63,21 +63,10 @@ namespace AppForSEII2526.Web
             }
 
             // Métodos adicionales que necesitas (pero tu compañero no tiene):
-            public void ActualizarCliente(string nombre, string apellidos, string telefono)
-            {
-                Reparacion.Nombre = nombre;
-                Reparacion.Apellidos = apellidos;
-                Reparacion.Telefono = telefono;
-                NotifyStateChanged();
-            }
-
+            
           
 
-            public void ActualizarMetodoPago(int metodoPagoId)
-            {
-                Reparacion.MetodoPagoId = metodoPagoId;
-                NotifyStateChanged();
-            }
+        
         }
     
 
