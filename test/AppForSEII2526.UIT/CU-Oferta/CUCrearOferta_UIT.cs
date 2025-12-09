@@ -85,6 +85,7 @@ namespace AppForSEII2526.UIT.CU_Oferta
 
             // Intentamos guardar
             _crearPO.PulsarCrearOferta();
+            _crearPO.ConfirmarModal();
 
             // 3. ASSERT
             bool seguimosEnCrear = _driver.Url.Contains("/Ofertar/CrearOferta");
@@ -121,6 +122,7 @@ namespace AppForSEII2526.UIT.CU_Oferta
 
             _crearPO.PulsarCrearOferta();
             // Nota: No confirmamos modal porque la validación debería saltar antes
+            _crearPO.ConfirmarModal();
 
             // 3. ASSERT
             bool hayError = _crearPO.CheckErrorMessage(mensajeErrorEsperado);
