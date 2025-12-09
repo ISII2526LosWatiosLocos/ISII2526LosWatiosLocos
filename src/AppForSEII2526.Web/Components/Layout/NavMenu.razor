@@ -18,6 +18,7 @@
             </NavLink>
         </div>
         
+        @*
         <!-- Select herramientas para comprar -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/Compra/SelectHerramientasParaCompra">
@@ -31,26 +32,37 @@
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Compra-Detail
             </NavLink>
         </div>
+        *@
+
+        <!-- Post para comprar -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/Compra/CrearCompra">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Comprar
+            </NavLink>
+        </div>
 
         <!-- Select herramientas para ofertar -->
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Ofertar/SeleccionarHerramientaParaOfertar">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Oferta
+            <NavLink class="nav-link" href="">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Ofertas
             </NavLink>
-        </div>
-
-        <!-- Detalle para ofertar -->
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Ofertar/DetalleOferta">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Oferta-Detail
-            </NavLink>
-        </div>
-
-        <!-- Select Alquiler -->
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Alquiler/SeleccionarHerramientasParaAlquilar">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Alquiler
-            </NavLink>
+            <ul style="list-style: none; padding-left: 20px; margin-bottom: 0;">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/Ofertar/SeleccionarHerramientaParaOfertar" style="padding-top: 0.25rem; padding-bottom: 0.25rem;">
+                        SeleccionarHerramientas
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/Ofertar/DetalleOferta" style="padding-top: 0.25rem; padding-bottom: 0.25rem;">
+                        DetallesOferta
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/Ofertar/CrearOferta" style="padding-top: 0.25rem; padding-bottom: 0.25rem;">
+                        CrearOferta
+                    </NavLink>
+                </li>
+            </ul>
         </div>
 
         <!-- Details Alquiler -->
@@ -65,6 +77,19 @@
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
             </NavLink>
         </div>
+
+
+
+        <!--a partir de aquí-->
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/reparacion/seleccionarherramientaparareparacion">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Reparacion
+            </NavLink>
+        </div>
+
+
+
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="weather">

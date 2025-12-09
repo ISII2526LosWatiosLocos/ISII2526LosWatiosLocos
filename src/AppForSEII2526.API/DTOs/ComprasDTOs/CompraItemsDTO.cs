@@ -1,8 +1,4 @@
-﻿
-
-
-
-namespace AppForSEII2526.API.DTOs
+﻿namespace AppForSEII2526.API.DTOs.ComprasDTOs
 {
     public class CompraItemsDTO
     {

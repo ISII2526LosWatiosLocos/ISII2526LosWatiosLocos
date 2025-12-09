@@ -1,9 +1,9 @@
-﻿using AppForSEII2526.API.DTOs;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AppForSEII2526.API.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq; 
+using System.Linq;
+using AppForSEII2526.API.DTOs.OfertasDTOs;
 
 namespace AppForSEII2526.API.Controllers
 {
@@ -223,6 +223,8 @@ namespace AppForSEII2526.API.Controllers
                 )).ToList(),
                 nuevaOferta.Usuario.Nombre
             );
+
+            ofertaDTORespuesta.Id = nuevaOferta.Id;
 
             // Devolvemos el DTO de detalle
             return CreatedAtAction(

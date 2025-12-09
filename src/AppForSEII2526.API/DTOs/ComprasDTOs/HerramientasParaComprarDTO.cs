@@ -1,11 +1,24 @@
-﻿namespace AppForSEII2526.API.DTOs
+﻿namespace AppForSEII2526.API.DTOs.ComprasDTOs
 {
     public class HerramientasParaComprarDTO
     {
+        public int Id { get; set; }
         public string Nombre { get; set; }
         public string Material { get; set; }
         public string Fabricante { get; set; }
         public float Precio { get; set; }
+        
+        // Constructor completo
+        public HerramientasParaComprarDTO(int id, string nombre, string material, string fabricante, float precio)
+        {
+            Id = id;
+            Nombre = nombre;
+            Material = material;
+            Fabricante = fabricante;
+            Precio = precio;
+        }
+
+        // Constructor sin Id para las pruebas
         public HerramientasParaComprarDTO(string nombre, string material, string fabricante, float precio)
         {
             Nombre = nombre;

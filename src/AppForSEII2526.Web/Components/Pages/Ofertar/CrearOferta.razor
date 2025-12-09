@@ -1,0 +1,226 @@
+﻿@page "/Ofertar/CrearOferta"
+
+@using AppForSEII2526.Web.API
+@using System.ComponentModel.DataAnnotations 
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<CrearOferta> logger
+@inject OfertaStateContainer ofertaState
+@using AppForSEII2526.Web.Components.Shared
+@inject NavigationManager navigation
+
+<h3>Crear Oferta</h3>
+
+@if (oferta.Items.Count == 0)
+{
+    <p class="alert alert-info">Aún no ha añadido herramientas a la oferta. Por favor, añada algunas.</p>
+}
+
+<EditForm Model="oferta" OnValidSubmit="OpenDialog">
+     <div class="row">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="row alert alert-danger" />
+        <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+            <p id="ErrorsShown">Errors: @errores</p>
+        </div>
+    </div>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="oferta.FechaInicio" class="form-control" id="FechaInicio" />
+                <label for="FechaInicio">Fecha Inicio (Obligatorio)</label>
+                <ValidationMessage For="@(() => oferta.FechaInicio)" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="oferta.FechaFinal" class="form-control" id="FechaFin" />
+                <label for="FechaFin">Fecha Fin (Obligatorio)</label>
+                <ValidationMessage For="@(() => oferta.FechaFinal)" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-floating mb-3">
+                <InputSelect @bind-Value="oferta.MetodoPagoId" class="form-select" id="MetodoPago">
+                    <option>Seleccione Método de Pago (Obligatorio)</option>
+                    <option value="0">Tarjeta de Crédito</option>
+                    <option value="1">PayPal</option>
+                    <option value="2">Metálico / Efectivo</option>
+                </InputSelect>
+                <label for="MetodoPago">Método de Pago</label>
+                <ValidationMessage For="@(() => oferta.MetodoPagoId)" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="oferta.NombreUsuario" class="form-control" id="NombreUsuario" />
+                <label for="NombreUsuario">Nombre Usuario (Obligatorio)</label>
+                <ValidationMessage For="@(() => oferta.NombreUsuario)" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="form-floating mb-3">
+                <InputSelect @bind-Value="oferta.TipoDirigida" class="form-select" id="DirigidaA">
+                    <option value="">Dirigida A (Opcional)</option>
+                    <option value="Socio">Socio</option>
+                    <option value="Cliente">Cliente</option>
+                </InputSelect>
+                <label for="DirigidaA">Dirigida A</label>
+            </div>
+        </div>
+        
+        <div class="col-md-8 d-flex align-items-end justify-content-end">
+            <div class="form-floating">
+                <button class="btn btn-primary me-2" type="submit" id="Submit" disabled="@(oferta.Items.Count == 0)">
+                    Crear Ofertas (Total: @ofertaState.PrecioFinal.ToString("C"))
+                </button>
+                <button class="btn btn-outline-danger" type="button" @onclick="ClearOferta" id="ClearCart">
+                    Vaciar Oferta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <h4>Oferta Detalle</h4>
+    <p><b>Fecha desde:</b> @oferta.FechaInicio.ToString("dd/MM/yyyy") <b>hasta:</b> @oferta.FechaFinal.ToString("dd/MM/yyyy")</p>
+    <p>
+        <b>Precio Total Oferta:</b> @precioTotal €
+        <button class="btn btn-outline-primary" type="submit" @onclick="ModifyOfertaItems" id="ModifyHerramientas">
+            Modificar Herramientas
+        </button>
+    </p>
+
+    <h4 class="mt-4">Detalle de Herramientas</h4>
+    <div class="mh-100 table-responsive">
+        <table class="table table-condensed table-hover" id="TableOfOfertaItems">
+            <thead>
+                <tr>
+                    <th>Nombre Fabricante</th>
+                    <th>Nombre</th>
+                    <th>Material</th>
+                    <th>Precio Base</th>
+                    <th style="width: 15%">Porcentaje Descuento (%)</th>
+                    <th>Precio Final Oferta</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in oferta.Items)
+                {
+                    <tr id="Herramienta_@item.HerramientaId">
+                        <td>@item.FabricanteHerramienta</td>
+                        <td>@item.NombreHerramienta</td>
+                        <td>@item.MaterialHerramienta</td>
+                        <td>@item.PrecioHerramienta.ToString("C")</td>
+                        
+                        <td>
+                            <InputNumber Value="item.PorcentajeDescuento"
+                                ValueExpression="() => item.PorcentajeDescuento"
+                                ValueChanged="@((int val) => { 
+                                item.PorcentajeDescuento = val; 
+                                   })"
+                                class="form-control"
+                                id="@($"Porcentaje_{item.HerramientaId}")" />
+                     
+                                <ValidationMessage For="@(() => item.PorcentajeDescuento)" />
+                        </td>
+                        
+                        <td>@item.PrecioFinalOferta.ToString("C")</td>
+
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger" @onclick="() => RemoveItem(item)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</EditForm>
+
+
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Crear Ofertas"
+    Message="¿Desea continuar el proceso de crear ofertas?"
+    OnClose="@OnDialogClose"
+    Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
+@code {
+
+    private CrearOfertaDTO oferta => ofertaState.Oferta;
+    private bool DialogIsOpen;
+    private string errores;
+    private bool hideErrors { get { return string.IsNullOrEmpty(errores); } }
+
+    private float precioTotal
+    {
+        get
+        {
+            float precio = oferta.Items.Sum(r => (r.PrecioHerramienta) * (100f - r.PorcentajeDescuento)/100f);
+            return precio;
+        }
+    }
+
+     private void ModifyOfertaItems()
+    {
+        navigation.NavigateTo("/Ofertar/SeleccionarHerramientaParaOfertar");
+    }
+
+    
+
+    private void RemoveItem(OfertaItemsDTO item)
+    {
+        ofertaState.RemoveOfertaItem(item);
+    }
+
+    private void ClearOferta()
+    {
+        ofertaState.ClearOfertaCart();
+    }
+
+    private void OpenDialog()
+    {
+        DialogIsOpen = true;
+    }
+
+    private async Task OnDialogClose(bool isOk)
+    {
+        DialogIsOpen = false;
+        
+        if (isOk)
+        {
+            try
+            {
+                logger.LogInformation("Enviando oferta al API: {@Oferta}", oferta);
+                
+                var ofertado = await apiclient.CrearOfertaAsync(oferta);
+
+                ofertaState.OfertaProcesada();
+                
+                navigation.NavigateTo($"/Ofertar/DetalleOferta/{ofertado.Id}"); 
+            }
+            catch(ApiException<ValidationProblemDetails> apiexceptionvalidation)
+                {
+                    if (apiexceptionvalidation.Result.Errors.Values != null)
+                    {
+                        errores = "";
+                        foreach (var errors in apiexceptionvalidation.Result.Errors.Values)
+                            //https://learn.microsoft.com/en-us/dotnet/api/system.string.join?view=net-7.0
+                            errores = string.Join("(*) ", errores, string.Join(" (*) ", errors));
+                    }
+                }
+                catch (ApiException apiexception)
+                {
+                    //we need to inform user that there was some other error while processing the request
+                    errores = "Error mientras se procesaba su solicitud, por favor prueba más tarde!";
+
+                }
+        }
+    }
+}

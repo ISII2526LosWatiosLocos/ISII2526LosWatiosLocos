@@ -1,4 +1,6 @@
 ﻿using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.ComprasDTOs;
+using AppForSEII2526.API.DTOs.OfertasDTOs;
 using AppForSEII2526.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +34,7 @@ namespace AppForSEII2526.API.Controllers
                 .Where (h => (filtroFabricante == null || h.Fabricante.Nombre == filtroFabricante) &&
                             (filtroPrecio == null || h.Precio <= filtroPrecio))
                 .Select(h => new HerramientasParaOfertarDTO(
-                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
+                    h.Id, h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio))
                 .ToListAsync();
             return Ok(herramientas);
 
@@ -67,7 +69,7 @@ namespace AppForSEII2526.API.Controllers
                 .Where(h => (filtroMaterial == null || h.Material == filtroMaterial) &&
                             (filtroPrecio == null || h.Precio <= filtroPrecio)) // Filtra según los parámetros que le paso arriba, así cubro el flujo alternativo 1
                 .Select(h => new HerramientasParaComprarDTO(
-                    h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio)) // Creo un DTO para cada herramienta, así solo devuelvo los 4 campos que necesito y no todo el objeto.
+                    h.Id, h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio)) // Creo un DTO para cada herramienta, así solo devuelvo los 5 campos que necesito y no todo el objeto.
                 .ToListAsync(); // Consulto los datos de forma asíncrona
             if (!herramientas.Any())
                 return NoContent(); // Lanzo error 204, así cubro el flujo alternativo 0 
@@ -82,7 +84,7 @@ namespace AppForSEII2526.API.Controllers
         {
             var herramientas = await _context.Herramientas
                 .Include(h => h.Fabricante)
-                .Where(h => (filtroNombre == null || h.Fabricante.Nombre == filtroNombre) &&
+                .Where(h => (filtroNombre == null || h.Nombre == filtroNombre) &&
                     (filtroTiempoReparacion == null || h.TiempoReparacion <= filtroTiempoReparacion))
                 .Select(h => new HerramientasParaReparaciónDTO(
                     h.Nombre, h.Material, h.Fabricante.Nombre, h.Precio, h.TiempoReparacion))

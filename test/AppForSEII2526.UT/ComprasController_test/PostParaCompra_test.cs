@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.ComprasDTOs;
 using AppForSEII2526.API.Models;
 
 namespace AppForSEII2526.UT.ComprasController_test
@@ -123,7 +123,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                 Apellidos = "Loco",
                 MetodoPagoId = 1,
                 Items = compraItems,
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraMetodoPagoInvalido = new CrearCompraDTO
@@ -132,7 +134,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                 Apellidos = "De Tal",
                 MetodoPagoId = 999, // <-- ID que no existe
                 Items = compraItems,
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraNoItem = new CrearCompraDTO
@@ -141,7 +145,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
                 Items = new List<CompraItemsDTO>(), // Lista vacía
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraSinDireccionEnvio = new CrearCompraDTO
@@ -150,7 +156,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
                 Items = compraItems,
-                DireccionEnvio = "" // String vacío o null
+                DireccionEnvio = "", // String vacío o null
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemDescripcionNula = new CrearCompraDTO
@@ -185,7 +193,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                     1 // Cantidad no igual a 3
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemCantidadCero = new CrearCompraDTO
@@ -220,7 +230,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                     0 // Cantidad cero
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemCantidadNegativa = new CrearCompraDTO
@@ -255,7 +267,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                     -3 // Cantidad negativa
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemCantidadMayorQueStockConUnSoloItem = new CrearCompraDTO
@@ -290,7 +304,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                     4 // Cantidad mayor que Stock
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemCantidadMayorQueStockConVariosItems = new CrearCompraDTO
@@ -333,7 +349,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                     3
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemDescripcionNulaCantidadIgualATres = new CrearCompraDTO
@@ -368,7 +386,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                     3 // Cantidad es igual a 3
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var allTests = new List<object[]>
@@ -459,7 +479,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
                 Items = compraItems,
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             // Act

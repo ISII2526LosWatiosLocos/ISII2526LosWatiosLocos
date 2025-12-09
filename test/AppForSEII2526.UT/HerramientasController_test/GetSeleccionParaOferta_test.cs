@@ -1,5 +1,5 @@
 ﻿using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.OfertasDTOs;
 using AppForSEII2526.UT;
 using RabbitMQ.Client;
 using System;
@@ -42,9 +42,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
             // Datos esperados
             var herramientasDTO = new List<HerramientasParaOfertarDTO>()
             {
-                new HerramientasParaOfertarDTO ( "Martillo", "Acero", "Herramientas SA", 15.5f),
-                new HerramientasParaOfertarDTO ( "Destornillador", "Acero", "Utensilios y Más", 7.0f),
-                new HerramientasParaOfertarDTO ( "Taladro", "Plástico", "Todo para Construcción", 5.0f)
+                new HerramientasParaOfertarDTO (1, "Martillo", "Acero", "Herramientas SA", 15.5f),
+                new HerramientasParaOfertarDTO (2, "Destornillador", "Acero", "Utensilios y Más", 7.0f),
+                new HerramientasParaOfertarDTO (3, "Taladro", "Plástico", "Todo para Construcción", 5.0f)
             };
 
             // Casos de prueba
