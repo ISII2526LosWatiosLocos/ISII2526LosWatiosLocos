@@ -18,34 +18,33 @@ namespace LogViewer
 
         public void StartReceiving(string subscriptionTopic)
         {
-            // reemplazar localhost por la IP del ordenador ejecutando la API, ejemplo: 10.194.97.164
-            // para probar la conectividad se pondría en el buscador HostName:Puerto, ejemplo: http://10.194.97.164:15672/ (15672 es el puerto por defecto)
+            //Crear la conexión
             var factory = new ConnectionFactory() { HostName = "localhost" };
-
+            
             var connection = factory.CreateConnection();
             var channel = connection.CreateModel();
-
+            //Creas el exchangue
             channel.ExchangeDeclare(
                 exchange: _exchangeName,
                 type: ExchangeType.Topic,
                 durable: true);
-
+            //Crear la cola efímera.Con durable=true, será persistente
             var queueName = channel.QueueDeclare(
                 queue: "",
                 durable: false,
                 exclusive: true,
                 autoDelete: true,
                 arguments: null).QueueName;
-
+            //Bindear la cola al exchangue
             channel.QueueBind(
                 queue: queueName,
                 exchange: _exchangeName,
                 routingKey: subscriptionTopic);
 
             Console.WriteLine($"[*] Suscrito a '{_exchangeName}'. Cola: {queueName}. Esperando logs...");
-
+            //Crear el consumidor
             var consumer = new EventingBasicConsumer(channel);
-
+            //Configurar callback al recibir un mensaje
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body.ToArray();
@@ -56,7 +55,7 @@ namespace LogViewer
                 Console.WriteLine($"[LOG RECIBIDO]: {message}");
                 Console.ResetColor();
             };
-
+            //Iniciar consumo de mensajes
             channel.BasicConsume(
                 queue: queueName,
                 autoAck: true,
@@ -65,7 +64,7 @@ namespace LogViewer
             Console.WriteLine(" Presiona [Enter] para salir.");
             Console.ReadLine();
 
-            // (Opcional) Limpiar al salir
+            //Limpiar al salir
             channel.Close();
             connection.Close();
         }

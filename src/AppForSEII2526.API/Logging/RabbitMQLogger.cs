@@ -73,10 +73,8 @@ public class RabbitMQLogger : ILogger, IDisposable
 
         try
         {
-            // --- INICIO DE MODIFICACIÓN ---
-            // 1. Crear la clave de enrutamiento (RoutingKey)
+            //Modificación para usar routing keys basadas en el nivel de log y la categoría
             var routingKey = $"{logLevel.ToString().ToLower()}.{_name}";
-            // --- FIN DE MODIFICACIÓN ---
 
             var logEntry = new
             {
@@ -94,14 +92,12 @@ public class RabbitMQLogger : ILogger, IDisposable
             var json = JsonSerializer.Serialize(logEntry);
             var body = Encoding.UTF8.GetBytes(json);
 
-            // --- INICIO DE MODIFICACIÓN ---
-            // 2. Usar la clave de enrutamiento en BasicPublish
+            //Usar la clave de enrutamiento en BasicPublish
             _channel.BasicPublish(
                 exchange: _config.Exchange,
                 routingKey: routingKey, 
                 basicProperties: _properties,
                 body: body);
-            // --- FIN DE MODIFICACIÓN ---
 
         }
         catch (Exception ex)
