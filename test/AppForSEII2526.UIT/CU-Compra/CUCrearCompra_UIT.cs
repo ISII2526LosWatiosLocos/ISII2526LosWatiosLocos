@@ -5,6 +5,8 @@ using Xunit.Abstractions;
 using System;
 using System.Collections.Generic;
 
+// PARA PROBAR LOS TESTS HAY QUE DAR CLICK DERECHO, VER, ABRIR CON EL NAVEGADOR A LA API Y A LA WEB
+
 namespace AppForSEII2526.UIT.CU_Compra
 {
     public class CUCrearCompra_UIT : UC_UIT

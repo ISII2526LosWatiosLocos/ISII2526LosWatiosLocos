@@ -22,11 +22,17 @@ namespace AppForSEII2526.UIT.CU_Compra
 
         public void RellenarDatosGenerales(string nombre, string apellidos, string direccionEnvio, string pagoValue)
         {
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(3)); // Espera a renderizar
             // Texto
+            WaitForBeingVisible(_Nombre);
             _driver.FindElement(_Nombre).Clear();
             _driver.FindElement(_Nombre).SendKeys(nombre);
+
+            WaitForBeingVisible(_Apellidos);
             _driver.FindElement(_Apellidos).Clear();
             _driver.FindElement(_Apellidos).SendKeys(apellidos);
+
+            WaitForBeingVisible(_DireccionEnvio);
             _driver.FindElement(_DireccionEnvio).Clear();
             _driver.FindElement(_DireccionEnvio).SendKeys(direccionEnvio);
 
@@ -46,7 +52,15 @@ namespace AppForSEII2526.UIT.CU_Compra
 
             element.SendKeys(Keys.Control + "a");
             element.SendKeys(Keys.Delete);
-            element.SendKeys(descripcion);
+            if (descripcion == null)
+            {
+                element.Clear();
+            }
+            else
+            {
+                element.SendKeys(descripcion);
+            }
+
         }
 
         public void PulsarCrearCompra()
