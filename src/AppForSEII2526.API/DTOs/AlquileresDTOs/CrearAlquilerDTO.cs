@@ -1,6 +1,4 @@
-﻿
-
-namespace AppForSEII2526.API.DTOs
+﻿namespace AppForSEII2526.API.DTOs.AlquileresDTOs
 {
     public class CrearAlquilerDTO 
     {

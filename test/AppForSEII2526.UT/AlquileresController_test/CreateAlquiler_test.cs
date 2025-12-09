@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.AlquileresDTOs;
 using AppForSEII2526.API.Models;
 
 namespace AppForSEII2526.UT.AlquileresController_test

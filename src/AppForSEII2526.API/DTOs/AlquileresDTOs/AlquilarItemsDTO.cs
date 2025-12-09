@@ -1,17 +1,17 @@
-﻿namespace AppForSEII2526.API.DTOs
+﻿namespace AppForSEII2526.API.DTOs.AlquileresDTOs
 {
     public class AlquilarItemsDTO
     {
-        public String NombreItem { get; set; }
-        public String MaterialItem { get; set; }
+        public string NombreItem { get; set; }
+        public string MaterialItem { get; set; }
         public float PrecioItem { get; set; }
         public int CantidadItem { get; set; }
-        public AlquilarItemsDTO(String nombreItem, String materialItem, float precioItem, int cantidadItem)
+        public AlquilarItemsDTO(string nombreItem, string materialItem, float precioItem, int cantidadItem)
         {
-            this.NombreItem = nombreItem;
-            this.MaterialItem = materialItem;
-            this.PrecioItem = precioItem;
-            this.CantidadItem = cantidadItem;
+            NombreItem = nombreItem;
+            MaterialItem = materialItem;
+            PrecioItem = precioItem;
+            CantidadItem = cantidadItem;
         }
 
         public override bool Equals(object? obj)

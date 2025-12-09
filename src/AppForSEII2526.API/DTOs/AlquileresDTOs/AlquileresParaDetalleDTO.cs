@@ -1,10 +1,10 @@
-﻿namespace AppForSEII2526.API.DTOs
+﻿namespace AppForSEII2526.API.DTOs.AlquileresDTOs
 {
     public class AlquileresParaDetalleDTO
     {
-        public String Nombre {  get; set; }
-        public String Apellidos { get; set; }
-        public String Direccion {  get; set; }
+        public string Nombre {  get; set; }
+        public string Apellidos { get; set; }
+        public string Direccion {  get; set; }
         public DateOnly FechaAlquiler { get; set; }
         public float PrecioTotal { get; set; }
         public DateOnly FechaInicio { get; set; }

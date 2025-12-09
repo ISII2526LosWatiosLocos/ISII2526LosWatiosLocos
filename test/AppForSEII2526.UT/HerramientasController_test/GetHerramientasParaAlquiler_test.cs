@@ -1,12 +1,12 @@
 ﻿using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.AlquileresDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit; // Para el Assert
-using Xunit.Abstractions; 
+using Xunit.Abstractions;
 
 namespace AppForSEII2526.UT.HerramientasController_test
 {

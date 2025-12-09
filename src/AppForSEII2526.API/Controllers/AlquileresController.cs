@@ -1,4 +1,4 @@
-﻿using AppForSEII2526.API.DTOs;
+﻿using AppForSEII2526.API.DTOs.AlquileresDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
