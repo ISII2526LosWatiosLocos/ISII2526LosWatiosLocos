@@ -5,7 +5,7 @@
 
 <h3>Detalle Alquiler</h3>
 
-@attribute [Authorize]
+<!-- attribute [Authorize] -->
 
 @if (Alquiler == null)
 {
@@ -68,35 +68,17 @@ else
 
 
 @code {
-    [Parameter]
-    [SupplyParameterFromQuery]
-    public int AlquilerId { get; set; }
-    private AlquileresParaDetalleDTO Alquiler;
+    // [Parameter]
+    // [SupplyParameterFromQuery]
+    public int AlquilerId { get; set; } = 0;
+    private AlquileresParaDetalleDTO? Alquiler;
     private string error = "";
 
-    [CascadingParameter]
-    private Task<AuthenticationState>? autentificacion { get; set; }
+    // [CascadingParameter]
+    // private Task<AuthenticationState>? autentificacion { get; set; }
 
-
-    protected override async Task OnInitializedAsync()
+    public async Task BuscarAlquiler()
     {
-        // Comprobamos si el usuario inició sesión
-        string nombre = "";
-        if (autentificacion is not null)
-        {
-            var estado = await autentificacion;
-            var usuario = estado?.User;
-
-            // Cogemos el id del que inicio sesión
-            if (usuario is not null)
-            {
-                if (usuario.Identity is not null && usuario.Identity.IsAuthenticated && usuario.IsInRole("User"))
-                {
-                    nombre = usuario.Identity.Name;
-                }
-            }
-        }
-
         try
         {
             Alquiler = await apiclient.GetDetalleHerramientasParaAlquilerAsync(AlquilerId);
@@ -105,13 +87,40 @@ else
         {
             Alquiler = null;
         }
-        if ((Alquiler == null) || (Alquiler.Nombre != nombre))
+        finally
+        {
+            StateHasChanged();
+        }
+        if (Alquiler == null)
         {
             error = $"Error! No tienes permiso para ver este alquiler o no hay alquiler con id={AlquilerId}";
         }
-
-
     }
+    /**
+    protected override async Task OnInitializedAsync()
+    {
+        // Comprobamos si el usuario inició sesión
 
 
+                        string nombre = "";
+                        if (autentificacion is not null)
+                        {
+                            var estado = await autentificacion;
+                            var usuario = estado?.User;
+
+                            // Cogemos el id del que inicio sesión
+                            if (usuario is not null)
+                            {
+                                if (usuario.Identity is not null && usuario.Identity.IsAuthenticated && usuario.IsInRole("User"))
+                                {
+                                    nombre = usuario.Identity.Name;
+                                }
+                            }
+                        }
+
+
+        BuscarAlquiler();
+        base.OnInitializedAsync();
+        // if ((Alquiler == null) || (Alquiler.Nombre != nombre))
+        **/
 }
