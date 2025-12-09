@@ -12,11 +12,11 @@
         
 
 
-        public List<CrearReparacionItemDTO> ReparacionesItems { get; set; }
+        public List<ReparacionesItemDTO> ReparacionesItems { get; set; }
 
         public CrearReparacionDTO()
         {
-            ReparacionesItems = new List<CrearReparacionItemDTO>();
+            ReparacionesItems = new List<ReparacionesItemDTO>();
         }
 
         public override bool Equals(object? obj)
@@ -29,7 +29,7 @@
                    PrecioTotal == dTO.PrecioTotal &&
                    MetodoPagoId == dTO.MetodoPagoId &&
                    telefono == dTO.telefono &&
-                   EqualityComparer<List<CrearReparacionItemDTO>>.Default.Equals(ReparacionesItems, dTO.ReparacionesItems);
+                   EqualityComparer<List<ReparacionesItemDTO>>.Default.Equals(ReparacionesItems, dTO.ReparacionesItems);
         }
 
         public override int GetHashCode()

@@ -9,12 +9,23 @@
         public int HerramientaCantidad { get; set; }
         public float HerramientaPrecio { get; set; }
 
+        public ReparacionesItemDTO() { }
+
+
         public ReparacionesItemDTO(string herramientaNombre, string herramientaDescripcion, int herramientaCantidad, float herramientaPrecio)
         {
             HerramientaNombre = herramientaNombre;
             HerramientaDescripcion = herramientaDescripcion;
             HerramientaCantidad = herramientaCantidad;
             HerramientaPrecio = herramientaPrecio;
+        }
+
+        public ReparacionesItemDTO(int herramientaId, string herramientaDescripcion, int herramientaCantidad)
+        {
+            HerramientaId = herramientaId; 
+            HerramientaDescripcion = herramientaDescripcion;
+            HerramientaCantidad = herramientaCantidad;
+           
         }
 
         public override bool Equals(object? obj)

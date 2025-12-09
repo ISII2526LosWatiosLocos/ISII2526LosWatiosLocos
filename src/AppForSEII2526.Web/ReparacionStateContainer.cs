@@ -9,18 +9,17 @@ namespace AppForSEII2526.Web
     public class ReparacionStateContainer
    
         {
-            // EXACTAMENTE como tu compañero
+          
             public CrearReparacionDTO Reparacion { get; private set; } = new CrearReparacionDTO()
             {
-                ReparacionesItems = new List<CrearReparacionItemDTO>()
+                ReparacionesItems = new List<ReparacionesItemDTO>()
             };
 
             public float PrecioTotal
             {
                 get
                 {
-                    // Aquí deberías calcular basado en precios reales
-                    // Por ahora devuelve 0 o el valor que ya tenga el DTO
+                   
                     return Reparacion.PrecioTotal;
                 }
             }
@@ -31,7 +30,7 @@ namespace AppForSEII2526.Web
 
             public void AgregarHerramientaAReparacion(HerramientasParaReparaciónDTO herramienta)
             {
-                Reparacion.ReparacionesItems.Add(new CrearReparacionItemDTO()
+                Reparacion.ReparacionesItems.Add(new ReparacionesItemDTO()
                 {
                     
                     HerramientaDescripcion = $"Reparar {herramienta.Nombre}",
@@ -41,7 +40,7 @@ namespace AppForSEII2526.Web
                 NotifyStateChanged();
             }
 
-            public void QuitarItemDeReparacion(CrearReparacionItemDTO item)
+            public void QuitarItemDeReparacion(ReparacionesItemDTO item)
             {
                 Reparacion.ReparacionesItems.Remove(item);
                 NotifyStateChanged();
@@ -57,27 +56,16 @@ namespace AppForSEII2526.Web
             {
                 Reparacion = new CrearReparacionDTO()
                 {
-                    ReparacionesItems = new List<CrearReparacionItemDTO>()
+                    ReparacionesItems = new List<ReparacionesItemDTO>()
                 };
                 NotifyStateChanged();
             }
 
-            // Métodos adicionales que necesitas (pero tu compañero no tiene):
-            public void ActualizarCliente(string nombre, string apellidos, string telefono)
-            {
-                Reparacion.Nombre = nombre;
-                Reparacion.Apellidos = apellidos;
-                Reparacion.Telefono = telefono;
-                NotifyStateChanged();
-            }
-
+         
+            
           
 
-            public void ActualizarMetodoPago(int metodoPagoId)
-            {
-                Reparacion.MetodoPagoId = metodoPagoId;
-                NotifyStateChanged();
-            }
+        
         }
     
 
