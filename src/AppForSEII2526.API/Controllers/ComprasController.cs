@@ -30,8 +30,18 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetDetalleHerramientasParaCompra(int id)
         {
+            // ---INYECCIÓN DE LOG DE ADVERTENCIA Y CRÍTICO ---
+            if (id == 0)
+            {
+                // Advertencia: Posible error de cliente, pero no detiene la ejecución.
+                _logger.LogWarning("Se recibió una solicitud GET para Detalle-Compra con ID 0. Esto podría indicar un error de llamada.");
+                // Opcional: Podríamos detener la ejecución aquí si ID 0 no es válido, pero continuamos para probar el NotFound.
+            }
+
             if (_context.Compras == null)
             {
+                // Un error grave si un DbSet está nulo
+                _logger.LogCritical("CRITICAL ERROR: El DbSet Compras es nulo. Verifique la configuración del DbContext.");
                 _logger.LogError("Error: La tabla Compras no existe en el DbContext.");
                 return NotFound();
             }
@@ -46,9 +56,11 @@ namespace AppForSEII2526.API.Controllers
 
             if (compra == null)
             {
-                _logger.LogInformation("No se encontró la compra con id {Id}", id);
+                _logger.LogError("Error: No se encontró la compra con id {Id}", id);
                 return NotFound();
             }
+            // --- INYECCIÓN DE LOG DE INFORMACIÓN ---
+            _logger.LogInformation("Compra obtenida correctamente. ID: {Id}", id);
 
             var compraDto = new ComprasParaDetalleDTO(
                 compra.Usuario?.Nombre ?? string.Empty,
@@ -81,7 +93,7 @@ namespace AppForSEII2526.API.Controllers
             if (_context.Compras == null || _context.Herramientas == null || _context.MetodosPagos == null)
             {
                 // Este es un error 500
-                _logger.LogError("Error: Faltan DbSets (Compras, Herramientas o MetodosPagos) en el DbContext.");
+                _logger.LogCritical("Error Crítico: Faltan DbSets (Compras, Herramientas o MetodosPagos) en el DbContext.");
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
 
@@ -90,24 +102,23 @@ namespace AppForSEII2526.API.Controllers
             // a. Buscar Método de Pago
             var metodoPago = await _context.MetodosPagos.FindAsync(CrearCompraDTO.MetodoPagoId);
             if (metodoPago == null)
+            {
+                // Log Error: Entidad requerida no encontrada
+                _logger.LogError("MetodoPagoId {MetodoPagoId} no existe.", CrearCompraDTO.MetodoPagoId);
                 ModelState.AddModelError(nameof(CrearCompraDTO.MetodoPagoId), $"El MetodoPagoId {CrearCompraDTO.MetodoPagoId} no existe.");
+            }
 
             // b. Buscar Usuario
             var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos);
-            if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El Usuario {CrearCompraDTO.Nombre} {CrearCompraDTO.Apellidos} no existe.");
-
-            // c. Validar items del dto (que no tengan valores imposibles)
+            if (Usuario == null)
+            {
+                // Log Error: Entidad requerida no encontrada
+                _logger.LogError("Usuario con nombre '{NombreUsuario}' no encontrado.", CrearCompraDTO.Nombre);
+                ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El Usuario {CrearCompraDTO.Nombre} {CrearCompraDTO.Apellidos} no existe.");
+            }
+            // c. Validar que la compra tenga items
             if (CrearCompraDTO.Items == null || !CrearCompraDTO.Items.Any())
                 ModelState.AddModelError(nameof(CrearCompraDTO.Items), "La compra debe incluir al menos una herramienta.");
-
-            foreach (var itemDto in CrearCompraDTO.Items)
-            {
-                if (itemDto.IdHerramienta <= 0)
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"IdHerramienta inválido: {itemDto.IdHerramienta}.");
-
-                if (itemDto.CantidadHerramienta <= 0)
-                    ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La cantidad para la IdHerramienta {itemDto.IdHerramienta} debe ser mayor que 0.");
-            }
 
             // d. Si hay *cualquier* error de los anteriores, parar y devolverlos todos
             if (ModelState.ErrorCount > 0)
@@ -142,13 +153,27 @@ namespace AppForSEII2526.API.Controllers
                 // Buscar la herramienta en la lista local (el Diccionario)
                 if (!herramientasEnDB.TryGetValue(itemDTO.IdHerramienta, out var herramienta))
                 {
+                    // Log Error: Problema en la integridad del DTO
+                    _logger.LogError("HerramientaId {HerramientaId} no existe. Fallo de integridad en la creación de la compra.", itemDTO.IdHerramienta);
                     // La herramienta no se encontró en nuestra consulta
                     ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La HerramientaId {itemDTO.IdHerramienta} no existe.");
                 }
                 else
                 {
-                    // Todo correcto para este item
+                    // Validar items del dto (que no tengan valores imposibles)
+                    if (itemDTO.IdHerramienta <= 0)
+                    {
+                        _logger.LogError("IdHerramienta {IdHerramienta} menor o igual que 0. Fallo de integridad en la creación de la compra.", itemDTO.IdHerramienta);
+                        ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"IdHerramienta inválido: {itemDTO.IdHerramienta}.");
+                    }
 
+                    if (itemDTO.CantidadHerramienta <= 0)
+                    {
+                        _logger.LogError("CantidadHerramienta {CantidadHerramienta} menor o igual que 0. Fallo de integridad en la creación de la compra.", itemDTO.CantidadHerramienta);
+                        ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La cantidad para la IdHerramienta {itemDTO.IdHerramienta} debe ser mayor que 0.");
+                    }
+                    
+                    // Todo correcto para este item
                     var nuevoItem = new CompraItem
                     {
                         Herramienta = herramienta,
@@ -170,7 +195,11 @@ namespace AppForSEII2526.API.Controllers
             // --- 7. VALIDACIÓN FINAL (Patrón del ejemplo) ---
             // Comprobar si se añadieron errores *dentro* del bucle
             if (ModelState.ErrorCount > 0)
+            {
+                // Log Error: Petición mal formada devuelta al cliente
+                _logger.LogError("Se recibió una solicitud de CrearCompra mal formada. {ErrorCount} errores de validación.", ModelState.ErrorCount);
                 return BadRequest(new ValidationProblemDetails(ModelState));
+            }
 
             // --- 8. GUARDADO ÚNICO (Patrón del ejemplo) ---
             _context.Compras.Add(nuevaCompra);
@@ -181,7 +210,8 @@ namespace AppForSEII2526.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al guardar la nueva compra en la base de datos.");
+                // Log Crítico/Error: Error fatal al guardar en la DB
+                _logger.LogCritical(ex, "CRITICAL: No se pudo guardar la nueva compra. Fallo de conexión o restricción de DB.");
                 return Conflict($"Ocurrió un error al guardar la compra: {ex.Message}");
             }
 
@@ -201,6 +231,9 @@ namespace AppForSEII2526.API.Controllers
                     oi.Cantidad
                 )).ToList()
             );
+
+            // Log Información: Éxito
+            _logger.LogInformation("Compra creada con éxito. ID: {IdCompra}", nuevaCompra.Id);
 
             // Devolvemos el DTO de detalle
             return CreatedAtAction(
