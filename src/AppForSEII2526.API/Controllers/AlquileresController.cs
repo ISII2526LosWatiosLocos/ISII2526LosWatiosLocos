@@ -99,7 +99,16 @@ namespace AppForSEII2526.API.Controllers
                 u.Apellidos == crearAlquilerDTO.Apellidos);
             if (usuario == null) ModelState.AddModelError(nameof(crearAlquilerDTO.Nombre), $"El Usuario {crearAlquilerDTO.Nombre} {crearAlquilerDTO.Apellidos} no existe.");
 
-            // Alguna validación más ???
+            if (crearAlquilerDTO.Items != null)
+            {
+                foreach (var item in crearAlquilerDTO.Items)
+                {
+                    if (item.CantidadItem <= 0)
+                    {
+                        ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "La cantidad de cada herramienta debe ser mayor que cero.");
+                    }
+                }
+            }
 
             // Si hay errores, retornar
             if (ModelState.ErrorCount > 0)

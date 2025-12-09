@@ -118,6 +118,19 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 alquilerItems
             );
 
+            var alquilerItemSinCantidad = new CrearAlquilerDTO(
+                _nombreUsuario,
+                _apellidoUsuario,
+                1,
+                "Calle Falsa 123",
+                "123456722",
+                "abc@hello.com",
+                new List<AlquilarItemsDTO>
+                {
+                    new AlquilarItemsDTO(4, 0) // Cantidad 0 no válida
+                }
+            );
+
             var allTests = new List<object[]>
             {
                 new object[] { alquilerNoItem, "El alquiler debe incluir al menos una herramienta." },
@@ -126,6 +139,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 new object[] { alquilerApplicationUser, $"El Usuario {alquilerApplicationUser.Nombre} {alquilerApplicationUser.Apellidos} no existe." },
                 new object[] { alquilerNoDisponible, "La HerramientaId 4 no existe." },
                 new object[] { alquilerMetodoPagoInvalido, "El MetodoPagoId 999 no existe." },
+                new object[] { alquilerItemSinCantidad, "La cantidad de cada herramienta debe ser mayor que cero." }
             };
             return allTests;
         }
