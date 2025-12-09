@@ -37,7 +37,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             // TODO: Implementar atributos opcionales en la UI
         }
 
-        public void RellenarDescripcion(string IdHerramienta, string descripcion)
+        public void RellenarDescripcion(int IdHerramienta, string descripcion)
         {
             By inputDescripcion = By.Id($"Descripcion_{IdHerramienta}");
 
