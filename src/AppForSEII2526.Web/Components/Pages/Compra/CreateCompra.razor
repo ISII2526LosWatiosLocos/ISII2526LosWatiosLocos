@@ -18,7 +18,7 @@
         <DataAnnotationsValidator />
         <ValidationSummary class="row alert alert-danger" />
         <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
-            <p id="ErrorsShown">Errors: @messageError</p>
+            <p id="ErrorsShown">Se ha producido un error: @messageError</p>
         </div>
     </div>
 
@@ -94,7 +94,7 @@
                         <td>@item.MaterialHerramienta</td>
                         <td>@item.CantidadHerramienta</td>
                         <td>@item.PrecioHerramienta</td>
-                        <td><InputText @bind-Value="item.DescripcionHerramienta" class="form-control" id="@($"description_{item.IdHerramienta}")" /></td>
+                        <td><InputText @bind-Value="item.DescripcionHerramienta" class="form-control" id="@($"Descripcion_{item.IdHerramienta}")" /></td>
                     </tr>
                 }
             </tbody>
