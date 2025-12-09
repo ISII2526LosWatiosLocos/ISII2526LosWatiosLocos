@@ -929,6 +929,10 @@
       "ComprasParaDetalleDTO": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "nombre": {
             "type": "string",
             "nullable": true
@@ -1039,6 +1043,14 @@
           "direccionEnvio": {
             "type": "string",
             "nullable": true
+          },
+          "correoElectronico": {
+            "type": "string",
+            "nullable": true
+          },
+          "numeroTelefono": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1069,23 +1081,9 @@
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CrearOfertaItemDTO"
+              "$ref": "#/components/schemas/OfertaItemsDTO"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CrearOfertaItemDTO": {
-        "type": "object",
-        "properties": {
-          "herramientaId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "porcentajeDescuento": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1178,6 +1176,10 @@
       "HerramientasParaComprarDTO": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "nombre": {
             "type": "string",
             "nullable": true
@@ -1271,6 +1273,14 @@
           "precioFinalOferta": {
             "type": "number",
             "format": "float"
+          },
+          "herramientaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "porcentajeDescuento": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1278,6 +1288,10 @@
       "OfertasParaDetalleDTO": {
         "type": "object",
         "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "fechaFinal": {
             "type": "string",
             "format": "date"

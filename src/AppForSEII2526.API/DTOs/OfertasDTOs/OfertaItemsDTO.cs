@@ -23,6 +23,8 @@ namespace AppForSEII2526.API.DTOs.OfertasDTOs
             PrecioFinalOferta = precioFinalOferta;
         }
 
+        public OfertaItemsDTO() { } 
+
         public OfertaItemsDTO(int herramientaId, int porcentajeDescuento)
         {
             HerramientaId = herramientaId;
