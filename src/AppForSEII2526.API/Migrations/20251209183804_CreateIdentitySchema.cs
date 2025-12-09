@@ -32,7 +32,7 @@ namespace AppForSEII2526.API.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Apellidos = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CorreoElectronico = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    CorreoElectronico = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
                     NumeroTelefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),

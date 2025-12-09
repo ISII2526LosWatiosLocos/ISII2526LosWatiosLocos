@@ -15,7 +15,7 @@ public class ApplicationUser : IdentityUser {
 
     // Campos opcionales
 
-    [StringLength(20, ErrorMessage = "Numero de caracteres excedido. No se puede más de 20 caracteres")]
+    [StringLength(40, ErrorMessage = "Numero de caracteres excedido. No se puede más de 40 caracteres")]
     public string? CorreoElectronico { get; set; }
 
     [DataType(System.ComponentModel.DataAnnotations.DataType.PhoneNumber), Display(Name = "Número de Teléfono")]
