@@ -10,7 +10,7 @@ namespace AppForSEII2526.Web
    
         {
             // EXACTAMENTE como tu compañero
-            public ReparacionesDTO Reparacion { get; private set; } = new ReparacionesDTO()
+            public CrearReparacionDTO Reparacion { get; private set; } = new CrearReparacionDTO()
             {
                 ReparacionesItems = new List<ReparacionesItemDTO>()
             };
@@ -55,7 +55,7 @@ namespace AppForSEII2526.Web
 
             public void ReparacionProcesada()
             {
-                Reparacion = new ReparacionesDTO()
+                Reparacion = new CrearReparacionDTO()
                 {
                     ReparacionesItems = new List<ReparacionesItemDTO>()
                 };
