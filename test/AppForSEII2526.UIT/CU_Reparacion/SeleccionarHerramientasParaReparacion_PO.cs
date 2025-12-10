@@ -14,13 +14,14 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         By inputGenre = By.Id("inputTeimporeparacion");                    // Realmente es el imput de timpo, si me da tiempo cambio el razor para que tenga más sentido
         By BotonbuscarHerramientas = By.Id("buscarHerramientas");
         By inputFrom = By.Id("fromDate");
+        By inputTo = By.Id("toDate");
         public SeleccionarHerramientasParaReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
 
 
         }
 
-        public void BuscarHerramientas(string nombre, string tiempoReparacion, string from)
+        public void BuscarHerramientas(string nombre, string tiempoReparacion, string from, string to)
         {
             //wait for the webelement to be clickable
             WaitForBeingClickable(inputTitle);
@@ -37,6 +38,12 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 
             if (from != "")
                 _driver.FindElement(inputFrom).SendKeys(from);
+
+
+
+            if (to != "")
+                _driver.FindElement(inputTo).SendKeys(to);
+
 
 
             _driver.FindElement(BotonbuscarHerramientas).Click();
