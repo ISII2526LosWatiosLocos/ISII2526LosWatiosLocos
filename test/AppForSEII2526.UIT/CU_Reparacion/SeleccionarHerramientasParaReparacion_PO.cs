@@ -13,20 +13,18 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         By inputTitle = By.Id("Nombreherramienta");
         By inputGenre = By.Id("inputTeimporeparacion");                    // Realmente es el imput de timpo, si me da tiempo cambio el razor para que tenga más sentido
         By BotonbuscarHerramientas = By.Id("buscarHerramientas");
+        By inputFrom = By.Id("fromDate");
         public SeleccionarHerramientasParaReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
 
 
         }
 
-        public void BuscarHerramientas(string nombre, string tiempoReparacion)
+        public void BuscarHerramientas(string nombre, string tiempoReparacion, string from)
         {
             //wait for the webelement to be clickable
             WaitForBeingClickable(inputTitle);
             _driver.FindElement(inputTitle).SendKeys(nombre);
-            _driver.FindElement(BotonbuscarHerramientas).Click();
-
-            // aquí en el código proporcionado debería ir el genre, pero no tengo nada que siga la misma lógica
 
             _driver.FindElement(inputTitle).SendKeys(nombre);
 
@@ -35,6 +33,15 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 
             _driver.FindElement(inputGenre).Clear();
             _driver.FindElement(inputGenre).SendKeys(tiempoReparacion);
+
+
+            if (from != "")
+                _driver.FindElement(inputFrom).SendKeys(from);
+
+
+            _driver.FindElement(BotonbuscarHerramientas).Click();
+
+            // aquí en el código proporcionado debería ir el genre, pero no tengo nada que siga la misma lógica
 
 
         }
