@@ -1,4 +1,4 @@
-﻿using AppForSEII2526.API.DTOs;
+﻿using AppForSEII2526.API.DTOs.AlquileresDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -99,7 +99,27 @@ namespace AppForSEII2526.API.Controllers
                 u.Apellidos == crearAlquilerDTO.Apellidos);
             if (usuario == null) ModelState.AddModelError(nameof(crearAlquilerDTO.Nombre), $"El Usuario {crearAlquilerDTO.Nombre} {crearAlquilerDTO.Apellidos} no existe.");
 
-            // Alguna validación más ???
+            if (crearAlquilerDTO.Items != null)
+            {
+                foreach (var item in crearAlquilerDTO.Items)
+                {
+                    if (item.CantidadItem <= 0)
+                    {
+                        ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "La cantidad de cada herramienta debe ser mayor que cero.");
+                    }
+                }
+            }
+
+            var hoy = DateOnly.FromDateTime(DateTime.Now);
+
+            if (crearAlquilerDTO.FechaInicio <= hoy)
+            {
+                ModelState.AddModelError(nameof(crearAlquilerDTO.FechaInicio), "La fecha de inicio debe ser posterior a la actualidad.");
+            }
+            if (crearAlquilerDTO.FechaInicio >= crearAlquilerDTO.FechaFinal)
+            {
+                ModelState.AddModelError(nameof(crearAlquilerDTO.FechaFinal), "La fecha de fin debe ser mayor que la de inicio.");
+            }
 
             // Si hay errores, retornar
             if (ModelState.ErrorCount > 0)
@@ -108,7 +128,7 @@ namespace AppForSEII2526.API.Controllers
             // Consulta única
 
             // Hacer una sola llamada a la BBDD para traer todas las herramientas
-            var herramientaIds = crearAlquilerDTO.Items.Select(i => i.HerramientaId).Distinct().ToList();
+            var herramientaIds = crearAlquilerDTO.Items.Select(i => i.IdItem).Distinct().ToList();
             var herramientasEnDB = await _context.Herramientas
                 .Include(h => h.Fabricante)
                 .Where(h => herramientaIds.Contains(h.Id))
@@ -122,6 +142,9 @@ namespace AppForSEII2526.API.Controllers
                 MetodoPago = metodoPago,
                 AlquilarItems = new List<AlquilarItem>(),
                 Usuario = usuario,
+                FechaAlquiler = hoy,
+                FechaInicio = crearAlquilerDTO.FechaInicio,
+                FechaFin = crearAlquilerDTO.FechaFinal,
             };
 
 
@@ -130,16 +153,16 @@ namespace AppForSEII2526.API.Controllers
             foreach (var itemDTO in crearAlquilerDTO.Items)
             {
                 // Buscar la herramienta en la lista local (el Diccionario)
-                if (!herramientasEnDB.TryGetValue(itemDTO.HerramientaId, out var herramienta))
+                if (!herramientasEnDB.TryGetValue(itemDTO.IdItem, out var herramienta))
                 {
                     // La herramienta no se encontró en nuestra consulta
-                    ModelState.AddModelError(nameof(CrearAlquilerDTO.Items), $"La HerramientaId {itemDTO.HerramientaId} no existe.");
+                    ModelState.AddModelError(nameof(CrearAlquilerDTO.Items), $"La HerramientaId {itemDTO.IdItem} no existe.");
                 }
                 else
                 {
                     var nuevoItem = new AlquilarItem(
                         herramienta.Precio,               // <-- usar precio unitario
-                        itemDTO.HerramientaCantidad,
+                        itemDTO.CantidadItem,
                         nuevoAlquiler,
                         herramienta
                     );

@@ -1,10 +1,10 @@
-﻿namespace AppForSEII2526.API.DTOs
+﻿namespace AppForSEII2526.API.DTOs.AlquileresDTOs
 {
     public class AlquileresParaDetalleDTO
     {
-        public String Nombre {  get; set; }
-        public String Apellidos { get; set; }
-        public String Direccion {  get; set; }
+        public string Nombre {  get; set; }
+        public string Apellidos { get; set; }
+        public string Direccion {  get; set; }
         public DateOnly FechaAlquiler { get; set; }
         public float PrecioTotal { get; set; }
         public DateOnly FechaInicio { get; set; }
@@ -26,14 +26,14 @@
         public override bool Equals(object? obj)
         {
             return obj is AlquileresParaDetalleDTO dTO &&
-                   Nombre == dTO.Nombre &&
-                   Apellidos == dTO.Apellidos &&
-                   Direccion == dTO.Direccion &&
-                   FechaAlquiler == dTO.FechaAlquiler &&
-                   PrecioTotal == dTO.PrecioTotal &&
-                   FechaInicio == dTO.FechaInicio &&
-                   FechaFinal == dTO.FechaFinal &&
-                   EqualityComparer<List<AlquilarItemsDTO>>.Default.Equals(Items, dTO.Items);
+                    Nombre == dTO.Nombre &&
+                    Apellidos == dTO.Apellidos &&
+                    Direccion == dTO.Direccion &&
+                    FechaAlquiler.Equals(dTO.FechaAlquiler) &&
+                    PrecioTotal == dTO.PrecioTotal &&
+                    FechaInicio.Equals(dTO.FechaInicio) &&
+                    FechaFinal.Equals(dTO.FechaFinal) &&
+                    Items.SequenceEqual(dTO.Items);
         }
 
         public override int GetHashCode()
