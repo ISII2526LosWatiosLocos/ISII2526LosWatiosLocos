@@ -15,6 +15,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         By BotonbuscarHerramientas = By.Id("buscarHerramientas");
         By inputFrom = By.Id("fromDate");
         By inputTo = By.Id("toDate");
+        By tableReparacion = By.Id("TableReparacion");
         public SeleccionarHerramientasParaReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
 
@@ -51,6 +52,12 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             // aquí en el código proporcionado debería ir el genre, pero no tengo nada que siga la misma lógica
 
 
+        }
+
+        public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
+        {
+
+            return CheckBodyTable(expectedHerramientas, tableReparacion);
         }
     }
 }
