@@ -3,12 +3,11 @@
 @inject NavigationManager navigation
 @using AppForSEII2526.Web.Components.Shared
 @using AppForSEII2526.Web.API
-@using Microsoft.AspNetCore.Authorization
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<CreateReparacion> logger
 @inject ReparacionStateContainer ReparacionStateContainer
 
-@attribute [Authorize]
+
 
 <h3>CreateReparacion</h3>
 
@@ -39,10 +38,23 @@
         <div class="col-md">
             <div class="form-floating mb-3">
                 <InputText @bind-Value="reparacion.Apellidos" class="form-control" id="Apellidos" />
-                <label for="Nombre">Nombre </label>
+                <label for="Apellidos"> </label>
          
             </div>
         </div>
+
+
+
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="reparacion.Telefono"
+                           class="form-control"
+                           id="Telefono"
+                           placeholder="Opcional" />
+                <label for="Telefono">Teléfono (opcional)</label>
+            </div>
+        </div>
+
 
             <div class="row g-3">
                 <div class="col-md">
@@ -63,10 +75,10 @@
                     @* MIRAR *@
                     <InputSelect class="form-select" @bind-Value="@reparacion.MetodoPagoId" id="MetodoPago">
                         <option value="">Seleccionar método</option>
-                        <option value="Tarjeta">Tarjeta</option>
-                        <option value="PayPal">PayPal</option>
-                        <option value="Efectivo">Efectivo</option>
-                        <option value="Transferencia">Transferencia</option>
+                         <option value="1">Tarjeta</option>
+                        <option value="2">PayPal</option>
+                        <option value="3">Efectivo</option>
+
                     </InputSelect>
                     <label for="MetodoPago">Método de Pago</label>
                 </div>
@@ -95,7 +107,7 @@
 
 
 <h4>Detalle de la Reparación</h4>
-<p><b>Fecha desde:</b> @reparacion.FechaEntrega.ToString("dd/MM/yyyy") <b>hasta:</b> @reparacion.FechaRecogida.ToString("dd/MM/yyyy")</p>
+<p><b>Fecha desde:</b> @reparacion.FechaEntrega.ToString("dd/MM/yyyy") <b>hasta:</b> @reparacion.FechaRecogida.AddDays(5).ToString("dd/MM/yyyy")</p>
 <p>
     <b>Precio total:</b> @PrecioTotal.ToString("N2")€
     <button class="btn btn-outline-primary" type="submit" @onclick="ModificarHerramientas" id="ModificarHerramientas">
@@ -108,7 +120,7 @@
     <table class="table table-condensed table-hover" id="TableOfReparacionItems">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>Nombre</th>
                
                 <th>Cantidad</th>
                 <th>Descripción</th>
@@ -118,22 +130,47 @@
             @foreach (var item in reparacion.ReparacionesItems)
             {
                 <tr id="HerramientaData_@item.HerramientaId">
-                    <td>@item.HerramientaId</td>
+
+                    @*Código para nombre*@
+                    <td>@item.HerramientaNombre</td>
+
+
+
+                    @*Código para descripción*@
+
                     <td>@item.HerramientaDescripcion</td>
-                    <td>@item.HerramientaCantidad</td>
-                    
+
+                    class="form-control form-control-sm"
+                    id="@($"descripcion_{item.HerramientaId}")" />
+
+
+                    @*Código para cantidad*@
                     <td>
-                        <InputText @bind-Value="item.HerramientaDescripcion"
-                                   class="form-control form-control-sm"
-                                   id="@($"descripcion_{item.HerramientaId}")"
-                           />
+                        <div class="input-group input-group-sm">
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    @onclick="@(() => DisminuirCantidad(item))">
+                                -
+                            </button>
+
+                            <InputNumber @bind-Value="item.HerramientaCantidad"
+                                         class="form-control text-center"
+                                         id="@($"cantidad_{item.HerramientaId}")"
+                                         min="1" />
+
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    @onclick="@(() => AumentarCantidad(item))">
+                                +
+                            </button>
+                        </div>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-</div>
 
+</div>
 
 @if (DialogIsOpen)
 {
@@ -259,5 +296,21 @@
     private Task<AuthenticationState>? authenticationState { get; set; }
 
 
+
+    private void AumentarCantidad(ReparacionesItemDTO item)
+    {
+        item.HerramientaCantidad++;
+        // Si necesitas actualizar el precio total
+        StateHasChanged();
+    }
+
+    private void DisminuirCantidad(ReparacionesItemDTO item)
+    {
+        if (item.HerramientaCantidad > 1)
+        {
+            item.HerramientaCantidad--;
+            StateHasChanged();
+        }
+    }
 
 }
