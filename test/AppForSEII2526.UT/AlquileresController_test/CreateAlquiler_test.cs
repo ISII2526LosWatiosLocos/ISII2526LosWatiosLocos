@@ -144,6 +144,28 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 }
             );
 
+            var fechaInicialAnteriorTomorrow = new CrearAlquilerDTO(
+                _nombreUsuario,
+                _apellidoUsuario,
+                DateOnly.FromDateTime(DateTime.UtcNow),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
+                1,
+                "Calle 24",
+                "123456722",
+                "abc@hello.com",
+                alquilerItems
+            );
+            var fechaFinalAntesInicial = new CrearAlquilerDTO(
+                _nombreUsuario,
+                _apellidoUsuario,
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(8)),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
+                1,
+                "Calle 24",
+                "123456722",
+                "abc@hello.com",
+                alquilerItems
+            );
             var allTests = new List<object[]>
             {
                 new object[] { alquilerNoItem, "El alquiler debe incluir al menos una herramienta." },
@@ -152,7 +174,9 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 new object[] { alquilerApplicationUser, $"El Usuario {alquilerApplicationUser.Nombre} {alquilerApplicationUser.Apellidos} no existe." },
                 new object[] { alquilerNoDisponible, "La HerramientaId 4 no existe." },
                 new object[] { alquilerMetodoPagoInvalido, "El MetodoPagoId 999 no existe." },
-                new object[] { alquilerItemSinCantidad, "La cantidad de cada herramienta debe ser mayor que cero." }
+                new object[] { alquilerItemSinCantidad, "La cantidad de cada herramienta debe ser mayor que cero." },
+                new object[] { fechaInicialAnteriorTomorrow, "La fecha de inicio debe ser posterior a la actualidad." },
+                new object[] { fechaFinalAntesInicial, "La fecha de fin debe ser mayor que la de inicio." }
             };
             return allTests;
         }
