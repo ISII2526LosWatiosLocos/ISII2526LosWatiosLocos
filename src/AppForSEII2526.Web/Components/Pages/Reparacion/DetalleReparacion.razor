@@ -1,0 +1,129 @@
+﻿@page "/Reparacion/DetalleReparacion"
+
+@using AppForSEII2526.Web.API
+
+@using Microsoft.AspNetCore.Authorization
+@inject AppForHerramientasAPIClient apiclient
+
+<h3>Detalle Reparacion</h3>
+
+@attribute [Authorize]
+
+@if (reparacion == null)
+{
+    <p>@error</p>
+}
+else
+{
+ 
+    
+
+
+    @foreach (var reparacion in reparacion)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                Reparación: @reparacion.Nombre
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless table-sm">
+                    <tr>
+                        <th>Nombre y Apellidos</th>
+                        <td>@reparacion.Nombre @reparacion.Apellidos</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Entrega</th>
+                        <td id="FechaEntrega">@reparacion.FechaEntrega.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    </tr>
+                    <tr>
+                        
+                        <th>Fecha de Recogida</th>
+                        <td>@reparacion.FechaRecogida.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    </tr>
+                    <tr>
+                        <th>Período de Reparación</th>
+                        <td id="PrecioTotal">@reparacion.PrecioTotal.ToString("C")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <h4>Herramientas en Reparación</h4>
+
+        <table class="table" id="HerramientasReparacion">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var herramienta in reparacion.ReparacionesItems)
+                {
+                    <tr id="Herramienta_@herramienta.HerramientaId">
+                        <td>@herramienta.HerramientaId</td>
+                        <td>@herramienta.HerramientaNombre</td>
+                        <td>@herramienta.HerramientaPrecio.ToString("N2")€</td>
+                        <td>@herramienta.HerramientaCantidad</td>
+                        <td>@herramienta.HerramientaDescripcion</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                @* colspan=4 porque hay 5 columnas, la primera (ID) no se incluye en el colspan *@
+            <th scope="row" colspan="4" class="text-end">Total Reparación</th>
+            <td id="TotalPrice">@reparacion.PrecioTotal.ToString("N2")€</td>
+            </tfoot>
+        </table>
+}
+
+}
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int ReparacionID { get; set; }
+    private ICollection<ReparacionesDTO> reparacion;
+    private string error = "";
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Verificamos que el usuario esté logueado
+        string userName = "";
+
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+         if (user is not null) {
+                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("User"))
+                {
+                    userName = user.Identity.Name;
+                }
+            }
+        }
+
+    
+        try
+        {
+            reparacion = await apiclient.GetDetalleHerramientasParaReparaciónAsync(ReparacionID);
+        }
+        catch (ApiException ex)
+        {
+            reparacion = null;
+        }
+
+        if ((reparacion == null) || (reparacion.First ().Nombre != userName))
+        {
+            error = $"Error! No estás autorizado para ver esta reparación o no existe con id={ReparacionID}";
+        }
+        await base.OnInitializedAsync();
+    }
+}

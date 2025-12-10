@@ -1,9 +1,9 @@
-﻿using AppForSEII2526.API.DTOs;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AppForSEII2526.API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using AppForSEII2526.API.DTOs.ComprasDTOs;
 
 /*
 Sistema 1. Ferretería: Caso de uso 1. Comprar herramientas
@@ -79,7 +79,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("DetalleCompra")]
         // El tipo de respuesta es una lista de ComprasParaDetalleDTO
-        [ProducesResponseType(typeof(IList<ComprasParaDetalleDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ComprasParaDetalleDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetDetalleHerramientasParaCompra(int id)
         {
@@ -104,8 +104,9 @@ namespace AppForSEII2526.API.Controllers
             }
 
             var compraDto = new ComprasParaDetalleDTO( // Construye el DTO
-                compra.Usuario?.Nombre ?? string.Empty, // las interrogaciones y el string.Empty son por si el usuario es NULL
-                compra.Usuario?.Apellidos ?? string.Empty,
+                compra.Id,
+                compra.Usuario.Nombre,
+                compra.Usuario.Apellidos,
                 compra.DireccionEnvio,
                 compra.PrecioTotal,
                 compra.FechaCompra,
@@ -115,8 +116,7 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
                     oi.Descripcion,
-                    oi.Cantidad,
-                    oi.Herramienta.Stock
+                    oi.Cantidad
                 )).ToList()
             );
 
@@ -160,7 +160,22 @@ namespace AppForSEII2526.API.Controllers
 
             // b. Buscar Usuario
             var Usuario = await _context.Users.FirstOrDefaultAsync(u=>u.Nombre == CrearCompraDTO.Nombre && u.Apellidos == CrearCompraDTO.Apellidos);
-            if (Usuario == null) ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El usuario no existe.");
+            if (Usuario == null)
+            {
+                ModelState.AddModelError(nameof(CrearCompraDTO.Nombre), $"El usuario no existe.");
+            }
+            else //sobreescribo las variables opcionales si son proporcionadas, tal y como me ha dicho Noelia
+            {
+                if ((CrearCompraDTO.NumeroTelefono != null) && (CrearCompraDTO.NumeroTelefono != ""))
+                {
+                    Usuario.NumeroTelefono = CrearCompraDTO.NumeroTelefono;
+                }
+                if ((CrearCompraDTO.CorreoElectronico != null) && (CrearCompraDTO.CorreoElectronico != ""))
+                {
+                    Usuario.CorreoElectronico = CrearCompraDTO.CorreoElectronico;
+                }
+            }
+
 
             // c. Validar items del DTO (que no tengan valores imposibles)
             // Solo comprobación estructural mínima aquí: existencia de la lista y validación básica del IdHerramienta.
@@ -203,6 +218,11 @@ namespace AppForSEII2526.API.Controllers
                 MetodoPago = metodoPago!, // Sabemos que no es null por la validación anterior
                 Usuario = Usuario
             };
+
+            // validar dirección de envío
+            if ((nuevaCompra.DireccionEnvio == null) || (nuevaCompra.DireccionEnvio == "")){
+                ModelState.AddModelError(nameof(CrearCompraDTO.Items), $"La compra debe tener una dirección de envío.");
+            }
 
             // --- PRE-CHECK: cantidades totales solicitadas por herramienta (una sola vez) ---
             // Construimos un diccionario IdHerramienta -> cantidad total solicitada en el DTO
@@ -353,6 +373,7 @@ namespace AppForSEII2526.API.Controllers
             // Construimos el DTO de detalle con los objetos que ya tenemos
 
             var compraDTORespuesta = new ComprasParaDetalleDTO(
+                nuevaCompra.Id,
                 nuevaCompra.Usuario.Nombre,
                 nuevaCompra.Usuario.Apellidos,
                 nuevaCompra.DireccionEnvio,
@@ -366,8 +387,7 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,   // MaterialHerramienta
                     oi.Herramienta.Precio,     // PrecioHerramienta (float)
                     oi.Descripcion,            // DescripcionHerramienta
-                    oi.Cantidad,               // CantidadHerramienta
-                    oi.Herramienta.Stock       // StockHerramienta
+                    oi.Cantidad                // CantidadHerramienta
                 )).ToList()
             );
 

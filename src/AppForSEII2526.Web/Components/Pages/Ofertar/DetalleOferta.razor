@@ -1,0 +1,161 @@
+﻿@page "/Ofertar/DetalleOferta"
+@* 1. AÑADIMOS ESTA RUTA PARA ACEPTAR EL ID *@
+@page "/Ofertar/DetalleOferta/{IdRecibido:int}"
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject CompraStateContainer compraState
+@inject NavigationManager navigation
+@inject ILogger<DetalleOferta> logger
+
+<h3>DetalleParaOferta</h3>
+
+<div class="container-fluid">
+    <div class="row" hidden="@hideErrors">
+        <div class="alert alert-danger" role="alert">
+            @errors
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">IdOferta</span>
+                        <input type="number" id="IdOferta" @bind="IdOferta" class="form-control" placeholder="IdOferta" aria-label="IdOferta">
+                    </div>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick="BuscarOferta" id="searchOferta">Buscar oferta</button>
+                </div>
+            </div>
+
+            <div class="row">
+                @if (isLoading)
+                {
+                    <p>Cargando oferta...</p>
+                }
+                else if (oferta != null)
+                {
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfOfertas">
+                            <thead>
+                                <tr>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Fecha Oferta</th>
+                                    <th>Metodo Pago</th>
+                                    <th>Tipo Dirigida</th>
+                                    <th>Items</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="align-middle">
+                                    <td>@oferta.FechaInicio.ToString("dd/MM/yyyy")</td>
+                                    <td>@oferta.FechaFinal.ToString("dd/MM/yyyy")</td>
+                                    <td>@oferta.FechaOferta.ToString("dd/MM/yyyy")</td>
+                                    <td>@oferta.MetodoPago</td>
+                                    <td>
+                                        <span class="badge bg-info text-dark">@oferta.TipoDirigida</span>
+                                    </td>
+                                    <td style="min-width: 350px;">
+                                        @if (oferta.Items != null && oferta.Items.Any())
+                                        {
+                                            <ul class="list-group list-group-flush">
+                                                @foreach (var item in oferta.Items)
+                                                {
+                                                    <li class="list-group-item p-2">
+                                                        <div class="fw-bold text-primary">
+                                                            @item.NombreHerramienta
+                                                        </div>
+                                                        <div class="small text-muted mb-1">
+                                                            <i class="bi bi-hammer"></i> @item.MaterialHerramienta
+                                                            |
+                                                            <i class="bi bi-building"></i> @item.FabricanteHerramienta
+                                                        </div>
+                                                        <div>
+                                                            <span class="text-decoration-line-through text-secondary me-2">
+                                                                @item.PrecioHerramienta.ToString("C2")
+                                                            </span>
+                                                            <span>&rarr;</span>
+                                                            <span class="fw-bold text-success ms-2">
+                                                                @item.PrecioFinalOferta.ToString("C2")
+                                                            </span>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">No hay herramientas en esta oferta.</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else if (hasSearched)
+                {
+                    <p>No se encontraron resultados para este ID.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // 2. CAPTURAMOS EL ID QUE VIENE POR LA URL
+    [Parameter]
+    public int? IdRecibido { get; set; }
+
+    private OfertasParaDetalleDTO? oferta;
+    private bool hideErrors => string.IsNullOrEmpty(errors);
+    private string errors = "";
+    private int IdOferta { get; set; } = 0;
+    private bool isLoading = false;
+    private bool hasSearched = false;
+
+    // 3. AUTOMATIZACIÓN: Si recibimos un ID por URL, buscamos automáticamente
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IdRecibido.HasValue && IdRecibido.Value > 0)
+        {
+            // Asignamos el valor al input
+            IdOferta = IdRecibido.Value;
+            // Ejecutamos la búsqueda sin esperar click
+            await BuscarOferta();
+        }
+    }
+
+    public async Task BuscarOferta()
+    {
+        isLoading = true;
+        errors = "";
+        oferta = null;
+        hasSearched = true;
+
+        try
+        {
+            if (IdOferta <= 0)
+            {
+                errors = "Por favor ingrese un ID válido";
+                return;
+            }
+
+            oferta = await apiclient.GetDetalleHerramientasParaOfertaAsync(IdOferta);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error fetching offer details");
+            errors = "Error al conectar con el sistema.";
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+}

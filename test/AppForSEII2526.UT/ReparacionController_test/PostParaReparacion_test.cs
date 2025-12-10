@@ -61,10 +61,10 @@ namespace AppForSEII2526.UT.ReparacionesController_test
         // --- CASOS DE USO INVÁLIDOS ---
         public static IEnumerable<object[]> CasosDeUso_CrearReparacion()
         {
-            var itemsBase = new List<CrearReparacionItemDTO>()
+            var itemsBase = new List<ReparacionesItemDTO>()
             {
-                new CrearReparacionItemDTO { HerramientaId = 1, HerramientaDescripcion = "Cambio de broca", HerramientaCantidad = 1 },
-                new CrearReparacionItemDTO { HerramientaId = 2, HerramientaDescripcion = "Reparar mango", HerramientaCantidad = 2 },
+                new ReparacionesItemDTO { HerramientaId = 1, HerramientaDescripcion = "Cambio de broca", HerramientaCantidad = 1 },
+                new ReparacionesItemDTO { HerramientaId = 2, HerramientaDescripcion = "Reparar mango", HerramientaCantidad = 2 },
             };
 
             var reparacionUsuarioNoExiste = new CrearReparacionDTO
@@ -98,7 +98,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 telefono = "+34111222333",
                 FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
                 FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(3)),
-                ReparacionesItems = new List<CrearReparacionItemDTO>()
+                ReparacionesItems = new List<ReparacionesItemDTO>()
             };
 
             var reparacionFechaEntregaPasada = new CrearReparacionDTO
@@ -131,8 +131,8 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
                 telefono = "111222333",
-                FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(6)),
-                FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
+                FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
+                FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(4)),
                 ReparacionesItems = itemsBase
             };
 
@@ -178,10 +178,10 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             var mock = new Mock<ILogger<ReparacionesController>>();
             var controller = new ReparacionesController(_context, mock.Object);
 
-            var items = new List<CrearReparacionItemDTO>()
+            var items = new List<ReparacionesItemDTO>()
             {
-                new CrearReparacionItemDTO { HerramientaId = 1, HerramientaDescripcion = "Sustitución de broca", HerramientaCantidad = 1 },
-                new CrearReparacionItemDTO { HerramientaId = 2, HerramientaDescripcion = "Cambio de mango", HerramientaCantidad = 2 },
+                new ReparacionesItemDTO{ HerramientaId = 1, HerramientaDescripcion = "Sustitución de broca", HerramientaCantidad = 1 },
+                new ReparacionesItemDTO { HerramientaId = 2, HerramientaDescripcion = "Cambio de mango", HerramientaCantidad = 2 },
             };
 
             var dto = new CrearReparacionDTO
@@ -193,7 +193,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 FechaEntrega = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
                 FechaRecogida = DateOnly.FromDateTime(DateTime.Now.AddDays(4)),
                 ReparacionesItems = items
-            }; 
+            };
 
             // Act
             var result = await controller.CreateReparacion(dto);
@@ -202,17 +202,21 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             var created = Assert.IsType<CreatedAtActionResult>(result);
             var reparacionDTO = Assert.IsType<ReparacionesDTO>(created.Value);
 
-            Assert.Equal(dto.Nombre, reparacionDTO.nombre);
-            Assert.Equal(dto.Apellidos, reparacionDTO.apellidos);
-            Assert.Equal(dto.ReparacionesItems.Count, reparacionDTO.ReparacionesItems.Count);
+            var expectedDTO = new ReparacionesDTO(
+                    "Fulanito",  // nombre
+                    "De Tal",    // apellidos
+                    dto.FechaEntrega,
+                    dto.FechaRecogida,
+                    90.0f, // Precio total: Taladro (50 * 1) + Martillo (20 * 2) = 90
+                    new List<ReparacionesItemDTO>
+                    {
+            new ReparacionesItemDTO("Taladro", "Sustitución de broca", 1, 50.0f),
+            new ReparacionesItemDTO("Martillo", "Cambio de mango", 2, 20.0f)
+                    }
+                );
 
-            var item1 = reparacionDTO.ReparacionesItems.FirstOrDefault(i => i.HerramientaNombre == "Taladro");
-            Assert.NotNull(item1);
-            Assert.InRange(item1.HerramientaPrecio, 49.99f, 50.01f);
+            Assert.Equal(expectedDTO, reparacionDTO);
+        }
 
-            var item2 = reparacionDTO.ReparacionesItems.FirstOrDefault(i => i.HerramientaNombre == "Martillo");
-            Assert.NotNull(item2);
-            Assert.InRange(item2.HerramientaPrecio, 19.99f, 20.01f);
         }
     }
-}

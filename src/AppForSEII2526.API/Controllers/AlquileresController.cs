@@ -1,4 +1,4 @@
-﻿using AppForSEII2526.API.DTOs;
+﻿using AppForSEII2526.API.DTOs.AlquileresDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -90,10 +90,6 @@ namespace AppForSEII2526.API.Controllers
             if (crearAlquilerDTO.Items == null || !crearAlquilerDTO.Items.Any())
                 ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "El alquiler debe incluir al menos una herramienta.");
 
-            // Flujos alternativos ???
-
-
-            // Validar entidades
             var metodoPago = await _context.MetodosPagos.FindAsync(crearAlquilerDTO.MetodoPagoId);
             if (metodoPago == null)
                 ModelState.AddModelError(nameof(crearAlquilerDTO.MetodoPagoId), $"El MetodoPagoId {crearAlquilerDTO.MetodoPagoId} no existe.");
@@ -103,7 +99,27 @@ namespace AppForSEII2526.API.Controllers
                 u.Apellidos == crearAlquilerDTO.Apellidos);
             if (usuario == null) ModelState.AddModelError(nameof(crearAlquilerDTO.Nombre), $"El Usuario {crearAlquilerDTO.Nombre} {crearAlquilerDTO.Apellidos} no existe.");
 
-            // Alguna validación más ???
+            if (crearAlquilerDTO.Items != null)
+            {
+                foreach (var item in crearAlquilerDTO.Items)
+                {
+                    if (item.CantidadItem <= 0)
+                    {
+                        ModelState.AddModelError(nameof(crearAlquilerDTO.Items), "La cantidad de cada herramienta debe ser mayor que cero.");
+                    }
+                }
+            }
+
+            var hoy = DateOnly.FromDateTime(DateTime.Now);
+
+            if (crearAlquilerDTO.FechaInicio <= hoy)
+            {
+                ModelState.AddModelError(nameof(crearAlquilerDTO.FechaInicio), "La fecha de inicio debe ser posterior a la actualidad.");
+            }
+            if (crearAlquilerDTO.FechaInicio >= crearAlquilerDTO.FechaFinal)
+            {
+                ModelState.AddModelError(nameof(crearAlquilerDTO.FechaFinal), "La fecha de fin debe ser mayor que la de inicio.");
+            }
 
             // Si hay errores, retornar
             if (ModelState.ErrorCount > 0)
@@ -112,7 +128,7 @@ namespace AppForSEII2526.API.Controllers
             // Consulta única
 
             // Hacer una sola llamada a la BBDD para traer todas las herramientas
-            var herramientaIds = crearAlquilerDTO.Items.Select(i => i.HerramientaId).Distinct().ToList();
+            var herramientaIds = crearAlquilerDTO.Items.Select(i => i.IdItem).Distinct().ToList();
             var herramientasEnDB = await _context.Herramientas
                 .Include(h => h.Fabricante)
                 .Where(h => herramientaIds.Contains(h.Id))
@@ -126,39 +142,41 @@ namespace AppForSEII2526.API.Controllers
                 MetodoPago = metodoPago,
                 AlquilarItems = new List<AlquilarItem>(),
                 Usuario = usuario,
-            }; 
-                
+                FechaAlquiler = hoy,
+                FechaInicio = crearAlquilerDTO.FechaInicio,
+                FechaFin = crearAlquilerDTO.FechaFinal,
+            };
+
 
 
             // Validar que todas las herramientas existen
             foreach (var itemDTO in crearAlquilerDTO.Items)
             {
                 // Buscar la herramienta en la lista local (el Diccionario)
-                if (!herramientasEnDB.TryGetValue(itemDTO.HerramientaId, out var herramienta))
+                if (!herramientasEnDB.TryGetValue(itemDTO.IdItem, out var herramienta))
                 {
                     // La herramienta no se encontró en nuestra consulta
-                    ModelState.AddModelError(nameof(CrearAlquilerDTO.Items), $"La HerramientaId {itemDTO.HerramientaId} no existe.");
+                    ModelState.AddModelError(nameof(CrearAlquilerDTO.Items), $"La HerramientaId {itemDTO.IdItem} no existe.");
                 }
-               // Aplicar logica de negociooo (flujos alterrnativos) !!!!!
                 else
                 {
-                    // calcula si necesitas el total en algún lado, pero no lo almacenes en AlquilarItem.Precio
-                    float precioTotal = itemDTO.HerramientaCantidad * herramienta.Precio;
-
                     var nuevoItem = new AlquilarItem(
                         herramienta.Precio,               // <-- usar precio unitario
-                        itemDTO.HerramientaCantidad,
+                        itemDTO.CantidadItem,
                         nuevoAlquiler,
-                        herramienta);
+                        herramienta
+                    );
 
                     nuevoAlquiler.AlquilarItems.Add(nuevoItem);
                 }
             }
-            // Validación final
+
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
-            // Guardado único
+            // Calcular el precio total del alquiler
+            nuevoAlquiler.PrecioTotal = nuevoAlquiler.AlquilarItems
+                .Sum(i => i.Cantidad * i.Precio);
 
             _context.Alquileres.Add(nuevoAlquiler);
 
@@ -172,8 +190,7 @@ namespace AppForSEII2526.API.Controllers
                 return Conflict($"Ocurrió un error al guardar el alquiler: {ex.Message}");
             }
 
-            // Respuesta sin recargar
-            // Construir DTO de respuesta con la información de los objetos Herramienta
+            // Construir DTO de respuesta
             var alquilerDTORespuesta = new AlquileresParaDetalleDTO(
                 nuevoAlquiler.Usuario.Nombre,
                 nuevoAlquiler.Usuario.Apellidos,
@@ -198,5 +215,4 @@ namespace AppForSEII2526.API.Controllers
                 alquilerDTORespuesta); // El cuerpo de la respuesta
         }
     }
-
 }

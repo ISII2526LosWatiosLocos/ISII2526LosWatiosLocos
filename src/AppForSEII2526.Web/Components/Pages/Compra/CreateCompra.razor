@@ -1,0 +1,230 @@
+﻿@page "/Compra/CrearCompra"
+
+@inject NavigationManager navigation
+@using AppForSEII2526.Web.Components.Shared
+@using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<CreateCompra> logger
+@inject CompraStateContainer compraState
+
+@*@attribute [Authorize]*@
+
+<h3>Comprar</h3>
+
+@* compra is the object that will be edited thanks to the form *@
+<EditForm Model="compra" OnValidSubmit="OpenDialog">
+    <div class="row">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="row alert alert-danger" />
+        <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+            <p id="ErrorsShown">Se ha producido un error: @messageError</p>
+        </div>
+    </div>
+
+    @* campos obligatorios *@
+    <div class="row g-3">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="compra.Nombre" class="form-control" id="Nombre" />
+                <label for="Nombre">Nombre </label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="compra.Apellidos" class="form-control" id="Apellidos" />
+                <label for="Apellidos">Apellidos </label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="compra.DireccionEnvio" class="form-control" id="DireccionEnvio" />
+                <label for="DireccionEnvio">Dirección de envío</label>
+            </div>
+        </div>
+    </div>
+
+    @* campos opcionales *@
+    <div class="row g-2">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="compra.NumeroTelefono" class="form-control" id="NumeroTelefono" />
+                <label for="NumeroTelefono">Número de teléfono (Opcional)</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="compra.CorreoElectronico" class="form-control" id="CorreoElectronico" />
+                <label for="CorreoElectronico">Correo electrónico (Opcional)</label>
+            </div>
+        </div>
+    </div>
+
+    @* pago y botón de comprar *@
+    <div class="row g-1">
+        <div class="col-md">
+            <div class="form-floating">
+                @*a dropdown for selecting the payment method*@
+                <InputSelect class="form-select" @bind-Value="@compra.MetodoPagoId" id="MetodoPago">
+                    <option value=0> Efectivo</option>
+                    <option value=1> PayPal</option>
+                    <option value=2> Tarjeta</option>
+                </InputSelect>
+                <label for="MetodoPago">Método de pago</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
+                @*this button will be used to ask the user if he want to proceed to comprar las herramientas*@
+                <button class="btn btn-primary" type="submit" id="Submit">
+                    Realizar compra
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <p>
+        <b>Precio total:</b> @TotalCost €
+        <button class="btn btn-outline-primary" type="submit" @onclick="ModifyCompraItems" id="ModifyHerramientas">
+            Añadir o quitar herramientas
+        </button>
+    </p>
+    <h4>Herramientas:</h4>
+
+
+    <div class="mh-100 table-responsive">
+        <table class="table table-condensed table-hover" id="TableOfCompraItems">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in compra.Items)
+                {
+                    <tr id="MovieData_@item.NombreHerramienta">
+                        <td>@item.MaterialHerramienta</td>
+                        <td>@item.CantidadHerramienta</td>
+                        <td>@item.PrecioHerramienta</td>
+                        <td><InputText @bind-Value="item.DescripcionHerramienta" class="form-control" id="@($"Descripcion_{item.IdHerramienta}")" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</EditForm>
+
+@*a modal popup dialog for checking if user wants to proceed to buy*@
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Realizar compra"
+            Message="¿Quieres proceder con tu compra?"
+            OnClose="@OnDialogClose"
+            Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
+@code {
+
+    private string messageError = "";
+
+    private bool hideErrors { get { return messageError.Length == 0; } }
+
+    private bool DialogIsOpen;
+
+    private decimal TotalCost
+    {
+        get
+        {
+            double price = compra.Items.Sum(i => i.PrecioHerramienta * i.CantidadHerramienta);
+            return Convert.ToDecimal(price);
+        }
+    }
+    private void ModifyCompraItems()
+    {
+        navigation.NavigateTo("/Compra/SelectHerramientasParaCompra");
+    }
+
+    private CrearCompraDTO compra => compraState.Compra;
+
+    private void OpenDialog()
+    {
+        DialogIsOpen = true;
+    }
+
+    private async Task OnDialogClose(bool isOk)
+    {
+
+        DialogIsOpen = false;
+        if (isOk)
+        {
+            // Process the data introduced by the user if they are valid
+            if (compra.Items.Count > 0)
+            {
+                try
+                {
+                    // LOG antes de enviar la compra
+                    logger.LogWarning(">>> Enviando compra al backend: {@Compra}", compra);
+
+                    var comprado = await apiclient.CrearCompraAsync(compra);
+
+                    // LOG después de recibir la respuesta
+                    logger.LogWarning("<<< Respuesta del backend CrearCompra: {@Respuesta}", comprado);
+
+                    compraState.CompraProcesada();
+                    navigation.NavigateTo($"/Compra/DetailParaCompra/{comprado.Id}");
+                }
+                catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
+                {
+
+                    if (apiexceptionvalidation.Result.Errors.Values != null)
+                    {
+                        messageError = "";
+                        foreach (var errors in apiexceptionvalidation.Result.Errors.Values)
+                            //https://learn.microsoft.com/en-us/dotnet/api/system.string.join?view=net-7.0
+                            messageError = string.Join("(*) ", messageError, string.Join(" (*) ", errors));
+                    }
+                }
+                catch (ApiException apiexception)
+                {
+
+                    //we need to inform user that there was some other error while processing the request
+
+                    messageError = "Error while processing your request, please try again later!";
+
+                }
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated)
+                {
+                    compra.Nombre = user.Identity.Name;
+                }
+            }
+            compra.Nombre = compra.Nombre == null ? "" : compra.Nombre;
+            compra.Apellidos = compra.Apellidos == null ? "" : compra.Apellidos;
+            compra.DireccionEnvio = compra.DireccionEnvio == null ? "" : compra.DireccionEnvio;
+
+        }
+    }
+
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+}

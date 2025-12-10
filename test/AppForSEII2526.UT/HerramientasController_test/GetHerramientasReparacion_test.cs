@@ -53,7 +53,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
             return new List<object[]>
             {
                 new object[] { null, null,  herramientasDTO_TC1 },
-                new object[] { "Utensilios y Más", null, herramientasDTO_TC2 },
+                new object[] { "Destornillador", null, herramientasDTO_TC2 },
                 new object[] { null, 5, herramientasDTO_TC3 }
             };
         }

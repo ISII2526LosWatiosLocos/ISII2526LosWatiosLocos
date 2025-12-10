@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.ComprasDTOs;
 using AppForSEII2526.API.Models;
 
 namespace AppForSEII2526.UT.ComprasController_test
@@ -97,8 +97,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -106,7 +105,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -115,7 +113,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    3,
                     3
                 )
             };
@@ -126,7 +123,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                 Apellidos = "Loco",
                 MetodoPagoId = 1,
                 Items = compraItems,
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraMetodoPagoInvalido = new CrearCompraDTO
@@ -135,7 +134,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                 Apellidos = "De Tal",
                 MetodoPagoId = 999, // <-- ID que no existe
                 Items = compraItems,
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraNoItem = new CrearCompraDTO
@@ -144,7 +145,20 @@ namespace AppForSEII2526.UT.ComprasController_test
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
                 Items = new List<CompraItemsDTO>(), // Lista vacía
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
+            };
+
+            var compraSinDireccionEnvio = new CrearCompraDTO
+            {
+                Nombre = "Fulanito",
+                Apellidos = "De Tal",
+                MetodoPagoId = 1,
+                Items = compraItems,
+                DireccionEnvio = "", // String vacío o null
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemDescripcionNula = new CrearCompraDTO
@@ -160,8 +174,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                              //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -169,7 +182,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -178,11 +190,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     null, // Descripción nula
-                    1, // Cantidad no igual a 3
-                    3
+                    1 // Cantidad no igual a 3
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemCantidadCero = new CrearCompraDTO
@@ -198,8 +211,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -207,7 +219,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -216,11 +227,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    0, // Cantidad cero
-                    3
+                    0 // Cantidad cero
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemCantidadNegativa = new CrearCompraDTO
@@ -236,8 +248,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -245,7 +256,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -254,11 +264,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    -3, // Cantidad negativa
-                    3
+                    -3 // Cantidad negativa
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemCantidadMayorQueStockConUnSoloItem = new CrearCompraDTO
@@ -274,8 +285,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -283,7 +293,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -292,11 +301,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    4, // Cantidad mayor que Stock
-                    3
+                    4 // Cantidad mayor que Stock
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemCantidadMayorQueStockConVariosItems = new CrearCompraDTO
@@ -312,8 +322,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -321,7 +330,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -330,7 +338,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    3,
                     3
                 ),
                 new CompraItemsDTO( // Duplico este item para que la Cantidad total sea 6 frente al Stock que sigue siendo 3
@@ -339,11 +346,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    3,
                     3
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var compraItemDescripcionNulaCantidadIgualATres = new CrearCompraDTO
@@ -359,8 +367,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -368,7 +375,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -377,11 +383,12 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     null, // Descripción nula
-                    3, // Cantidad es igual a 3
-                    3
+                    3 // Cantidad es igual a 3
                 )
                 },
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             var allTests = new List<object[]>
@@ -389,6 +396,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                 new object[] { compraSinUsuario, "El usuario no existe." },
                 new object[] { compraMetodoPagoInvalido, "El MetodoPagoId 999 no existe." },
                 new object[] { compraNoItem, "La compra debe incluir al menos una herramienta." },
+                new object[] { compraSinDireccionEnvio, "La compra debe tener una dirección de envío." },
                 // Los mensajes de error de las herramientas pueden variar según el nombre de ésta:
                 new object[] { compraItemDescripcionNula, "La herramienta Nombre - Herramienta3 no tiene descipción." },
                 new object[] { compraItemCantidadCero, "La herramienta Nombre - Herramienta3 tiene cantidad cero." },
@@ -445,8 +453,7 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta1",      //PrecioHerramienta
                     10.99f,                         //PrecioHerramienta
                     "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1,                              //CantidadHerramienta
-                    1                               //StockHerramienta
+                    1                               //CantidadHerramienta
                 ),
                 new CompraItemsDTO(
                     2,
@@ -454,7 +461,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta2",
                     2.99f,
                     "Descripción - CompraItem2",
-                    2,
                     2
                 ),
                 new CompraItemsDTO(
@@ -463,7 +469,6 @@ namespace AppForSEII2526.UT.ComprasController_test
                     "Material - Herramienta3",
                     3.99f,
                     "Descripción - CompraItem3",
-                    3,
                     3
                 )
             };
@@ -474,7 +479,9 @@ namespace AppForSEII2526.UT.ComprasController_test
                 Apellidos = "De Tal",
                 MetodoPagoId = 1,
                 Items = compraItems,
-                DireccionEnvio = "DireccionEnvio - Compra1"
+                DireccionEnvio = "DireccionEnvio - Compra1",
+                CorreoElectronico = "fulanitodetal@uclm.es",
+                NumeroTelefono = "111222333"
             };
 
             // Act
@@ -482,8 +489,7 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             // Assert
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            var createdCompraDTO = Assert.IsType<ComprasParaDetalleDTO>(createdAtActionResult.Value); 
-
+            var createdCompraDTO = Assert.IsType<ComprasParaDetalleDTO>(createdAtActionResult.Value);
             Assert.Equal(compraDTO.Nombre, createdCompraDTO.Nombre);
             Assert.Equal(compraDTO.Apellidos, createdCompraDTO.Apellidos);
             Assert.Equal(compraDTO.DireccionEnvio, createdCompraDTO.DireccionEnvio);

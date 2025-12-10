@@ -1,0 +1,130 @@
+﻿@page "/Compra/DetailParaCompra/{IdCompra:int}"
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<SelectHerramientasParaCompra> logger
+@inject CompraStateContainer compraState
+@inject NavigationManager navigation
+
+<h3>DetalleParaCompra</h3>
+<div class="container-fluid">
+    <div class="row" hidden="@hideErrors">
+        <p>Se ha producido un error</p>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">IdCompra</span>
+                        <input type="text" id="IdCompra" @bind=IdCompra class="form-control" placeholder="IdCompra" aria-label="IdCompra" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick="BuscarCompraAsync" id="BuscarCompra">Buscar compra</button>
+                </div>
+            </div>
+            <div class="row">
+                @if (compra == null)
+                {
+                    <p>Loading compra...</p>
+                }
+                else
+                {
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfCompras">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Apellidos</th>
+                                    <th>Dirección</th>
+                                    <th>Precio total</th>
+                                    <th>Fecha</th>
+                                    <th>Items</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="CompraData_@compra.Nombre">
+                                    <th>@compra.Nombre</th>
+                                    <th>@compra.Apellidos</th>
+                                    <th>@compra.DireccionEnvio</th>
+                                    <th>@compra.PrecioTotal</th>
+                                    <th>@compra.FechaCompra</th>
+                                    @* --- 2. LISTA DE HERRAMIENTAS (ITEMS) --- *@
+                                    <td style="min-width: 350px;">
+                                        @if (compra.Items != null && compra.Items.Any())
+                                        {
+                                            <ul class="list-group list-group-flush">
+                                                @foreach (var item in compra.Items)
+                                                {
+                                                    <li class="list-group-item p-2">
+                                                        @* A. Nombre de la herramienta *@
+                                                        <div class="fw-bold text-primary">
+                                                            @item.NombreHerramienta
+                                                        </div>
+
+                                                        @* B. Material y Fabricante *@
+                                                        <div class="small text-muted mb-1">
+                                                            <i class="bi bi-hammer"></i> @item.MaterialHerramienta
+                                                            |
+                                                            <i class="bi bi-building"></i> @item.PrecioHerramienta
+                                                            |
+                                                            <i class="bi bi-building"></i> @item.CantidadHerramienta
+                                                            |
+                                                            <i class="bi bi-building"></i> @item.DescripcionHerramienta
+
+                                                        </div>
+
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">No hay herramientas en esta oferta.</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    // la compra es solo una, por lo que no tiene mucho sentido que sea una colección (ICollection),
+    // sin embargo, lo voy a dejar así por no complicar el código y para que haya más flexibilidad
+    private ComprasParaDetalleDTO compra;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    [Parameter] public int IdCompra { get; set; }
+
+    public async Task BuscarCompraAsync()
+    {
+        try
+        {
+            compra = await apiclient.GetDetalleHerramientasParaCompraAsync(IdCompra);
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+        StateHasChanged();
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // BuscarCompra(); // Mejor no llamo a BuscarCompra nada más entrar pq buscaría ID 0 y no existe
+        if (IdCompra > 0)
+        {
+            await BuscarCompraAsync();
+        }
+    }
+
+}

@@ -1,8 +1,9 @@
 ﻿using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.AlquileresDTOs;
 using AppForSEII2526.API.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -46,7 +47,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
-                13.95f,
+                139.5f,
                 alquilerItem,
                 metodoPago,
                 usuario
@@ -96,7 +97,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 "Arribas",
                 "La Casa Blanca",
                 DateOnly.FromDateTime(DateTime.UtcNow),
-                19.35f,
+                139.5f,
                 DateOnly.FromDateTime(DateTime.UtcNow),
                 DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 new List<AlquilarItemsDTO>()
@@ -118,29 +119,12 @@ namespace AppForSEII2526.UT.AlquileresController_test
 
             var okResult = Assert.IsType<OkObjectResult>(result);
 
+            // Sacamos el DTO real
             var alquilerDTOActual = Assert.IsType<AlquileresParaDetalleDTO>(okResult.Value);
 
-            // 2. Comprueba las propiedades simples (string, DateOnly, int, etc.)
-            Assert.Equal(expectedAlquiler.FechaFinal, alquilerDTOActual.FechaFinal);
-            Assert.Equal(expectedAlquiler.FechaInicio, alquilerDTOActual.FechaInicio);
-            Assert.Equal(expectedAlquiler.FechaAlquiler, alquilerDTOActual.FechaAlquiler);
-            Assert.Equal(expectedAlquiler.Nombre, alquilerDTOActual.Nombre);
-            Assert.Equal(expectedAlquiler.Apellidos, alquilerDTOActual.Apellidos);
-            Assert.Equal(expectedAlquiler.Direccion, alquilerDTOActual.Direccion);
+            // Comparamos directamente el objeto completo
+            Assert.Equal(expectedAlquiler, alquilerDTOActual);
 
-            // 3. Comprueba las listas o colecciones
-            //    Primero, comprueba que tengan el mismo número de elementos
-            Assert.Equal(expectedAlquiler.Items.Count, alquilerDTOActual.Items.Count);
-
-            // 4. Comprueba los elementos DENTRO de las listas
-            //    (En este test, sabes que solo hay un item, en la posición [0])
-            var expectedItem = expectedAlquiler.Items[0];
-            var actualItem = alquilerDTOActual.Items[0];
-
-            Assert.Equal(expectedItem.NombreItem, actualItem.NombreItem);
-            Assert.Equal(expectedItem.MaterialItem, actualItem.MaterialItem);
-            Assert.Equal(expectedItem.PrecioItem, actualItem.PrecioItem);
-            Assert.Equal(expectedItem.CantidadItem, actualItem.CantidadItem);
         }
     }
 }
