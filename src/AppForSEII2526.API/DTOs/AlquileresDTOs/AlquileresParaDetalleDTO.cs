@@ -29,11 +29,11 @@
                    Nombre == dTO.Nombre &&
                    Apellidos == dTO.Apellidos &&
                    Direccion == dTO.Direccion &&
-                   FechaAlquiler == dTO.FechaAlquiler &&
+                   FechaAlquiler.Equals(dTO.FechaAlquiler) &&
                    PrecioTotal == dTO.PrecioTotal &&
-                   FechaInicio == dTO.FechaInicio &&
-                   FechaFinal == dTO.FechaFinal &&
-                   EqualityComparer<List<AlquilarItemsDTO>>.Default.Equals(Items, dTO.Items);
+                   FechaInicio.Equals(dTO.FechaInicio) &&
+                   FechaFinal.Equals(dTO.FechaFinal) &&
+                   Items.SequenceEqual(dTO.Items);
         }
 
         public override int GetHashCode()
