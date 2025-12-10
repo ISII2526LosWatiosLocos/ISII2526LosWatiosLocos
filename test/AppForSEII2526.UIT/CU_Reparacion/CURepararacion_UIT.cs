@@ -15,6 +15,14 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 
         private SeleccionarHerramientasParaReparacion_PO seleccionarHerramientasParaReparacion_PO;
 
+        private const int HerramientaId1 = 1;
+        private const string HerramientaNombre1 = "Martillo";
+        private const string HerramientaMaterial1 = "Acero";
+        private const string HerramientaFabricante1 = "herramientas SA";
+        private const int HerramientaTiempoReparacion1 = 33;
+        private const float PrecioHerramientaReparacion1 = 57.4f;
+
+
         public CURepararacion_UIT(ITestOutputHelper output) : base(output)
         {
         }
@@ -33,5 +41,23 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             _driver.FindElement(By.Id("CrearReparacion")).Click();
         }
 
+
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_AF1_UC2_4_5_6_filtering()
+        {
+            //Arrange
+            InitialStepsForRentalMovies();
+            var expectedHerramientas= new List<string[]> { new string[] {  HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1 }, };
+
+            //Act
+            seleccionarHerramientasParaReparacion_PO.BuscarHerramientas("Last of", "", "", "");
+
+            //Assert
+
+            Assert.True(seleccionarHerramientasParaReparacion_PO.CheckListOfHerramientas(expectedHerramientas));
+
+        }
     }
 }
