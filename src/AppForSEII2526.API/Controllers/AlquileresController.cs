@@ -110,6 +110,17 @@ namespace AppForSEII2526.API.Controllers
                 }
             }
 
+            var hoy = DateOnly.FromDateTime(DateTime.Now);
+
+            if (crearAlquilerDTO.FechaInicio <= hoy)
+            {
+                ModelState.AddModelError(nameof(crearAlquilerDTO.FechaInicio), "La fecha de inicio debe ser posterior a la actualidad.");
+            }
+            if (crearAlquilerDTO.FechaInicio >= crearAlquilerDTO.FechaFinal)
+            {
+                ModelState.AddModelError(nameof(crearAlquilerDTO.FechaFinal), "La fecha de fin debe ser mayor que la de inicio.");
+            }
+
             // Si hay errores, retornar
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
@@ -131,6 +142,9 @@ namespace AppForSEII2526.API.Controllers
                 MetodoPago = metodoPago,
                 AlquilarItems = new List<AlquilarItem>(),
                 Usuario = usuario,
+                FechaAlquiler = hoy,
+                FechaInicio = crearAlquilerDTO.FechaInicio,
+                FechaFin = crearAlquilerDTO.FechaFinal,
             };
 
 

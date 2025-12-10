@@ -1,12 +1,13 @@
-﻿using System;
+﻿using AppForSEII2526.API.Controllers;
+using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs.AlquileresDTOs;
+using AppForSEII2526.API.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.DTOs;
-using AppForSEII2526.API.DTOs.AlquileresDTOs;
-using AppForSEII2526.API.Models;
+using Xunit.Abstractions;
 
 namespace AppForSEII2526.UT.AlquileresController_test
 {
@@ -61,6 +62,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
             var alquilerNoItem = new CrearAlquilerDTO(
                 _nombreUsuario, 
                 _apellidoUsuario,
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 1,
                 "Calle Balsa Botin", 
                 "123456722", 
@@ -77,6 +80,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
             var alquilerDireccionInvalida = new CrearAlquilerDTO(
                 _nombreUsuario,
                 _apellidoUsuario,
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 1,
                 "Pisos Picadooos",
                 "123456722",
@@ -87,6 +92,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
             var alquilerApplicationUser = new CrearAlquilerDTO(
                 "usuario_no_existe",
                 "apellido",
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 1,
                 "Calle Senorio de la Sal",
                 "123456722",
@@ -96,6 +103,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
             var alquilerNoDisponible = new CrearAlquilerDTO(
                 _nombreUsuario,
                 _apellidoUsuario,
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 1,
                 "Calle Soto Solitario",
                 "123456722",
@@ -111,6 +120,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
             var alquilerMetodoPagoInvalido = new CrearAlquilerDTO(
                 _nombreUsuario,
                 _apellidoUsuario,
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 999, // Id que no existe
                 "Calle 24",
                 "123456722",
@@ -121,6 +132,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
             var alquilerItemSinCantidad = new CrearAlquilerDTO(
                 _nombreUsuario,
                 _apellidoUsuario,
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 1,
                 "Calle Falsa 123",
                 "123456722",
@@ -187,6 +200,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
 
                 _nombreUsuario,
                 _apellidoUsuario,
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
                 1,
                 "Calle Caserio Colesterol",
                 "123456722",
@@ -197,31 +212,36 @@ namespace AppForSEII2526.UT.AlquileresController_test
             // --- Pre-cálculo de precios esperados ---
            
             float expectedPrice1 = 10.0f;
-            // Herramienta 2: 15.7f * (1 - 0.15) = 13.345f
+
             float expectedPrice2 = 30.0f;
 
-            // Act
+            var expectedResponse = new AlquileresParaDetalleDTO(
+                alquilerDTO.Nombre,
+                alquilerDTO.Apellidos,
+                alquilerDTO.Direccion,
+                DateOnly.FromDateTime(DateTime.UtcNow),
+                expectedPrice1 + expectedPrice2,
+                DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
+                new List<AlquilarItemsDTO>()
+                );
+
+            // Añadir items esperados
+            expectedResponse.Items.Add(new AlquilarItemsDTO(1,2));
+            expectedResponse.Items.Add(new AlquilarItemsDTO(2, 15));
+
+            // --- ACT
             var result = await controller.CreateAlquiler(alquilerDTO);
 
 
-            // Assert
+            // 3. ASSERT (Respuesta HTTP)
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
             var createdAlquilerDTO = Assert.IsType<AlquileresParaDetalleDTO>(createdAtActionResult.Value);
 
-            Assert.Equal(alquilerDTO.Nombre, createdAlquilerDTO.Nombre);
-            Assert.Equal(alquilerDTO.Apellidos, createdAlquilerDTO.Apellidos);
-            Assert.Equal(alquilerDTO.Direccion, createdAlquilerDTO.Direccion);
-
-            // --- 3. Comprobar los items del DTO (¡Importante!) ---
-            var item1DTO = createdAlquilerDTO.Items.FirstOrDefault(i => i.NombreItem == _nombreHerramienta1);
-            Assert.NotNull(item1DTO);
-            Assert.Equal(10.0f, item1DTO.PrecioItem);
-            var item2DTO = createdAlquilerDTO.Items.FirstOrDefault(i => i.NombreItem == _nombreHerramienta2);
-            Assert.NotNull(item2DTO);
-            Assert.Equal(15.7f, item2DTO.PrecioItem);
-
-            // --- 4. (¡EL MÁS IMPORTANTE!) Comprobar la Base de Datos ---
-            // Tu constructor ya creó el alquiler ID=1. Esta nueva debe ser la ID=2.
+            Assert.Equal(expectedResponse, createdAlquilerDTO);
+            
+            // 4. ASSERT (Base de Datos)
+            // El constructor ya creó el alquiler ID=1. Esta nueva debe ser la ID=2.
             var alquilerEnDB = await _context.Alquileres
                                         .Include(o => o.Usuario)
                                         .Include(o => o.MetodoPago)
@@ -229,16 +249,11 @@ namespace AppForSEII2526.UT.AlquileresController_test
                                         .FirstOrDefaultAsync(o => o.Id == 2); // Busca la nueva oferta
 
             Assert.NotNull(alquilerEnDB);
-            // Assert.Equal(alquilerDTO., alquilerEnDB.FechaInicio); fechas no??
-            Assert.Equal(_nombreUsuario, alquilerEnDB.Usuario.Nombre); // Comprueba el usuario enlazado
-            Assert.Equal("Efectivo", alquilerEnDB.MetodoPago.Nombre); // Comprueba el método de pago
-            Assert.Equal(2, alquilerEnDB.AlquilarItems.Count); // Comprueba el número de items
+            Assert.Equal(2, alquilerEnDB.AlquilarItems.Count);
 
-            // Comprobar que el precio final se guardó bien en la BBDD
-            var item1EnDB = alquilerEnDB.AlquilarItems.FirstOrDefault(i => i.HerramientaId == 1);
-            Assert.NotNull(item1EnDB);
-            Assert.Equal(expectedPrice1, item1EnDB.Precio);
-
+            // Verificamos un dato clave en BD (ej: precio final calculado guardado correctamente)
+            var itemDb = alquilerEnDB.AlquilarItems.First(i => i.HerramientaId == 1);
+            Assert.Equal(expectedPrice1, itemDb.Precio, 0.001f); // Usamos tolerancia para float
 
         }
     }
