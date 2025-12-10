@@ -14,5 +14,10 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         public CURepararacion_UIT(ITestOutputHelper output) : base(output)
         {
         }
+
+        private void Precondition_perform_login()
+        {
+            Perform_login("elena@uclm.es", "Password1234%");
+        }
     }
 }
