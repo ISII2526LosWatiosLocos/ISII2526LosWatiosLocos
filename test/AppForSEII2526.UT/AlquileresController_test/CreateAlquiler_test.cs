@@ -193,8 +193,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
 
             var alquilerItems = new List<AlquilarItemsDTO>
             {
-                new AlquilarItemsDTO(1,10),
-                new AlquilarItemsDTO (2, 15)
+                new AlquilarItemsDTO(1,1),
+                new AlquilarItemsDTO (2, 2)
             };
             var alquilerDTO = new CrearAlquilerDTO(
 
@@ -213,7 +213,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
            
             float expectedPrice1 = 10.0f;
 
-            float expectedPrice2 = 30.0f;
+            float expectedPrice2 = 31.4f;
 
             var expectedResponse = new AlquileresParaDetalleDTO(
                 alquilerDTO.Nombre,
@@ -227,8 +227,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 );
 
             // Añadir items esperados
-            expectedResponse.Items.Add(new AlquilarItemsDTO(1,2));
-            expectedResponse.Items.Add(new AlquilarItemsDTO(2, 15));
+            expectedResponse.Items.Add(new AlquilarItemsDTO(_nombreHerramienta1, "Acero", 10.0f,1));
+            expectedResponse.Items.Add(new AlquilarItemsDTO(_nombreHerramienta2, "Madera", 15.7f,2));
 
             // --- ACT
             var result = await controller.CreateAlquiler(alquilerDTO);
@@ -254,7 +254,6 @@ namespace AppForSEII2526.UT.AlquileresController_test
             // Verificamos un dato clave en BD (ej: precio final calculado guardado correctamente)
             var itemDb = alquilerEnDB.AlquilarItems.First(i => i.HerramientaId == 1);
             Assert.Equal(expectedPrice1, itemDb.Precio, 0.001f); // Usamos tolerancia para float
-
         }
     }
 }

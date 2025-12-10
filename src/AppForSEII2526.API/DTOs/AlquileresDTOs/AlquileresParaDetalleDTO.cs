@@ -26,14 +26,14 @@
         public override bool Equals(object? obj)
         {
             return obj is AlquileresParaDetalleDTO dTO &&
-                   Nombre == dTO.Nombre &&
-                   Apellidos == dTO.Apellidos &&
-                   Direccion == dTO.Direccion &&
-                   FechaAlquiler.Equals(dTO.FechaAlquiler) &&
-                   PrecioTotal == dTO.PrecioTotal &&
-                   FechaInicio.Equals(dTO.FechaInicio) &&
-                   FechaFinal.Equals(dTO.FechaFinal) &&
-                   Items.SequenceEqual(dTO.Items);
+                    Nombre == dTO.Nombre &&
+                    Apellidos == dTO.Apellidos &&
+                    Direccion == dTO.Direccion &&
+                    FechaAlquiler.Equals(dTO.FechaAlquiler) &&
+                    PrecioTotal == dTO.PrecioTotal &&
+                    FechaInicio.Equals(dTO.FechaInicio) &&
+                    FechaFinal.Equals(dTO.FechaFinal) &&
+                    Items.SequenceEqual(dTO.Items);
         }
 
         public override int GetHashCode()
