@@ -32,7 +32,8 @@ namespace AppForSEII2526.Web
             {
                 Reparacion.ReparacionesItems.Add(new ReparacionesItemDTO()
                 {
-                    
+                    HerramientaNombre = herramienta.Nombre,           
+                    HerramientaPrecio = herramienta.Precio,
                     HerramientaDescripcion = $"Reparar {herramienta.Nombre}",
                     HerramientaCantidad = 1
                 });
