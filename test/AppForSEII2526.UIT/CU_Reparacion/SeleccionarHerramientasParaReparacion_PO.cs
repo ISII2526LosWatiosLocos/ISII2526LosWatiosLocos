@@ -16,6 +16,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         By inputFrom = By.Id("fromDate");
         By inputTo = By.Id("toDate");
         By tableReparacion = By.Id("TableReparacion");
+        By errorShownBy = By.Id("ErrorsShown");
         public SeleccionarHerramientasParaReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
 
@@ -58,6 +59,15 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         {
 
             return CheckBodyTable(expectedHerramientas, tableReparacion);
+        }
+
+
+
+        public bool CheckMessageError(string errorMessage)
+        {
+            IWebElement actualErrorShown = _driver.FindElement(errorShownBy);
+            _output.WriteLine($"actual Message shown:{actualErrorShown.Text}");
+            return actualErrorShown.Text.Contains(errorMessage);
         }
     }
 }

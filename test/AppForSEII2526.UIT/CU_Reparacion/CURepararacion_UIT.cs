@@ -3,10 +3,11 @@ using AppForMovies.UIT.Shared;
 using AppForSEII2526.UIT.Shared;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AppForSEII2526.UIT.CU_Reparacion
 {
@@ -42,7 +43,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             Perform_login("elena@uclm.es", "Password1234%");
         }
 
-        private void InitialStepsForRentalMovies()
+        private void InitialStepsForRentalHerramientas()
         {
             Precondition_perform_login();
             //we wait for the option of the menu to be visible
@@ -63,7 +64,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
      )
         {
             //Arrange
-            InitialStepsForRentalMovies();
+            InitialStepsForRentalHerramientas();
             var expectedHerramientas = new List<string[]> { new string[] { HerramientaNombre, HerramientaMaterial, HerramientaFabricante }, };
 
             //Act
@@ -86,7 +87,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             //Arrange
 
 
-            InitialStepsForRentalMovies();
+            InitialStepsForRentalHerramientas();
             var expectedHerramientas = new List<string[]> { new string[] { HerramientaNombre2, HerramientaMaterial2, HerramientaFabricante2 }, };
 
             string desde = DateTime.Today.AddDays(2).ToString("dd/MM/yyyy");
@@ -103,5 +104,48 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 
     
     }
-}
+
+
+        public static IEnumerable<object[]> TestCasesFor_UC2_4_5_AF2_errorEnFechas()
+        {
+            var allTests = new List<object[]>
+    {
+        new object[] {
+            DateTime.Today.AddDays(-1).ToString("dd/MM/yyyy"),
+            DateTime.Today.AddDays(2).ToString("dd/MM/yyyy"),
+            "Tu período de reparación debe ser posterior"
+        },
+        new object[] {
+            DateTime.Today.AddDays(-2).ToString("dd/MM/yyyy"),
+            DateTime.Today.AddDays(-1).ToString("dd/MM/yyyy"),
+            "Tu período de reparación debe ser posterior"
+        },
+        new object[] {
+            DateTime.Today.AddDays(7).ToString("dd/MM/yyyy"),
+            DateTime.Today.AddDays(5).ToString("dd/MM/yyyy"),
+            "La reparación debe terminar después de comenzar"
+        },
+    };
+
+            return allTests;
+        }
+
+        [Theory]
+        [MemberData(nameof(TestCasesFor_UC2_4_5_AF2_errorEnFechas))]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_7_8_9_AF2_errorEnFechas(string fechaDesde, string fechaHasta, string errorEsperado)
+        {
+            // Arrange
+
+            // Act
+
+            InitialStepsForRentalHerramientas();
+
+            // Assert
+
+
+
+            Assert.True(seleccionarHerramientasParaReparacion_PO.CheckMessageError(errorEsperado), $"Error in the message box for test {fechaDesde} - {fechaHasta}");
+        }
+    }
 }
