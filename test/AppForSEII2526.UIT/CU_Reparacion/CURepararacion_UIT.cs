@@ -3,6 +3,7 @@ using AppForMovies.UIT.Shared;
 using AppForSEII2526.UIT.Shared;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,19 +52,19 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         }
 
 
-        [InlineData(HerramientaId1, HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1,HerramientaTiempoReparacion1,PrecioHerramientaReparacion1, "", "")]
+        [InlineData(HerramientaId1, HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1, HerramientaTiempoReparacion1, PrecioHerramientaReparacion1, "", "")]
         [Trait("LevelTesting", "Funcional Testing")]
 
 
         [InlineData(HerramientaId2, HerramientaNombre2, HerramientaMaterial2, HerramientaFabricante2, HerramientaTiempoReparacion2, PrecioHerramientaReparacion2, "", "")]
         [Trait("LevelTesting", "Funcional Testing")]
 
-        public void UC2_AF1_UC2_4_5_6_filtering(string HerramientaNombre, string HerramientaMaterial, string HerramientaFabricante, int HerramientaTiempoReparacion, int PrecioHerramientaReparacion, string FiltroNombre, string FiltroTiempoReparacion
+        public void UC2_AF1_UC2_4_5_filtering(string HerramientaNombre, string HerramientaMaterial, string HerramientaFabricante, int HerramientaTiempoReparacion, int PrecioHerramientaReparacion, string FiltroNombre, string FiltroTiempoReparacion
      )
         {
             //Arrange
             InitialStepsForRentalMovies();
-            var expectedHerramientas= new List<string[]> { new string[] {  HerramientaNombre, HerramientaMaterial, HerramientaFabricante }, };
+            var expectedHerramientas = new List<string[]> { new string[] { HerramientaNombre, HerramientaMaterial, HerramientaFabricante }, };
 
             //Act
             seleccionarHerramientasParaReparacion_PO.BuscarHerramientas(FiltroNombre, FiltroTiempoReparacion, "", "");
@@ -73,5 +74,34 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             Assert.True(seleccionarHerramientasParaReparacion_PO.CheckListOfHerramientas(expectedHerramientas));
 
         }
+
+
+        [Fact(Skip = "first run dbo.Movies.data.UpdateQuantityAvailable.sql, after running the test case run dbo.Movies.data.UpdateQuantityAvailableto100")]
+        [Trait("LevelTesting", "Funcional Testing")]
+
+
+
+        public void UC2_AF1_UC2_6_filtering()
+        {
+            //Arrange
+
+
+            InitialStepsForRentalMovies();
+            var expectedHerramientas = new List<string[]> { new string[] { HerramientaNombre2, HerramientaMaterial2, HerramientaFabricante2 }, };
+
+            string desde = DateTime.Today.AddDays(2).ToString("dd/MM/yyyy");
+            string hasta = DateTime.Today.AddDays(3).ToString("dd/MM/yyyy");
+
+            //Act
+            seleccionarHerramientasParaReparacion_PO.BuscarHerramientas("","", desde, hasta);
+
+            //Assert
+
+            Assert.True(seleccionarHerramientasParaReparacion_PO.CheckListOfHerramientas(expectedHerramientas));
+
+        
+
+    
     }
+}
 }
