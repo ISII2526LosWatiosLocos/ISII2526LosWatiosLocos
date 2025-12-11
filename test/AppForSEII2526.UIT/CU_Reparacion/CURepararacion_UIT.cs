@@ -42,17 +42,17 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         }
 
 
-
-        [Fact]
+        [InlineData(HerramientaId1, HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1,HerramientaTiempoReparacion1,PrecioHerramientaReparacion1, "Last of", "")]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC2_AF1_UC2_4_5_6_filtering()
+        public void UC2_AF1_UC2_4_5_6_filtering(string HerramientaNombre, string HerramientaMaterial, string HerramientaFabricante, int HerramientaTiempoReparacion, int PrecioHerramientaReparacion, string FiltroNombre, string FiltroTiempoReparacion
+     )
         {
             //Arrange
             InitialStepsForRentalMovies();
-            var expectedHerramientas= new List<string[]> { new string[] {  HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1 }, };
+            var expectedHerramientas= new List<string[]> { new string[] {  HerramientaNombre, HerramientaMaterial, HerramientaFabricante }, };
 
             //Act
-            seleccionarHerramientasParaReparacion_PO.BuscarHerramientas("Last of", "", "", "");
+            seleccionarHerramientasParaReparacion_PO.BuscarHerramientas(FiltroNombre, FiltroTiempoReparacion, "", "");
 
             //Assert
 
