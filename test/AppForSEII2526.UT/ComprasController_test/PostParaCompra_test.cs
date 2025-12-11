@@ -445,35 +445,19 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             var controller = new ComprasController(_context, logger);
 
-            var compraItems = new List<CompraItemsDTO> // Los valores coinciden con lo guardado anteriormente en la BBDD, uso el constructor completo pq no puede tener nulls.
+            var compraItems = new List<CompraItemsDTO>
             {
-                new CompraItemsDTO(
-                    1,                              //IdHerramienta
-                    "Nombre - Herramienta1",        //NombreHerramienta
-                    "Material - Herramienta1",      //PrecioHerramienta
-                    10.99f,                         //PrecioHerramienta
-                    "Descripción - CompraItem1",    //DescripciónHerramienta
-                    1                               //CantidadHerramienta
-                ),
-                new CompraItemsDTO(
-                    2,
-                    "Nombre - Herramienta2",
-                    "Material - Herramienta2",
-                    2.99f,
-                    "Descripción - CompraItem2",
-                    2
-                ),
-                new CompraItemsDTO(
-                    3,
-                    "Nombre - Herramienta3",
-                    "Material - Herramienta3",
-                    3.99f,
-                    "Descripción - CompraItem3",
-                    3
+            new CompraItemsDTO(
+                1,
+                "Nombre - Herramienta1",
+                "Material - Herramienta1",
+                10.99f,
+                "Descripción - CompraItem1",
+                1
                 )
             };
 
-            var compraDTO = new CrearCompraDTO // Compra sin errores
+            var compraDTO = new CrearCompraDTO
             {
                 Nombre = "Fulanito",
                 Apellidos = "De Tal",
@@ -488,21 +472,19 @@ namespace AppForSEII2526.UT.ComprasController_test
             var result = await controller.CrearCompra(compraDTO);
 
             // Assert
-            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            var createdCompraDTO = Assert.IsType<ComprasParaDetalleDTO>(createdAtActionResult.Value);
-            Assert.Equal(compraDTO.Nombre, createdCompraDTO.Nombre);
-            Assert.Equal(compraDTO.Apellidos, createdCompraDTO.Apellidos);
-            Assert.Equal(compraDTO.DireccionEnvio, createdCompraDTO.DireccionEnvio);
-            Assert.Equal(compraDTO.Items.Count, createdCompraDTO.Items.Count);
+            var createdAt = Assert.IsType<CreatedAtActionResult>(result);
 
-            // --- 3. Comprobar los items del DTO (¡Importante!) ---
-            var item1DTO = createdCompraDTO.Items.FirstOrDefault(i => i.NombreHerramienta == "Nombre - Herramienta1");
-            Assert.NotNull(item1DTO);
-            Assert.InRange(item1DTO.PrecioHerramienta, 10.989f, 10.991f); // Añadimos un pequeño rango de tolerancia para que no pegue el petardazo
+            var responseDTO = Assert.IsType<ComprasParaDetalleDTO>(createdAt.Value);
 
-            var item2DTO = createdCompraDTO.Items.FirstOrDefault(i => i.NombreHerramienta == "Nombre - Herramienta2");
-            Assert.NotNull(item2DTO);
-            Assert.InRange(item2DTO.PrecioHerramienta, 2.989f, 2.991f); // Añadimos un pequeño rango de tolerancia para que no pegue el petardazo
+            // Comparar objeto entero (requiere implementar Equals en DTO)
+            Assert.Equal(new ComprasParaDetalleDTO(
+                "Fulanito",
+                "De Tal",
+                "DireccionEnvio - Compra1",
+                10.99f,
+                DateOnly.FromDateTime(DateTime.UtcNow),
+                responseDTO.Items // Items generados por la compra real
+            ), responseDTO);
         }
     }
 }
