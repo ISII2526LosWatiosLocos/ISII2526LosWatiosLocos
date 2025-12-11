@@ -23,6 +23,15 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         private const float PrecioHerramientaReparacion1 = 57.4f;
 
 
+
+        private const int HerramientaId2 = 3;
+        private const string HerramientaNombre2 = "LLave";
+        private const string HerramientaMaterial2 = "Acero";
+        private const string HerramientaFabricante2 = "herramientas SA";
+        private const int HerramientaTiempoReparacion2 = 17;
+        private const float PrecioHerramientaReparacion2 = 17.5f;
+
+
         public CURepararacion_UIT(ITestOutputHelper output) : base(output)
         {
         }
@@ -42,8 +51,13 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         }
 
 
-        [InlineData(HerramientaId1, HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1,HerramientaTiempoReparacion1,PrecioHerramientaReparacion1, "Last of", "")]
+        [InlineData(HerramientaId1, HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1,HerramientaTiempoReparacion1,PrecioHerramientaReparacion1, "", "")]
         [Trait("LevelTesting", "Funcional Testing")]
+
+
+        [InlineData(HerramientaId2, HerramientaNombre2, HerramientaMaterial2, HerramientaFabricante2, HerramientaTiempoReparacion2, PrecioHerramientaReparacion2, "", "")]
+        [Trait("LevelTesting", "Funcional Testing")]
+
         public void UC2_AF1_UC2_4_5_6_filtering(string HerramientaNombre, string HerramientaMaterial, string HerramientaFabricante, int HerramientaTiempoReparacion, int PrecioHerramientaReparacion, string FiltroNombre, string FiltroTiempoReparacion
      )
         {
