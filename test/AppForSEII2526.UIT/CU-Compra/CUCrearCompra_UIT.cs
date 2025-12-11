@@ -161,5 +161,142 @@ namespace AppForSEII2526.UIT.CU_Compra
             bool seguimosEnSeleccion = _driver.Url.Contains("/Compra/SelectHerramientasParaCompra");
             Assert.True(seguimosEnSeleccion, "El sistema permitió continuar con el carrito vacío.");
         }
+
+        // -------------------------------------------------------------------
+        // [Fact]: ESCENARIO 4: LISTAR TODAS LAS HERRAMIENTAS (sin filtros)
+        // -------------------------------------------------------------------
+        [Fact]
+        [Trait("Category", "UIT")]
+        public void UC1_4_SinFiltros()
+        {
+            // 1. ARRANGE
+            string nombre = "Yoel";
+            string apellidos = "CS";
+            string direccionEnvio = "casa de yoel";
+            string pagoValue = "0";
+
+            int herramientaId = 1;
+            string nombreHerramienta1 = "Martillo";
+            string nombreHerramienta2 = "Llave";
+            string material = "";
+            string precio = "";
+
+            // 2. ACT
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
+            _selectPO.BuscarHerramientas(material, precio); // filtros vacíos
+            // añade todas las herramientas disponibles (2)
+            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta1);
+            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta2);
+            _selectPO.Continuar();
+
+            // Rellenar Formulario
+            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
+            _crearPO.RellenarDescripcion(herramientaId, "Descripción cualquiera"); // cualquier descripción no nula es válida
+
+            // Intentamos guardar
+            _crearPO.PulsarCrearCompra();
+            try { _crearPO.ConfirmarModal(); } catch { /* Si no sale modal, seguimos */ }
+
+            // 3. ASSERT
+            System.Threading.Thread.Sleep(1000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
+            bool urlCorrecta = _driver.Url.Contains("/Compra/DetailParaCompra");
+            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
+        }
+
+        // -------------------------------------------------------------------
+        // [Fact]: ESCENARIO 5: FILTRAR POR MATERIAL
+        // -------------------------------------------------------------------
+        [Fact]
+        [Trait("Category", "UIT")]
+        public void UC1_5_FiltrarMaterial()
+        {
+            // 1. ARRANGE
+            string nombre = "Yoel";
+            string apellidos = "CS";
+            string direccionEnvio = "casa de yoel";
+            string pagoValue = "0";
+
+            int herramientaId = 1;
+            string nombreHerramienta = "Llave";
+            string material = "Hierro";
+            string precio = "";
+
+            // 2. ACT
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
+            _selectPO.BuscarHerramientas(material, precio); // filtra por material
+            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
+            _selectPO.Continuar();
+
+            // Rellenar Formulario
+            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
+            _crearPO.RellenarDescripcion(herramientaId, "Descripción cualquiera"); // cualquier descripción no nula es válida
+
+            // Intentamos guardar
+            _crearPO.PulsarCrearCompra();
+            try { _crearPO.ConfirmarModal(); } catch { /* Si no sale modal, seguimos */ }
+
+            // 3. ASSERT
+            System.Threading.Thread.Sleep(1000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
+            bool urlCorrecta = _driver.Url.Contains("/Compra/DetailParaCompra");
+            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
+        }
+
+        // -------------------------------------------------------------------
+        // [Fact]: ESCENARIO 6: FILTRAR POR PRECIO
+        // -------------------------------------------------------------------
+        [Fact]
+        [Trait("Category", "UIT")]
+        public void UC1_6_FiltrarPrecio()
+        {
+            // 1. ARRANGE
+            string nombre = "Yoel";
+            string apellidos = "CS";
+            string direccionEnvio = "casa de yoel";
+            string pagoValue = "0";
+
+            int herramientaId = 1;
+            string nombreHerramienta = "Martillo";
+            string material = "";
+            string precio = "10";
+
+            // 2. ACT
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
+            _selectPO.BuscarHerramientas(material, precio); // filtra por precio
+            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
+            _selectPO.Continuar();
+
+            // Rellenar Formulario
+            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
+            _crearPO.RellenarDescripcion(herramientaId, "Descripción cualquiera"); // cualquier descripción no nula es válida
+
+            // Intentamos guardar
+            _crearPO.PulsarCrearCompra();
+            try { _crearPO.ConfirmarModal(); } catch { /* Si no sale modal, seguimos */ }
+
+            // 3. ASSERT
+            System.Threading.Thread.Sleep(1000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
+            bool urlCorrecta = _driver.Url.Contains("/Compra/DetailParaCompra");
+            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
+        }
+
+        // -------------------------------------------------------------------
+        // [Fact]: ESCENARIO 7: OBTENER DETALLE DE COMPRA EXISTENTE
+        // -------------------------------------------------------------------
+        [Fact]
+        [Trait("Category", "UIT")]
+        public void UC1_7_ObtenerDetalle()
+        {
+           
+        }
+
+        // -------------------------------------------------------------------
+        // [Fact]: ESCENARIO 8: OBTENER DETALLE DE COMPRA INEXISTENTE
+        // -------------------------------------------------------------------
+        [Fact]
+        [Trait("Category", "UIT")]
+        public void UC1_8_ObtenerDetalleInexistente_Error()
+        {
+
+        }
     }
 }
