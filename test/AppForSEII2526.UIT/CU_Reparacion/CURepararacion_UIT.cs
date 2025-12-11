@@ -11,8 +11,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AppForSEII2526.UIT.CU_Reparacion
 {
-    public class CURepararacion_UIT: UC_UIT
-         
+    public class CURepararacion_UIT : UC_UIT
+
     {
 
         private SeleccionarHerramientasParaReparacion_PO seleccionarHerramientasParaReparacion_PO;
@@ -47,7 +47,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         {
             Precondition_perform_login();
             //we wait for the option of the menu to be visible
-           seleccionarHerramientasParaReparacion_PO.WaitForBeingVisible(By.Id("CrearReparacion"));
+            seleccionarHerramientasParaReparacion_PO.WaitForBeingVisible(By.Id("CrearReparacion"));
             //we click on the menu
             _driver.FindElement(By.Id("CrearReparacion")).Click();
         }
@@ -94,16 +94,16 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             string hasta = DateTime.Today.AddDays(3).ToString("dd/MM/yyyy");
 
             //Act
-            seleccionarHerramientasParaReparacion_PO.BuscarHerramientas("","", desde, hasta);
+            seleccionarHerramientasParaReparacion_PO.BuscarHerramientas("", "", desde, hasta);
 
             //Assert
 
             Assert.True(seleccionarHerramientasParaReparacion_PO.CheckListOfHerramientas(expectedHerramientas));
 
-        
 
-    
-    }
+
+
+        }
 
 
         public static IEnumerable<object[]> TestCasesFor_UC2_4_5_AF2_errorEnFechas()
@@ -146,6 +146,28 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 
 
             Assert.True(seleccionarHerramientasParaReparacion_PO.CheckMessageError(errorEsperado), $"Error in the message box for test {fechaDesde} - {fechaHasta}");
+
+
+
+
+        }
+
+
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+
+        public void UC2_AF1_UC2_11_RentingNotavailable()
+        {
+            //Arrange
+            InitialStepsForRentalHerramientas();
+            //Act
+            seleccionarHerramientasParaReparacion_PO.AddHerramientaToReparacionCart(HerramientaNombre1);
+            seleccionarHerramientasParaReparacion_PO.RemoveHerramientaFromReparacionCart(HerramientaNombre1);
+
+            //Assert
+
+            Assert.True(seleccionarHerramientasParaReparacion_PO.ReparacionNotAvailable());
         }
     }
 }

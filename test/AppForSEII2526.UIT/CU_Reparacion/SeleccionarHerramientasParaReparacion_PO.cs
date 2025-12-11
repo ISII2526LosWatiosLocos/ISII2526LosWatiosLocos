@@ -17,6 +17,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         By inputTo = By.Id("toDate");
         By tableReparacion = By.Id("TableReparacion");
         By errorShownBy = By.Id("ErrorsShown");
+        By BotonRepararHerramientas= By.Id("ReparacionHerramientaBoton");
         public SeleccionarHerramientasParaReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
 
@@ -50,7 +51,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 
             _driver.FindElement(BotonbuscarHerramientas).Click();
 
-            // aquí en el código proporcionado debería ir el genre, pero no tengo nada que siga la misma lógica
+      
 
 
         }
@@ -68,6 +69,27 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             IWebElement actualErrorShown = _driver.FindElement(errorShownBy);
             _output.WriteLine($"actual Message shown:{actualErrorShown.Text}");
             return actualErrorShown.Text.Contains(errorMessage);
+        }
+        public void AddHerramientaToReparacionCart(string herramientaNombre)
+        {
+           
+            WaitForBeingClickable(By.Id("ReparacionData_" + herramientaNombre));
+
+            _driver.FindElement(By.Id("ReparacionData_" + herramientaNombre)).Click();
+        }
+
+        public void RemoveHerramientaFromReparacionCart(string herramientaNombre)
+        {
+            // Necesito saber el ID exacto de tu botón "Remove"
+            WaitForBeingClickable(By.Id("removeHerramienta_" + herramientaNombre));
+
+            _driver.FindElement(By.Id("removeHerramienta_" + herramientaNombre)).Click();
+        }
+
+        public bool ReparacionNotAvailable()
+        {
+            
+            return _driver.FindElement(BotonRepararHerramientas).Displayed == false;
         }
     }
 }
