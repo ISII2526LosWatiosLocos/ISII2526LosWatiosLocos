@@ -4,7 +4,7 @@
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<CrearAlquiler> logger
 @inject AlquilerStateContainer container
-
+@inject NavigationManager navegacion
 <h3>CrearAlquiler</h3>
 
 @* rental is the object that will be edited thanks to the form *@
@@ -54,6 +54,16 @@
                 </div>
             </div>
        </div>
+
+    <h4>Detalles del alquiler</h4>
+    <p><b>Fecha desdse:</b> @alquiler.FechaInicio.ToString("dd/MM/yyyy") <b>hasta:</b> @alquiler.FechaFinal.ToString("dd/MM/yyyy")</p>
+    <p>
+        <b>Precio total:</b> @precioTotal $
+        <button class="btn btn-outline-primary" type="submit" @onclick="ModifyAlquilerlItems" id="ModifyHerramientas">
+            Modificar herramientas
+        </button>
+    </p>
+
     <div class="mh-100 table-responsive">
         <table class="table table-condensed table-hover" id="TableOfRentalItems">
             <thead>
@@ -93,6 +103,20 @@
 @code {
 
     private bool DialogIsOpen;
+
+    private float precioTotal
+    {
+        get
+        {
+            float precio = alquiler.Items.Sum(r => r.PrecioItem * r.CantidadItem);
+            return precio;
+        }
+    }
+    private void ModifyAlquilerlItems()
+    {
+        navegacion.NavigateTo("/Alquiler/SeleccionarHerramientasParaAlquilar");
+    }
+
     private CrearAlquilerDTO alquiler => container.Alquilar;
     private void OpenDialog()
         {
