@@ -84,7 +84,30 @@
                         <td>@item.NombreItem</td>
                         <td>@item.MaterialItem</td>
                         <td>@item.PrecioItem $</td>
-                        <td>@item.CantidadItem</td>
+
+
+                       
+
+                        <td>
+                            <div class="input-group input-group-sm">
+                                <button class="btn btn-outline-secondary"
+                                        type="button"
+                                        @onclick="@(() => DisminuirCantidad(item))">
+                                    -
+                                </button>
+
+                                <InputNumber @bind-Value="item.CantidadItem"
+                                             class="form-control text-center"
+                                             id="@($"cantidad_{item.IdItem}")"
+                                             min="1" />
+
+                                <button class="btn btn-outline-secondary"
+                                        type="button"
+                                        @onclick="@(() => AumentarCantidad(item))">
+                                    +
+                                </button>
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -132,6 +155,22 @@
         {
             DialogIsOpen = true;
         }
+
+
+    private void AumentarCantidad(AlquilarItemsDTO item)
+    {
+        item.CantidadItem++;
+        // Si necesitas actualizar el precio total
+        StateHasChanged();
+    }
+    private void DisminuirCantidad(AlquilarItemsDTO item)
+    {
+        if (item.CantidadItem > 1)
+        {
+            item.CantidadItem--;
+            StateHasChanged();
+        }
+    }
 
     private async Task OnDialogClose(bool isOk)
     {
