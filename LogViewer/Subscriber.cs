@@ -19,7 +19,7 @@ namespace LogViewer
         public void StartReceiving(string subscriptionTopic)
         {
             //Crear la conexión
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            var factory = new ConnectionFactory() { HostName = "10.69.79.250" };
             
             var connection = factory.CreateConnection();
             var channel = connection.CreateModel();
