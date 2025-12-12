@@ -16,6 +16,7 @@ namespace AppForSEII2526.UIT.CU_Oferta
         private By _dirigidaA = By.Id("DirigidaA");
         private By _submitButton = By.Id("Submit");
         private By _errorsShown = By.Id("ErrorsShown");
+        private By _modificarButton = By.Id("ModifyHerramientas");
 
         public CrearOferta_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
@@ -58,6 +59,12 @@ namespace AppForSEII2526.UIT.CU_Oferta
         {
             WaitForBeingClickable(_submitButton);
             _driver.FindElement(_submitButton).Click();
+        }
+
+        public void PulsarModificarCarrito()
+        {
+            WaitForBeingClickable(_modificarButton);
+            _driver.FindElement(_modificarButton).Click();
         }
 
         public void ConfirmarModal()

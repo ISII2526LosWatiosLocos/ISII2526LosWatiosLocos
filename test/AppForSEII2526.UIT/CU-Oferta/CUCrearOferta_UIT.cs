@@ -180,5 +180,31 @@ namespace AppForSEII2526.UIT.CU_Oferta
             bool seguimosEnSeleccion = _driver.Url.Contains("/Ofertar/SeleccionarHerramientaParaOfertar");
             Assert.True(seguimosEnSeleccion, "El sistema permitió continuar con el carrito vacío.");
         }
+
+        [Fact]
+        [Trait("Category", "UIT")]
+        public void UC3_6_modificar_carrito()
+        {
+            //ASSERT
+            string usuario = "Yoel";
+            string herramienta = "Martillo";
+            // ACT
+            _driver.Navigate().GoToUrl(_URI + "Ofertar/SeleccionarHerramientaParaOfertar");
+            _selectPO.SearchHerramientas("EMPRESA1");
+            _selectPO.AddHerramientaToOfertaCart(herramienta);
+            _selectPO.PressContinuar();
+
+            _crearPO.PulsarModificarCarrito();
+            _selectPO.borrarHerramienta();
+            //Intentamos clickar el botón de continuar
+            try
+            {
+                _selectPO.PressContinuar();
+            }
+            catch (Exception) { /* Ignoramos si falla el click por estar disabled */ }
+            //ASSERT
+            bool seguimosEnSeleccion = _driver.Url.Contains("/Ofertar/SeleccionarHerramientaParaOfertar");
+            Assert.True(seguimosEnSeleccion, "El sistema permitió continuar con el carrito vacío.");
+        }
     }
 }

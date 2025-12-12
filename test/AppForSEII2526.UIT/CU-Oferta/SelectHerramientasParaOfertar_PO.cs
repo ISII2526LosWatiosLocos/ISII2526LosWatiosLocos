@@ -11,6 +11,7 @@ namespace AppForSEII2526.UIT.CU_Oferta
         private By inputfabricante = By.Id("fabricanteSelected");
         private By buttonBuscar = By.Id("buscarHerramientas");
         private By tableOferta = By.Id("TableOfOferta");
+        private By _borrarHerramientaButton = By.Id("removeHerramienta_Martillo");
 
         // Nuevo ID más claro
         private By buttonContinuar = By.Id("btn_continuar_oferta");
@@ -45,6 +46,12 @@ namespace AppForSEII2526.UIT.CU_Oferta
             By btnRemoveLocator = By.Id($"removeHerramienta_{nombreHerramienta}");
 
             WaitForBeingVisible(btnRemoveLocator);
+        }
+
+        public void borrarHerramienta()
+        {
+            WaitForBeingClickable(_borrarHerramientaButton);
+            _driver.FindElement(_borrarHerramientaButton).Click();
         }
 
         public void PressContinuar()
