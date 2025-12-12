@@ -22,7 +22,7 @@ namespace AppForSEII2526.Web
         public void AddHerramientaToAlquiler(HerramientasParaAlquilarDTO herramienta)
         {
             // Antes de añadirla comprobamos si ya esta
-            if (!Alquilar.Items.Any(ri => ri.IdItem == herramienta.Id)) // También se podría comprobar por nombre
+            if (!Alquilar.Items.Any(ri => ri.NombreItem == herramienta.Nombre))
             {
                 // Si no esta en la lista la añadimos
                 Alquilar.Items.Add(new AlquilarItemsDTO()
