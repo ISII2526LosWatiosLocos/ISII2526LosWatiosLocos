@@ -25,20 +25,20 @@
         <table class="table table-condensed table-hover" id="TableOfRentalItems">
             <thead>
                 <tr>
-                    <th>Title</th>
-                    <th>Genre</th>
-                    <th>Price For Renting</th>
-                    <th>Description</th>
+                    <th>Nombre</th>
+                    <th>Material</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in alquiler.Items)
                 {   
-                    <!-- 
-                        MIRAR LO DE LOS DTOS PARA PONER LOS ATRIBUTOS NECESARIOS!!!
-                    -->
-                    <tr id="MovieData_@item.HerramientaId">
-                        <td>@item.HerramientaId</td>
+                    <tr id="AlquilerData_@item.IdItem">
+                        <td>@item.NombreItem</td>
+                        <td>@item.MaterialItem</td>
+                        <td>@item.PrecioItem $</td>
+                        <td>@item.CantidadItem</td>
                     </tr>
                 }
             </tbody>
@@ -50,8 +50,8 @@
 @*a modal popup dialog for checking if user wants to proceed to rent*@
 @if (DialogIsOpen)
 {
-    <Dialog Caption="Rental movies"
-    Message="Do you want to proceed to rent the selected movies?"
+    <Dialog Caption="Alquilar herramientas"
+    Message="¿Desea proceder con el alquiler?"
     OnClose="@OnDialogClose"
     Type=Dialog.Category.SaveNot>
     </Dialog>
