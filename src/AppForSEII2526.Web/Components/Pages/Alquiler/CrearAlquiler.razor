@@ -152,7 +152,10 @@
                             mensajeError = string.Join("(*) ", mensajeError, string.Join(" (*) ", errors));
                     }
                 }
-
+                catch (ApiException apiexception)
+                {
+                    mensajeError = "Error mientras se procesaba su solicitud, por favor prueba más tarde!";
+                }
             }
         }
     }
