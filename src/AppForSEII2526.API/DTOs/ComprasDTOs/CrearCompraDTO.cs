@@ -17,6 +17,5 @@
             Items = new List<CompraItemsDTO>();
         }
 
-
     }
 }
