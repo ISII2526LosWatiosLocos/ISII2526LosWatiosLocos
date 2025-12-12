@@ -6,12 +6,8 @@
 @inject AlquilerStateContainer alquilerState
 @inject NavigationManager navegacion
 
-
-
 <h3>SeleccionarHerramientasParaAlquilar</h3>
 <div class="container-fluid">
-
-
     <div class="row" hidden="@hideErrors">
         <p>Aquí mostraré los errores</p>
     </div>
@@ -74,13 +70,12 @@
         </div>
         <div class="col-2" hidden="@ocultarCarritoAlquiler">
             <div class="row">
-                <h3>Carrito de Alquileres</h3>
+                <h3>Carrito del Alquiler</h3>
             </div>
-            @foreach (CrearAlquilerItemDTO item in alquiler.Items)
+            @foreach (AlquilarItemsDTO item in alquiler.Items)
             {
-                
                 <div class="row">
-                    <button type="button" class="btn btn-light" id="removeMovie_@item.HerramientaId" @onclick="@(() => BorrarHerramienta(item))">x @item.HerramientaId - @item.HerramientaPrecio</button> <!-- poner en lugar de id nombre -->
+                    <button type="button" class="btn btn-light" id="removeMovie_@item.NombreItem" @onclick="@(() => BorrarHerramienta(item))">@item.NombreItem - @item.PrecioItem</button>
                 </div>
             }
             <div class="row">
@@ -107,7 +102,7 @@
         alquilerState.AddHerramientaToAlquiler(herramienta);
     }
 
-    private void BorrarHerramienta(CrearAlquilerItemDTO item)
+    private void BorrarHerramienta(AlquilarItemsDTO item)
     {
         alquilerState.BorraItemParaAlquilar(item);
         if (alquiler.Items.Count == 0) carritoAlquilerOculto = true;
@@ -117,11 +112,18 @@
     {
         navegacion.NavigateTo("/Alquiler/CrearAlquiler");
     }
-    public async void BuscarHeramientas()
+
+    protected override async Task OnInitializedAsync()
+    {
+        // carga inicial automática
+        await BuscarHeramientas();
+    }
+
+    private async Task BuscarHeramientas()
     {
         try
         {
-            herramientas = await apiclient.GetHerramientasParaAlquilerAsync(nombre,material);
+            herramientas = await apiclient.GetHerramientasParaAlquilerAsync(nombre, material);
         }
         catch (ApiException ex)
         {

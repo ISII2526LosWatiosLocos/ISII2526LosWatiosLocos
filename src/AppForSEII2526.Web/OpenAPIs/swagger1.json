@@ -836,6 +836,10 @@
       "AlquilarItemsDTO": {
         "type": "object",
         "properties": {
+          "idItem": {
+            "type": "integer",
+            "format": "int32"
+          },
           "nombreItem": {
             "type": "string",
             "nullable": true
@@ -974,6 +978,14 @@
             "type": "string",
             "nullable": true
           },
+          "fechaInicio": {
+            "type": "string",
+            "format": "date"
+          },
+          "fechaFinal": {
+            "type": "string",
+            "format": "date"
+          },
           "metodoPagoId": {
             "type": "integer",
             "format": "int32"
@@ -993,27 +1005,9 @@
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CrearAlquilerItemDTO"
+              "$ref": "#/components/schemas/AlquilarItemsDTO"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CrearAlquilerItemDTO": {
-        "type": "object",
-        "properties": {
-          "herramientaPrecio": {
-            "type": "number",
-            "format": "float"
-          },
-          "herramientaId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "herramientaCantidad": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1125,24 +1119,6 @@
               "$ref": "#/components/schemas/ReparacionesItemDTO"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CrearReparacionItemDTO": {
-        "type": "object",
-        "properties": {
-          "herramientaId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "herramientaDescripcion": {
-            "type": "string",
-            "nullable": true
-          },
-          "herramientaCantidad": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false

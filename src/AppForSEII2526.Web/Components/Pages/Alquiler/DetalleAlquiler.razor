@@ -1,126 +1,150 @@
 ﻿@page "/Alquiler/DetalleAlquiler"
 @using AppForSEII2526.Web.API
 @using Microsoft.AspNetCore.Authorization
+@inject ILogger<SeleccionarHerramientasParaAlquilar> logger
 @inject AppForHerramientasAPIClient apiclient
 
 <h3>Detalle Alquiler</h3>
 
-<!-- attribute [Authorize] -->
+<div class="container-fluid">
+    <div class="row" hidden="@hideErrors">
+        <div class="alert alert-danger" role="alert">
+            @errors
+        </div>
+    </div>
 
-@if (Alquiler == null)
-{
-    <p>@error</p>
-}
-else
-{
-    <table class="table table-borderless table-sm">
-        <tr>
-            <th>Nombre y Apellidos and Surname</th>
-            <td id="NombreApellidos">@Alquiler.Nombre @Alquiler.Apellidos</td>
-        </tr>
-        <tr>
-            <th>Dirección</th>
-            <td id="Direccion">@Alquiler.Direccion</td>
-        </tr>
-        <tr>
-            <th>Fecha</th>
-            <td id="Fecha">@Alquiler.FechaAlquiler.ToString("dd/MM/yyyy")</td>
-        </tr>
-        <tr>
-            <th>Precio Total</th>
-            <td id="PrecioTotal">@Alquiler.PrecioTotal</td>
-        </tr>
-        <tr>
-            <th>Items</th>
-            <td id="Items">@Alquiler.Items</td>
-        </tr>
-    </table>
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">IdAlquiler</span>
+                        <input type="number" id="IdAlquiler" @bind="IdAlquiler" class="form-control" placeholder="IdAlquiler" aria-label="IdAlquiler">
+                    </div>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick="BuscarAlquiler" id="searchAlquiler">Buscar alquiler</button>
+                </div>
+            </div>
 
-    <h4>Herramientas Alquiladas</h4>
-
-    <table class="table" id="RentedMovies">
-        <thead>
-            <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Genre</th>
-                <th scope="col">Price for Renting</th>
-                <th scope="col">Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (AlquilarItemsDTO item in Alquiler.Items)
-            {
-                <tr id="RentalItem_@item.NombreItem">
-                    <td>@item.NombreItem</td>
-                    <td>@item.MaterialItem</td>
-                    <td>@item.PrecioItem</td>
-                    <td>@item.CantidadItem</td>
-                </tr>
-            }
-        </tbody>
-        <tfoot>
-            @*colspan is used to state that TWO columns are collapsed*@
-        <th scope="row" colspan="2" class="text-end">Precio Total</th>
-        <td id="PrecioTotal">@Alquiler.PrecioTotal €</td>
-        </tfoot>
-    </table>
-}
-
+            <div class="row">
+                @if (isLoading)
+                {
+                    <p>Cargando alquiler...</p>
+                }
+                else if (alquiler != null)
+                {
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfAlquileres">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Dirección</th>
+                                    <th>Fecha Alquiler</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Precio total</th>
+                                    <th>Items</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="align-middle">
+                                    <td>@alquiler.Nombre @alquiler.Apellidos</td>
+                                    <td>@alquiler.Direccion</td>
+                                    <td>@alquiler.FechaAlquiler.ToString("dd/MM/yyyy")</td>
+                                    <td>@alquiler.FechaInicio.ToString("dd/MM/yyyy")</td>
+                                    <td>@alquiler.FechaFinal.ToString("dd/MM/yyyy")</td>
+                                    <td>@alquiler.PrecioTotal.ToString("C2")</td>
+                                    <td style="min-width: 350px;">
+                                        @if (alquiler.Items != null && alquiler.Items.Any())
+                                        {
+                                            <ul class="list-group list-group-flush">
+                                                @foreach (var item in alquiler.Items)
+                                                {
+                                                    <li class="list-group-item p-2">
+                                                        <div class="fw-bold text-primary">
+                                                            @item.NombreItem
+                                                        </div>
+                                                        <div class="small text-muted mb-1">
+                                                            @item.MaterialItem
+                                                            |
+                                                            @item.CantidadItem u.
+                                                            |
+                                                            @item.PrecioItem.ToString("C2")
+                                                        </div>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">No hay herramientas en este alquiler.</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else if (hasSearched)
+                {
+                    <p>No se encontraron resultados para este ID.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
-    // [Parameter]
-    // [SupplyParameterFromQuery]
-    public int AlquilerId { get; set; } = 0;
-    private AlquileresParaDetalleDTO? Alquiler;
-    private string error = "";
+    // 2. CAPTURAMOS EL ID QUE VIENE POR LA URL
+    [Parameter]
+    public int? IdRecibido { get; set; }
 
-    // [CascadingParameter]
-    // private Task<AuthenticationState>? autentificacion { get; set; }
+    private AlquileresParaDetalleDTO? alquiler;
+    private bool hideErrors => string.IsNullOrEmpty(errors);
+    private string errors = "";
+    private int IdAlquiler { get; set; } = 0;
+    private bool isLoading = false;
+    private bool hasSearched = false;
+
+    // 3. AUTOMATIZACIÓN: Si recibimos un ID por URL, buscamos automáticamente
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IdRecibido.HasValue && IdRecibido.Value > 0)
+        {
+            // Asignamos el valor al input
+            IdAlquiler = IdRecibido.Value;
+            // Ejecutamos la búsqueda sin esperar click
+            await BuscarAlquiler();
+        }
+    }
 
     public async Task BuscarAlquiler()
     {
+        isLoading = true;
+        errors = "";
+        alquiler = null;
+        hasSearched = true;
+
         try
         {
-            Alquiler = await apiclient.GetDetalleHerramientasParaAlquilerAsync(AlquilerId);
+            if (IdAlquiler <= 0)
+            {
+                errors = "Por favor ingrese un ID válido";
+                return;
+            }
+
+            alquiler = await apiclient.GetDetalleHerramientasParaAlquilerAsync(IdAlquiler);
         }
-        catch (ApiException exception)
+        catch (Exception ex)
         {
-            Alquiler = null;
+            logger.LogError(ex, "Error fetching rental details");
+            errors = "Error al conectar con el sistema.";
         }
         finally
         {
+            isLoading = false;
             StateHasChanged();
         }
-        if (Alquiler == null)
-        {
-            error = $"Error! No tienes permiso para ver este alquiler o no hay alquiler con id={AlquilerId}";
-        }
     }
-    /**
-    protected override async Task OnInitializedAsync()
-    {
-        // Comprobamos si el usuario inició sesión
-
-
-                        string nombre = "";
-                        if (autentificacion is not null)
-                        {
-                            var estado = await autentificacion;
-                            var usuario = estado?.User;
-
-                            // Cogemos el id del que inicio sesión
-                            if (usuario is not null)
-                            {
-                                if (usuario.Identity is not null && usuario.Identity.IsAuthenticated && usuario.IsInRole("User"))
-                                {
-                                    nombre = usuario.Identity.Name;
-                                }
-                            }
-                        }
-
-
-        BuscarAlquiler();
-        base.OnInitializedAsync();
-        // if ((Alquiler == null) || (Alquiler.Nombre != nombre))
-        **/
 }

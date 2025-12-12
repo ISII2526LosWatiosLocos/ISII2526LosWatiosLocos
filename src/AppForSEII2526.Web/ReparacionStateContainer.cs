@@ -30,15 +30,17 @@ namespace AppForSEII2526.Web
 
             public void AgregarHerramientaAReparacion(HerramientasParaReparaciónDTO herramienta)
             {
-                Reparacion.ReparacionesItems.Add(new ReparacionesItemDTO()
+                if (!Reparacion.ReparacionesItems.Any(ri => ri.HerramientaNombre == herramienta.Nombre))
                 {
-                    HerramientaNombre = herramienta.Nombre,           
-                    HerramientaPrecio = herramienta.Precio,
-                    HerramientaDescripcion = $"Reparar {herramienta.Nombre}",
-                    HerramientaCantidad = 1
-                });
-
-                NotifyStateChanged();
+                    Reparacion.ReparacionesItems.Add(new ReparacionesItemDTO()
+                    {
+                        HerramientaNombre = herramienta.Nombre,           
+                        HerramientaPrecio = herramienta.Precio,
+                        HerramientaDescripcion = $"Reparar {herramienta.Nombre}",
+                        HerramientaCantidad = 1
+                    });
+                    NotifyStateChanged();
+                }
             }
 
             public void QuitarItemDeReparacion(ReparacionesItemDTO item)
@@ -61,14 +63,5 @@ namespace AppForSEII2526.Web
                 };
                 NotifyStateChanged();
             }
-
-         
-            
-          
-
-        
         }
-    
-
-
 }
