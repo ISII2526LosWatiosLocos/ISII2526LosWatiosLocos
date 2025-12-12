@@ -13,6 +13,9 @@
         <DataAnnotationsValidator />
         <ValidationSummary />
     </div>
+    <div class="row alert alert-danger" role="alert" hidden="@hideErrores">
+        <p id="ErrorsShown">Errores: @mensajeError</p>
+    </div>
     <div class="row g-3">
         <div class="col-md">
             <div class="form-floating mb-3">
@@ -103,7 +106,8 @@
 @code {
 
     private bool DialogIsOpen;
-
+    private string mensajeError = "";
+    private bool hideErrores { get { return mensajeError.Length == 0; } }
     private float precioTotal
     {
         get
@@ -129,7 +133,27 @@
         DialogIsOpen = false;
         if (isOk)
         {
-            // Procesa la info del usuario si es valid
+            if (alquiler.Items.Count > 0)
+            {
+                try
+                {
+                    var alquilado = await apiclient.CreateAlquilerAsync(alquiler);
+                    container.AlquilerProcesado();
+                    navegacion.NavigateTo($"/Alquiler/DetalleAlquiler/?RentalID={alquilado.GetHashCode}"); // no tengo id en el dto
+                }
+                catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
+                {
+
+                    if (apiexceptionvalidation.Result.Errors.Values != null)
+                    {
+                        mensajeError = "";
+                        foreach (var errors in apiexceptionvalidation.Result.Errors.Values)
+                            //https://learn.microsoft.com/en-us/dotnet/api/system.string.join?view=net-7.0
+                            mensajeError = string.Join("(*) ", mensajeError, string.Join(" (*) ", errors));
+                    }
+                }
+
+            }
         }
     }
 }
