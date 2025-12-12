@@ -1,0 +1,57 @@
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using AppForSEII2526.UIT.Shared;
+using Xunit.Abstractions;
+using System.Collections.Generic;
+
+namespace AppForSEII2526.UIT.CU_Oferta
+{
+    public class SelectHerramientasParaOfertar_PO : PageObject
+    {
+        private By inputfabricante = By.Id("fabricanteSelected");
+        private By buttonBuscar = By.Id("buscarHerramientas");
+        private By tableOferta = By.Id("TableOfOferta");
+
+        // Nuevo ID más claro
+        private By buttonContinuar = By.Id("btn_continuar_oferta");
+
+        public SelectHerramientasParaOfertar_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
+        {
+        }
+
+        public void SearchHerramientas(string nombreFabricante)
+        {
+            WaitForBeingClickable(inputfabricante);
+
+            if (string.IsNullOrEmpty(nombreFabricante)) nombreFabricante = "All";
+
+            new SelectElement(_driver.FindElement(inputfabricante)).SelectByText(nombreFabricante);
+            _driver.FindElement(buttonBuscar).Click();
+        }
+
+        public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
+        {
+            return CheckBodyTable(expectedHerramientas, tableOferta);
+        }
+
+        public void AddHerramientaToOfertaCart(string nombreHerramienta)
+        {
+            By btnAddLocator = By.Id($"btn_add_{nombreHerramienta}");
+
+            // Esperar y clicar
+            WaitForBeingClickable(btnAddLocator);
+            _driver.FindElement(btnAddLocator).Click();
+
+            By btnRemoveLocator = By.Id($"removeHerramienta_{nombreHerramienta}");
+
+            WaitForBeingVisible(btnRemoveLocator);
+        }
+
+        public void PressContinuar()
+        {
+            // Como hemos esperado al carrito arriba, este botón ya debería estar habilitado
+            WaitForBeingClickable(buttonContinuar);
+            _driver.FindElement(buttonContinuar).Click();
+        }
+    }
+}

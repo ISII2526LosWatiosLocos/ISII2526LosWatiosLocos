@@ -63,15 +63,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var her in herramientas) @* Cambiado 'oferta' a 'her' para claridad *@
+                                @foreach (var her in herramientas)
                                 {
-                                    <tr id="OfertaData_@her.Nombre">
+                                    @* CAMBIO 1: Al ID de la fila le ponemos el prefijo "row_" *@
+                                    <tr id="row_@her.Nombre">
                                         <td>@her.Nombre</td>
                                         <td>@her.Material</td>
                                         <td>@her.Fabricante</td>
                                         <td>@her.Precio</td>
                                         <td>
-                                            <button class="btn btn-outline-secondary" id="OfertaData_@her.Nombre" @onclick="@(() => AddHerramienta(her))">Add</button>
+                                            @* CAMBIO 2: Al ID del botón le ponemos el prefijo "btn_add_" *@
+                                            <button class="btn btn-outline-secondary"
+                                                    id="btn_add_@her.Nombre"
+                                                    @onclick="@(() => AddHerramienta(her))">
+                                                Add
+                                            </button>
                                         </td>
                                     </tr>
                                 }
@@ -100,7 +106,10 @@
                     </div>
                 }
                 <div class="row mt-3">
-                    <button type="button" class="btn btn-success" id="purchaseHerramienta" @onclick=@ofertarHerramientas disabled="@(oferta.Items.Count == 0)">
+                    <button type="button" class="btn btn-success"
+                            id="btn_continuar_oferta"
+                            @onclick=@ofertarHerramientas
+                            disabled="@(oferta.Items.Count == 0)">
                         Continuar a Crear Oferta
                     </button>
                 </div>
