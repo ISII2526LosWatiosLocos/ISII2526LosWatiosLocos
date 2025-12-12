@@ -1,9 +1,9 @@
-﻿using AppForSEII2526.API.DTOs;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AppForSEII2526.API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using AppForSEII2526.API.DTOs.ComprasDTOs;
 
 /*
 Sistema 1. Ferretería: Caso de uso 1. Comprar herramientas

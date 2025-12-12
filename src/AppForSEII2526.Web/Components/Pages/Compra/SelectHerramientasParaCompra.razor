@@ -6,28 +6,28 @@
 @inject CompraStateContainer compraState
 @inject NavigationManager navigation
 
-<h3>Select Herramientas Para Compra</h3>
+<h3>Selecciona tus herramientas</h3>
 <div class="container-fluid">
     <div class="row" hidden="@hideErrors">
-        <p>here i will show the errors</p>
+        <p>Se ha producido un error</p>
     </div>
     <div class="row">
         <div class="col-8">
             <div class="row">
                 <div class="col">
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Material</span>
+                        <span class="input-group-text" id="Material">Material</span>
                         <input type="text" id="inputMaterial" @bind=filtroMaterial class="form-control" placeholder="Material" aria-label="Material" aria-describedby="basic-addon1">
                     </div>
                 </div>
                 <div class="col">
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Precio</span>
+                        <span class="input-group-text" id="Precio">Precio</span>
                         <input type="number" id="inputPrecio" @bind=filtroPrecio class="form-control" placeholder="Precio" aria-label="Precio" aria-describedby="basic-addon1">
                     </div>
                 </div>
                 <div class="col">
-                    <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="searchHerramientas">Search herramientas</button>
+                    <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="BuscarHerramientas">Buscar herramientas</button>
                 </div>
             </div>
             <div class="row">
@@ -41,19 +41,20 @@
                         <table class="table table-condensed table-hover" id="TableOfCompras">
                             <thead>
                                 <tr>
-                                    <th>Material</th>
+                                    <th>Nombre</th>
                                     <th>Precio</th>
-                                    <th>Compra</th>
+                                    <th>Material</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var herramienta in herramientas)
                                 {
                                     <tr id="HerramientaData_@herramienta.Nombre">
-                                        <td>@herramienta.Material</td>
+                                        <td>@herramienta.Nombre</td>
                                         <td>@herramienta.Precio</td>
+                                        <td>@herramienta.Material</td>
                                         <td>
-                                            <button class="btn btn-outline-secondary" id="herramientaParaComprar_@herramienta.Nombre" @onclick="@(() => AñadirHerramienta(herramienta))">Add</button>
+                                            <button class="btn btn-outline-secondary" id="herramientaParaComprar_@herramienta.Nombre" @onclick="@(() => AñadirHerramienta(herramienta))">Añadir</button>
                                         </td>
                                     </tr>
                                 }
@@ -70,11 +71,17 @@
             @foreach (CompraItemsDTO item in compra.Items)
             {
                 <div class="row">
-                    <button type="button" class="btn btn-light" id="quitarHerramienta_@item.NombreHerramienta"> (@item.CantidadHerramienta)x @item.NombreHerramienta - @item.PrecioHerramienta€ </button>
+                    <button type="button"
+                            class="btn btn-light"
+                            id="quitarHerramienta_@item.NombreHerramienta"
+                            @onclick="@(() => QuitarItemDelCarroDeCompra(item))">
+                        ❌ @item.NombreHerramienta - @item.PrecioHerramienta€ (@item.CantidadHerramienta)
+                        <!-- El iconito de la X dejadlo porque antes ni veía la opción -->
+                    </button>
                 </div>
             }
             <div class="row">
-                <button type="button" class="btn btn-primary" id="purchaseHerramientaButton" @onclick=@ComprarHerramientas>Comprar herramientas</button>
+                <button type="button" class="btn btn-primary" id="ComprarHerramientasButton" @onclick=@ComprarHerramientas>Comprar herramientas</button>
             </div>
         </div>
     </div>

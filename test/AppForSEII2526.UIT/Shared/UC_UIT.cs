@@ -43,7 +43,8 @@ namespace AppForMovies.UIT.Shared {
                     break;
             }
             //Added to make _Driver wait when an element is not found.
-            //It will wait for a maximum of 50 seconds.
+            //It will wait for a maximum of 20 seconds.
+            _driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(20);
 
             //maximize the window browser
             _driver.Manage().Window.Maximize();

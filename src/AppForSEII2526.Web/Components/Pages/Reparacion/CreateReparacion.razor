@@ -1,0 +1,316 @@
+﻿@page "/Reparacion/CreateReparacion"
+
+@inject NavigationManager navigation
+@using AppForSEII2526.Web.Components.Shared
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<CreateReparacion> logger
+@inject ReparacionStateContainer ReparacionStateContainer
+
+
+
+<h3>CreateReparacion</h3>
+
+@* rental is the object that will be edited thanks to the form *@
+<EditForm Model="reparacion" OnValidSubmit="OpenDialog">
+    <div class="row">
+
+
+        <DataAnnotationsValidator />
+        <ValidationSummary class="row alert alert-danger" />
+
+    
+        </div>
+
+    <div class="row alert alert-danger" role="alert" hidden="@EsconderErrores ">
+        <p id="ErrorsShown">Errors: @MensajeError</p>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="reparacion.Nombre"
+                   class="form-control" id="Nombre" />
+                <label for="Nombre">Nombre </label>
+            </div>
+
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="reparacion.Apellidos" class="form-control" id="Apellidos" />
+                <label for="Apellidos"> </label>
+         
+            </div>
+        </div>
+
+
+
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="reparacion.Telefono"
+                           class="form-control"
+                           id="Telefono"
+                           placeholder="Opcional" />
+                <label for="Telefono">Teléfono (opcional)</label>
+            </div>
+        </div>
+
+
+            <div class="row g-3">
+                <div class="col-md">
+                    <div class="form-floating mb-3">
+                        <InputDate @bind-Value="reparacion.FechaEntrega" class="form-control" id="FechaEntrega" />
+                        <label for="FechaEntrega">Fecha de Entrega</label>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating">
+                    @* Un dropdown para seleccionar el método de pago *@
+                    @* MIRAR *@
+                    <InputSelect class="form-select" @bind-Value="@reparacion.MetodoPagoId" id="MetodoPago">
+                        <option value="">Seleccionar método</option>
+                         <option value="1">Tarjeta</option>
+                        <option value="2">PayPal</option>
+                        <option value="3">Efectivo</option>
+
+                    </InputSelect>
+                    <label for="MetodoPago">Método de Pago</label>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+        <div class="col-md">
+            <div class="form-floating">
+                @*this button will be used to ask the user if he want to proceed to repare the tools*@
+                <button class="btn btn-primary" type="submit" id="Submit">
+                    Repara tus herramientas
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
+
+
+
+<h4>Detalle de la Reparación</h4>
+<p><b>Fecha desde:</b> @reparacion.FechaEntrega.ToString("dd/MM/yyyy") <b>hasta:</b> @reparacion.FechaRecogida.AddDays(5).ToString("dd/MM/yyyy")</p>
+<p>
+    <b>Precio total:</b> @PrecioTotal.ToString("N2")€
+    <button class="btn btn-outline-primary" type="submit" @onclick="ModificarHerramientas" id="ModificarHerramientas">
+        Modificar herramientas
+    </button>
+</p>
+
+
+<div class="mh-100 table-responsive">
+    <table class="table table-condensed table-hover" id="TableOfReparacionItems">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+               
+                <th>Cantidad</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in reparacion.ReparacionesItems)
+            {
+                <tr id="HerramientaData_@item.HerramientaId">
+
+                    @*Código para nombre*@
+                    <td>@item.HerramientaNombre</td>
+
+
+
+                    @*Código para descripción*@
+
+                    <td>@item.HerramientaDescripcion</td>
+
+                    class="form-control form-control-sm"
+                    id="@($"descripcion_{item.HerramientaId}")" />
+
+
+                    @*Código para cantidad*@
+                    <td>
+                        <div class="input-group input-group-sm">
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    @onclick="@(() => DisminuirCantidad(item))">
+                                -
+                            </button>
+
+                            <InputNumber @bind-Value="item.HerramientaCantidad"
+                                         class="form-control text-center"
+                                         id="@($"cantidad_{item.HerramientaId}")"
+                                         min="1" />
+
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    @onclick="@(() => AumentarCantidad(item))">
+                                +
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Reparar Herramientas"
+            Message="¿quieres prodecer a seleccionar las herramientas para reparar?"
+            OnClose="@OnDialogClose"
+            Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
+@code {
+
+
+    private string MensajeError = "";
+    private bool EsconderErrores { get { return MensajeError.Length == 0; } }
+
+      private bool DialogIsOpen; 
+
+
+    private decimal PrecioTotal
+    {
+        get
+        {
+
+            @*MIRAR LO DE CANTIDAD PORQUE ES PRECIO*@
+            int days = (reparacion.FechaEntrega.DateTime - reparacion.FechaRecogida.DateTime).Days;
+            double price = reparacion.ReparacionesItems.Sum(ri => ri.HerramientaCantidad * days);
+            return Convert.ToDecimal(price);
+        }
+    }
+    private void ModificarHerramientas()
+    {
+        navigation.NavigateTo("/Reparaciones/seleccionherramientaparareparacion");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private CrearReparacionDTO reparacion => ReparacionStateContainer.Reparacion;
+
+
+    private void OpenDialog()
+    {
+
+
+        DialogIsOpen = true;
+    }
+
+    private async Task OnDialogClose(bool isOk)
+    {
+
+        DialogIsOpen = false;
+        if (isOk)
+        {
+            if (reparacion.ReparacionesItems.Count > 0)
+            {
+                try
+                {
+                  //  var reparacionCreada = await apiclient.CreateReparacionAsync(reparacion);
+                 //   ReparacionStateContainer.ReparacionProcesada(); 
+
+                  //  navigation.NavigateTo($"/Reparaciones/DetailReparacion/?ReparacionID={reparacionCreada.Id}");
+                }
+                catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
+                {
+                    if (apiexceptionvalidation.Result.Errors.Values != null)
+                    {
+                        MensajeError = "";
+                        foreach (var errors in apiexceptionvalidation.Result.Errors.Values)
+                            //https://learn.microsoft.com/en-us/dotnet/api/system.string.join?view=net-7.0
+                           MensajeError = string.Join("(*) ", MensajeError, string.Join(" (*) ", errors));
+                    }
+                }
+
+
+                catch (ApiException apiexception)
+                {
+                    //we need to inform user that there was some other error while processing the request
+                    MensajeError = "Error while processing your request, please try again later!";
+
+                }
+            }
+
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated)
+                {
+                    reparacion.Nombre = user.Identity.Name;
+                }
+            }
+
+         
+            reparacion.Nombre = reparacion.Nombre == null ? "" : reparacion.Nombre;
+            reparacion.Apellidos = reparacion.Apellidos == null ? "" : reparacion.Apellidos;
+          @*Mirar lo de direccion de envio *@
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+
+
+    private void AumentarCantidad(ReparacionesItemDTO item)
+    {
+        item.HerramientaCantidad++;
+        // Si necesitas actualizar el precio total
+        StateHasChanged();
+    }
+
+    private void DisminuirCantidad(ReparacionesItemDTO item)
+    {
+        if (item.HerramientaCantidad > 1)
+        {
+            item.HerramientaCantidad--;
+            StateHasChanged();
+        }
+    }
+
+}

@@ -1,4 +1,4 @@
-﻿@page "/Compra/DetailParaCompra"
+﻿@page "/Compra/DetailParaCompra/{IdCompra:int}"
 
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient apiclient
@@ -9,7 +9,7 @@
 <h3>DetalleParaCompra</h3>
 <div class="container-fluid">
     <div class="row" hidden="@hideErrors">
-        <p>here i will show the errors</p>
+        <p>Se ha producido un error</p>
     </div>
     <div class="row">
         <div class="col-8">
@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="col">
-                    <button type="button" class="btn btn-primary" @onclick=@BuscarCompra id="searchCompra">Buscar compra</button>
+                    <button type="button" class="btn btn-primary" @onclick="BuscarCompraAsync" id="BuscarCompra">Buscar compra</button>
                 </div>
             </div>
             <div class="row">
@@ -38,8 +38,8 @@
                                     <th>Nombre</th>
                                     <th>Apellidos</th>
                                     <th>Dirección</th>
-                                    <th>PrecioTotal</th>
-                                    <th>FechaCompra</th>
+                                    <th>Precio total</th>
+                                    <th>Fecha</th>
                                     <th>Items</th>
                                 </tr>
                             </thead>
@@ -101,9 +101,9 @@
     private ComprasParaDetalleDTO compra;
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
-    private int IdCompra { get; set; }
+    [Parameter] public int IdCompra { get; set; }
 
-    public async void BuscarCompra()
+    public async Task BuscarCompraAsync()
     {
         try
         {
@@ -118,12 +118,13 @@
 
     }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-
-        BuscarCompra();
-        return base.OnInitializedAsync();
-
+        // BuscarCompra(); // Mejor no llamo a BuscarCompra nada más entrar pq buscaría ID 0 y no existe
+        if (IdCompra > 0)
+        {
+            await BuscarCompraAsync();
+        }
     }
 
 }
