@@ -51,7 +51,7 @@
             <div class="col-md">
                 <div class="form-floating">
                     @*este boton se usara para decir al usuario que si quiere alquilar las herramientas*@
-                    <button class="btn btn-primary" type="submit" id="Submit">
+                    <button class="btn btn-primary" type="submit" id="Submit" disabled="@botonAlquilerApagado">
                         Alquila tus herramientas
                     </button>
                 </div>
@@ -104,7 +104,13 @@
 }
 
 @code {
-
+    private bool botonAlquilerApagado
+    {
+        get
+        {
+            return alquiler.Items == null || alquiler.Items.Count == 0;
+        }
+    }
     private bool DialogIsOpen;
     private string mensajeError = "";
     private bool hideErrores { get { return mensajeError.Length == 0; } }
