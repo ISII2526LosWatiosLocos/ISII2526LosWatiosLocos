@@ -10,17 +10,37 @@
 @* rental is the object that will be edited thanks to the form *@
 <EditForm Model="alquiler" OnValidSubmit="OpenDialog">
     <div class="row">
-
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+    </div>
+    <div class="row g-3">
         <div class="col-md">
-            <div class="form-floating">
-                @*este boton se usara para decir al usuario que si quiere alquilar las herramientas*@
-                <button class="btn btn-primary" type="submit" id="Submit">
-                    Alquila tus herramientas
-                </button>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="alquiler.Nombre" class="form-control" id="Name" />
+                <label for="Name">Nombre </label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="alquiler.Apellidos" class="form-control" id="Surname" />
+                <label for="Name">Apellidos </label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="alquiler.Direccion" class="form-control" id="DeliveryAddress" />
+                <label for="DeliveryAddress">Direccción de envío </label>
             </div>
         </div>
     </div>
-    
+    <div class="col-md">
+        <div class="form-floating">
+            @*este boton se usara para decir al usuario que si quiere alquilar las herramientas*@
+            <button class="btn btn-primary" type="submit" id="Submit">
+                Alquila tus herramientas
+            </button>
+        </div>
+    </div>
     <div class="mh-100 table-responsive">
         <table class="table table-condensed table-hover" id="TableOfRentalItems">
             <thead>
@@ -60,6 +80,7 @@
 @code {
 
     private bool DialogIsOpen;
+    private object? errors;
     private CrearAlquilerDTO alquiler => container.Alquilar;
     private void OpenDialog()
         {
