@@ -221,6 +221,8 @@ namespace AppForSEII2526.API.Controllers
                 }).ToList()
             );
 
+            reparacionDetalle.Id = nuevaReparacion.Id;
+
             // Devolver el DTO simulado
             return CreatedAtAction(
      nameof(GetDetalleHerramientasParaReparación), // Nombre del método GET
