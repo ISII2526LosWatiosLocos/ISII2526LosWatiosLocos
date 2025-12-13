@@ -45,6 +45,11 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             By btnRemoveLocator = By.Id($"quitarHerramienta_{nombreHerramienta}");
             WaitForBeingVisible(btnRemoveLocator);
         }
-
+        public void Continuar()
+        {
+            // Como hemos esperado al carrito arriba, este botón ya debería estar habilitado
+            WaitForBeingClickable(botonContinuar);
+            _driver.FindElement(botonContinuar).Click();
+        }
     }
 }
