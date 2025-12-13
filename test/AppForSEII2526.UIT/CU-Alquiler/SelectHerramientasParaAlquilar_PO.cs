@@ -8,7 +8,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
 {
     public class SelectHerramientasParaAlquilar_PO : PageObject
     {
-        By inputNombre = By.Id("inputNombreHeramienta");
+        By inputNombre = By.Id("inputNombreHerramienta");
         By inputMaterial = By.Id("inputMaterialHeramienta");
         By tablaHerramientas = By.Id("TablaDeHerramientas");
         private By botonContinuar = By.Id("btn_continuar_alquiler");
@@ -17,18 +17,15 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         }
         public void BuscarHerramientas(string nombre, string material)
         {
-            WaitForBeingClickable(inputNombre);
-           if (string.IsNullOrEmpty(nombre)) nombre = ""; // String vacío muestra todas, simplemente me aseguro de que no sea null
-            var txtNombre = _driver.FindElement(By.Id("inputNombreHeramienta"));
-            txtNombre.Clear();
-            if (!string.IsNullOrEmpty(nombre))
-                txtNombre.SendKeys(nombre);
-            WaitForBeingClickable(inputMaterial);
-            if (string.IsNullOrEmpty(material)) material = ""; // String vacío muestra todas, simplemente me aseguro de que no sea null
-            var txtMaterial = _driver.FindElement(By.Id("inputMaterialHeramienta"));
-            txtMaterial.Clear();
-            if (!string.IsNullOrEmpty(material))
-                txtMaterial.SendKeys(material);
+            WaitForBeingVisible(inputNombre);
+            var nom = _driver.FindElement(inputNombre);
+            nom.Clear();
+            nom.SendKeys(nombre);
+
+            WaitForBeingVisible(inputMaterial);
+            var mat = _driver.FindElement(inputMaterial);
+            mat.Clear();
+            mat.SendKeys(material);
         }
 
         public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
