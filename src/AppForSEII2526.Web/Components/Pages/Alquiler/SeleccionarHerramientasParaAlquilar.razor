@@ -75,7 +75,7 @@
             @foreach (AlquilarItemsDTO item in alquiler.Items)
             {
                 <div class="row">
-                    <button type="button" class="btn btn-light" id="removeMovie_@item.NombreItem" @onclick="@(() => BorrarHerramienta(item))">@item.NombreItem - @item.PrecioItem</button>
+                    <button type="button" class="btn btn-light" id="quitarHerramienta_@item.NombreItem" @onclick="@(() => BorrarHerramienta(item))">@item.NombreItem - @item.PrecioItem</button>
                 </div>
             }
             <div class="row">
