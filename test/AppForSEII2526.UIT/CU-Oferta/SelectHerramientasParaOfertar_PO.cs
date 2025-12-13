@@ -13,7 +13,6 @@ namespace AppForSEII2526.UIT.CU_Oferta
         private By tableOferta = By.Id("TableOfOferta");
         private By _borrarHerramientaButton = By.Id("removeHerramienta_Martillo");
 
-        // Nuevo ID más claro
         private By buttonContinuar = By.Id("btn_continuar_oferta");
 
         public SelectHerramientasParaOfertar_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
@@ -59,6 +58,22 @@ namespace AppForSEII2526.UIT.CU_Oferta
             // Como hemos esperado al carrito arriba, este botón ya debería estar habilitado
             WaitForBeingClickable(buttonContinuar);
             _driver.FindElement(buttonContinuar).Click();
+        }
+
+        public bool CheckEmptyCart()
+        {
+            var botonesContinuar = _driver.FindElements(By.Id("btn_continuar_oferta"));
+
+
+            bool carritoVisible = botonesContinuar.Count > 0 && botonesContinuar[0].Displayed;
+
+            if (carritoVisible)
+            {
+                return false;
+
+                throw new Exception("Error: El carrito debería estar vacío, pero el botón 'Continuar' es visible.");
+            }
+            return true;
         }
     }
 }

@@ -69,7 +69,6 @@ namespace AppForSEII2526.UIT.CU_Oferta
 
         public void ConfirmarModal()
         {
-            // Usa el método ya existente en tu PageObject base
             PressOkModalDialog();
         }
 
