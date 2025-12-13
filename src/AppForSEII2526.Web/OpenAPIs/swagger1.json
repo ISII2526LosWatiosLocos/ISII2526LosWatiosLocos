@@ -1336,6 +1336,11 @@
       "ReparacionesDTO": {
         "type": "object",
         "properties": {
+
+          "Id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "fechaEntrega": {
             "type": "string",
             "format": "date"

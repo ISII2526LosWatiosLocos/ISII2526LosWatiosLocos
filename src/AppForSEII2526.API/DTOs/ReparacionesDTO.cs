@@ -4,7 +4,9 @@ namespace AppForSEII2526.API.DTOs
 {
     public class ReparacionesDTO
     {
+        [JsonPropertyName("Id")]
 
+        public int Id { get; set; }
 
         public DateOnly FechaEntrega { get; set; }
         public DateOnly FechaRecogida { get; set; }
@@ -28,6 +30,17 @@ namespace AppForSEII2526.API.DTOs
             this.PrecioTotal = PrecioTotal;
             this.ReparacionesItems = ReparacionesItems;
 
+        }
+
+        public ReparacionesDTO(int id, DateOnly fechaEntrega, DateOnly fechaRecogida, float precioTotal, string nombre, string apellidos, IList<ReparacionesItemDTO> reparacionesItems)
+        {
+            Id = id;
+            FechaEntrega = fechaEntrega;
+            FechaRecogida = fechaRecogida;
+            PrecioTotal = precioTotal;
+            this.nombre = nombre;
+            this.apellidos = apellidos;
+            ReparacionesItems = reparacionesItems;
         }
 
         public override bool Equals(object? obj)

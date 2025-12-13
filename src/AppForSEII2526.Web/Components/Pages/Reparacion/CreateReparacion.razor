@@ -3,6 +3,7 @@
 @inject NavigationManager navigation
 @using AppForSEII2526.Web.Components.Shared
 @using AppForSEII2526.Web.API
+
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<CreateReparacion> logger
 @inject ReparacionStateContainer ReparacionStateContainer
@@ -38,7 +39,7 @@
         <div class="col-md">
             <div class="form-floating mb-3">
                 <InputText @bind-Value="reparacion.Apellidos" class="form-control" id="Apellidos" />
-                <label for="Apellidos"> </label>
+                <label for="Apellidos">Apellidos </label>
          
             </div>
         </div>
@@ -110,7 +111,7 @@
 <p><b>Fecha desde:</b> @reparacion.FechaEntrega.ToString("dd/MM/yyyy") <b>hasta:</b> @reparacion.FechaRecogida.AddDays(5).ToString("dd/MM/yyyy")</p>
 <p>
     <b>Precio total:</b> @PrecioTotal.ToString("N2")€
-    <button class="btn btn-outline-primary" type="submit" @onclick="ModificarHerramientas" id="ModificarHerramientas">
+    <button class="btn btn-outline-primary" type="button" @onclick="ModificarHerramientas" id="ModificarHerramientas">
         Modificar herramientas
     </button>
 </p>
@@ -136,13 +137,7 @@
 
 
 
-                    @*Código para descripción*@
-
-                    <td>@item.HerramientaDescripcion</td>
-
-                    class="form-control form-control-sm"
-                    id="@($"descripcion_{item.HerramientaId}")" />
-
+                    
 
                     @*Código para cantidad*@
                     <td>
@@ -165,6 +160,18 @@
                             </button>
                         </div>
                     </td>
+
+
+
+                    @*Código para descripción*@
+
+                    <td>
+                        <InputText @bind-Value="item.HerramientaDescripcion"
+                                   class="form-control form-control-sm"
+                                   id="@($"descripcion_{item.HerramientaId}")"
+                                   placeholder="Ej: Madera, Acero, etc." />
+                    </td>
+
                 </tr>
             }
         </tbody>
@@ -195,10 +202,7 @@
         get
         {
 
-            @*MIRAR LO DE CANTIDAD PORQUE ES PRECIO*@
-            int days = (reparacion.FechaEntrega.DateTime - reparacion.FechaRecogida.DateTime).Days;
-            double price = reparacion.ReparacionesItems.Sum(ri => ri.HerramientaCantidad * days);
-            return Convert.ToDecimal(price);
+            return Convert.ToDecimal(reparacion.ReparacionesItems.Sum(ri => ri.HerramientaCantidad));
         }
     }
     private void ModificarHerramientas()
@@ -239,10 +243,10 @@
             {
                 try
                 {
-                  //  var reparacionCreada = await apiclient.CreateReparacionAsync(reparacion);
-                 //   ReparacionStateContainer.ReparacionProcesada(); 
+                  var reparacionCreada = await apiclient.CreateReparacionAsync(reparacion);
+                  ReparacionStateContainer.ReparacionProcesada(); 
 
-                  //  navigation.NavigateTo($"/Reparaciones/DetailReparacion/?ReparacionID={reparacionCreada.Id}");
+                   navigation.NavigateTo($"/Reparaciones/DetailReparacion/{reparacionCreada.Id}");
                 }
                 catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
                 {
@@ -314,3 +318,5 @@
     }
 
 }
+
+
