@@ -25,10 +25,22 @@
             Items = items;
         }
 
+        public AlquileresParaDetalleDTO(string nombre, string apellidos, string direccion, DateOnly fechaAlquiler, float precioTotal, DateOnly fechaInicio, DateOnly fechaFinal, List<AlquilarItemsDTO> items)
+        {
+            Nombre = nombre;
+            Apellidos = apellidos;
+            Direccion = direccion;
+            FechaAlquiler = fechaAlquiler;
+            PrecioTotal = precioTotal;
+            FechaInicio = fechaInicio;
+            FechaFinal = fechaFinal;
+            Items = items;
+        }
+
+
         public override bool Equals(object? obj)
         {
             return obj is AlquileresParaDetalleDTO dTO &&
-                   Id == dTO.Id &&
                    Nombre == dTO.Nombre &&
                    Apellidos == dTO.Apellidos &&
                    Direccion == dTO.Direccion &&
@@ -42,7 +54,6 @@
         public override int GetHashCode()
         {
             HashCode hash = new HashCode();
-            hash.Add(Id);
             hash.Add(Nombre);
             hash.Add(Apellidos);
             hash.Add(Direccion);

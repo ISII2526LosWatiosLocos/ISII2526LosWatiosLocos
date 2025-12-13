@@ -39,9 +39,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
             // Datos esperados
             var herramientasDTO = new List<HerramientasParaAlquilarDTO>()
             {
-                new HerramientasParaAlquilarDTO ( "Martillo", "Acero", "Herramientas SA", 15.5f),
-                new HerramientasParaAlquilarDTO ( "Destornillador", "Acero", "Utensilios y Más", 7.0f),
-                new HerramientasParaAlquilarDTO ( "Taladro", "Plástico", "Todo para Construcción", 5.0f)
+                new HerramientasParaAlquilarDTO ("Martillo", "Acero", "Herramientas SA", 15.5f, 1), // Id = 1
+                new HerramientasParaAlquilarDTO ("Destornillador", "Acero", "Utensilios y Más", 7.0f, 2),
+                new HerramientasParaAlquilarDTO ("Taladro", "Plástico", "Todo para Construcción", 5.0f, 3)
             };
 
             // Casos de prueba
