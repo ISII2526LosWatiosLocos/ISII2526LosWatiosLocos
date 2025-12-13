@@ -11,7 +11,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         By inputNombre = By.Id("inputNombreHeramienta");
         By inputMaterial = By.Id("inputMaterialHeramienta");
         By tablaHerramientas = By.Id("TablaDeHerramientas");
-
+        By inputFechaInicial = By.Id("fechaInicioAlquiler");
         private By botonContinuar = By.Id("btn_continuar_alquiler");
         public SelectHerramientasParaAlquilar_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
@@ -29,7 +29,14 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             var txtMaterial = _driver.FindElement(By.Id("inputMaterialHeramienta"));
             txtMaterial.Clear();
             if (!string.IsNullOrEmpty(material))
-                txtMaterial.SendKeys(material);)
+                txtMaterial.SendKeys(material);
         }
+
+        public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
+        {
+            return CheckBodyTable(expectedHerramientas, tablaHerramientas);
+        }
+
+
     }
 }
