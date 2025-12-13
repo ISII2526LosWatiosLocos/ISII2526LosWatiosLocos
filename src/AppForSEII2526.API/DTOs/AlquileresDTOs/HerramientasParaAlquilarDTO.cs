@@ -1,5 +1,4 @@
-﻿
-namespace AppForSEII2526.API.DTOs.AlquileresDTOs
+﻿namespace AppForSEII2526.API.DTOs.AlquileresDTOs
 {
     public class HerramientasParaAlquilarDTO
     {
@@ -22,7 +21,7 @@ namespace AppForSEII2526.API.DTOs.AlquileresDTOs
             Material = material;
             Fabricante = fabricante;
             Precio = precio;
-            Id = Id;
+            Id = id;
         }
 
         public override bool Equals(object? obj)
