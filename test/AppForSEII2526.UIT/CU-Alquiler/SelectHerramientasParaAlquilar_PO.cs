@@ -11,7 +11,6 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         By inputNombre = By.Id("inputNombreHeramienta");
         By inputMaterial = By.Id("inputMaterialHeramienta");
         By tablaHerramientas = By.Id("TablaDeHerramientas");
-        By inputFechaInicial = By.Id("fechaInicioAlquiler");
         private By botonContinuar = By.Id("btn_continuar_alquiler");
         public SelectHerramientasParaAlquilar_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
