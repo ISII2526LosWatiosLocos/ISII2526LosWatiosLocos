@@ -21,7 +21,7 @@
         public DateOnly FechaFinal { get; set; }
         public int MetodoPagoId { get; set; }
         public string Direccion {  get; set; }
-        public string telefono { get; set; }
+        public string? telefono { get; set; }
         public string? correo { get; set; }
         public List<AlquilarItemsDTO> Items { get; set; }
 
