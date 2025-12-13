@@ -36,7 +36,15 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         {
             return CheckBodyTable(expectedHerramientas, tablaHerramientas);
         }
-
+        public void AñadirHerramientasAlCarroDeAlquiler(string nombreHerramienta)
+        {
+            By btnAddLocator = By.Id($"herramientaParaAlquilar_{nombreHerramienta}");
+            // Esperar y clicar
+            WaitForBeingClickable(btnAddLocator);
+            _driver.FindElement(btnAddLocator).Click();
+            By btnRemoveLocator = By.Id($"quitarHerramienta_{nombreHerramienta}");
+            WaitForBeingVisible(btnRemoveLocator);
+        }
 
     }
 }
