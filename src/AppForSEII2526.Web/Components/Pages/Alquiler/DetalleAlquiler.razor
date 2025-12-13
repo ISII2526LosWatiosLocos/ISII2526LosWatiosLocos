@@ -98,6 +98,7 @@
 @code {
     // 2. CAPTURAMOS EL ID QUE VIENE POR LA URL
     [Parameter]
+    [SupplyParameterFromQuery]
     public int? IdRecibido { get; set; }
 
     private AlquileresParaDetalleDTO? alquiler;

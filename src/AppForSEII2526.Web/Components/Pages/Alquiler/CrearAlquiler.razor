@@ -210,7 +210,7 @@
                 {
                     var alquilado = await apiclient.CreateAlquilerAsync(alquiler);
                     container.AlquilerProcesado();
-                    navegacion.NavigateTo($"/Alquiler/DetalleAlquiler/?RentalID={alquilado}"); // no tengo id en el dto
+                    navegacion.NavigateTo($"/Alquiler/DetalleAlquiler/?IdRecibido={alquilado.Id}");
                 }
                 catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
                 {
