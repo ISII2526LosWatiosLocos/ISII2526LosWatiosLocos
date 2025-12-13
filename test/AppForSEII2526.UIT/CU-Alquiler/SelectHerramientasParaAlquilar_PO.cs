@@ -18,13 +18,18 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         }
         public void BuscarHerramientas(string nombre, string material)
         {
-            //wait for the webelement to be clickable
             WaitForBeingClickable(inputNombre);
-            /**
-            _driver.FindElement(inputTitle).SendKeys(title);
-            _driver.FindElement(buttonSearchMovies).Click(); **/
-
-
+           if (string.IsNullOrEmpty(nombre)) nombre = ""; // String vacío muestra todas, simplemente me aseguro de que no sea null
+            var txtNombre = _driver.FindElement(By.Id("inputNombreHeramienta"));
+            txtNombre.Clear();
+            if (!string.IsNullOrEmpty(nombre))
+                txtNombre.SendKeys(nombre);
+            WaitForBeingClickable(inputMaterial);
+            if (string.IsNullOrEmpty(material)) material = ""; // String vacío muestra todas, simplemente me aseguro de que no sea null
+            var txtMaterial = _driver.FindElement(By.Id("inputMaterialHeramienta"));
+            txtMaterial.Clear();
+            if (!string.IsNullOrEmpty(material))
+                txtMaterial.SendKeys(material);)
         }
     }
 }
