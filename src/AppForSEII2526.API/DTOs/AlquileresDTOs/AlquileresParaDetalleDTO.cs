@@ -2,6 +2,7 @@
 {
     public class AlquileresParaDetalleDTO
     {
+        public int Id { get; set; }
         public string Nombre {  get; set; }
         public string Apellidos { get; set; }
         public string Direccion {  get; set; }
@@ -11,8 +12,9 @@
         public DateOnly FechaFinal {  get; set; }
         public List<AlquilarItemsDTO> Items { get; set; }
 
-        public AlquileresParaDetalleDTO(string nombre, string apellidos, string direccion, DateOnly fechaAlquiler, float precioTotal, DateOnly fechaInicio, DateOnly fechaFinal, List<AlquilarItemsDTO> items)
+        public AlquileresParaDetalleDTO(string nombre, string apellidos, string direccion, DateOnly fechaAlquiler, float precioTotal, DateOnly fechaInicio, DateOnly fechaFinal, List<AlquilarItemsDTO> items, int id)
         {
+            Id = id;
             Nombre = nombre;
             Apellidos = apellidos;
             Direccion = direccion;
@@ -26,19 +28,30 @@
         public override bool Equals(object? obj)
         {
             return obj is AlquileresParaDetalleDTO dTO &&
-                    Nombre == dTO.Nombre &&
-                    Apellidos == dTO.Apellidos &&
-                    Direccion == dTO.Direccion &&
-                    FechaAlquiler.Equals(dTO.FechaAlquiler) &&
-                    PrecioTotal == dTO.PrecioTotal &&
-                    FechaInicio.Equals(dTO.FechaInicio) &&
-                    FechaFinal.Equals(dTO.FechaFinal) &&
-                    Items.SequenceEqual(dTO.Items);
+                   Id == dTO.Id &&
+                   Nombre == dTO.Nombre &&
+                   Apellidos == dTO.Apellidos &&
+                   Direccion == dTO.Direccion &&
+                   FechaAlquiler.Equals(dTO.FechaAlquiler) &&
+                   PrecioTotal == dTO.PrecioTotal &&
+                   FechaInicio.Equals(dTO.FechaInicio) &&
+                   FechaFinal.Equals(dTO.FechaFinal) &&
+                   Items.SequenceEqual(dTO.Items);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Nombre, Apellidos, Direccion, FechaAlquiler, PrecioTotal, FechaInicio, FechaFinal, Items);
+            HashCode hash = new HashCode();
+            hash.Add(Id);
+            hash.Add(Nombre);
+            hash.Add(Apellidos);
+            hash.Add(Direccion);
+            hash.Add(FechaAlquiler);
+            hash.Add(PrecioTotal);
+            hash.Add(FechaInicio);
+            hash.Add(FechaFinal);
+            hash.Add(Items);
+            return hash.ToHashCode();
         }
     }
 }

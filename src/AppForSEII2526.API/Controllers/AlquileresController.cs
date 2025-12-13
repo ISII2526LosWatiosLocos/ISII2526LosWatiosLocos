@@ -62,7 +62,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
                     oi.Cantidad
-                )).ToList()
+                )).ToList(),
+                alquiler.Id
             );
 
             return Ok(alquilerParaDetalle);
@@ -81,7 +82,6 @@ namespace AppForSEII2526.API.Controllers
                 _logger.LogError("Error: Faltan DbSets (Alquileres, Herramientas o MetodosPagos) en el DbContext.");
                 return StatusCode(500, "Error interno del servidor al configurar la base de datos.");
             }
-
 
             if (crearAlquilerDTO.Direccion == null || !crearAlquilerDTO.Direccion.StartsWith("Calle"))
             {
@@ -205,7 +205,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.Herramienta.Material,
                     oi.Herramienta.Precio,
                     oi.Cantidad
-                )).ToList()
+                )).ToList(),
+                nuevoAlquiler.Id
             );
 
             // Devolvemos el DTO de detalle

@@ -862,6 +862,10 @@
       "AlquileresParaDetalleDTO": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "nombre": {
             "type": "string",
             "nullable": true
