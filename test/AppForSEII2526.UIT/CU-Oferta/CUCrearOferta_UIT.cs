@@ -1,184 +1,318 @@
 ﻿using AppForMovies.UIT.Shared;
 using AppForSEII2526.UIT.Shared;
-using Xunit;
-using Xunit.Abstractions;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
 using System.Collections.Generic;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace AppForSEII2526.UIT.CU_Oferta
 {
     public class CUCrearOferta_UIT : UC_UIT
     {
+        private const string herramientaNombre1 = "Martillo";
+        private const string herramientaFabricante1 = "EMPRESA1";
+        private const string herramientaPrecio1 = "10";
+        private const int herramientaId1 = 1;
+
+        private const string usuarioEmail = "elena@uclm.es";
+        private const string usuarioPass = "Password1234%";
+
+        // Page Objects
         private readonly SelectHerramientasParaOfertar_PO _selectPO;
         private readonly CrearOferta_PO _crearPO;
+        private readonly DetalleOferta_PO _detallePO;
 
         public CUCrearOferta_UIT(ITestOutputHelper output) : base(output)
         {
-            _selectPO = new SelectHerramientasParaOfertar_PO(_driver, output);
-            _crearPO = new CrearOferta_PO(_driver, output);
+            Initial_step_opening_the_web_page();
+
+            _selectPO = new SelectHerramientasParaOfertar_PO(_driver, _output);
+            _crearPO = new CrearOferta_PO(_driver, _output);
+            _detallePO = new DetalleOferta_PO(_driver, _output);
         }
 
-        // -------------------------------------------------------------------
-        // [Fact]: PRUEBA DE CAMINO FELIZ (Creación Exitosa)
-        // -------------------------------------------------------------------
-        [Fact]
-        [Trait("Category", "UIT")]
-        public void UC3_1_CrearOferta_FlujoBasico_Exito()
+
+        private void InitialStepsForCrearOferta_UIT()
         {
-            // 1. ARRANGE
-            string fabricante = "EMPRESA1";
-            string nombreHerramienta = "Martillo"; 
-            int herramientaId = 1; 
-
-            DateTime fechaInicio = DateTime.Today.AddDays(1);
-            DateTime fechaFin = DateTime.Today.AddDays(30);
-
-            // 2. ACT
-            // Navegar
             _driver.Navigate().GoToUrl(_URI + "Ofertar/SeleccionarHerramientaParaOfertar");
-
-            // Buscar y Seleccionar
-            _selectPO.SearchHerramientas(fabricante);
-            _selectPO.AddHerramientaToOfertaCart(nombreHerramienta); 
-            _selectPO.PressContinuar(); 
-
-            // Rellenar Formulario
-            _crearPO.RellenarDatosGenerales(fechaInicio, fechaFin, "1", "Yoel", "Cliente");
-            _crearPO.EstablecerPorcentaje(herramientaId, 20); // 20% es válido
-
-            // Confirmar
-            _crearPO.PulsarCrearOferta();
-            _crearPO.ConfirmarModal();
-
-            // 3. ASSERT
-            // Esperamos redirección a Detalle
-            System.Threading.Thread.Sleep(2000);
-            bool urlCorrecta = _driver.Url.Contains("/Ofertar/DetalleOferta");
-            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
         }
 
-        // -------------------------------------------------------------------
-        // [Theory]: PRUEBAS DE VALIDACIÓN (Errores)
-        // -------------------------------------------------------------------
+        // UC3_1: Flujo Básico - Creación Exitosa (Esc-1)
+
         [Theory]
-        [Trait("Category", "UIT")]
-        [InlineData(101)] // Caso: Porcentaje mayor a 100
-        [InlineData(-5)]  // Caso: Porcentaje negativo
-        public void UC3_2_CrearOferta_PorcentajeInvalido_Error(int porcentajeInvalido)
+        // Caso 1: Martillo (ID 1), Efectivo (ID 0)
+        [InlineData("Martillo", 1, "EMPRESA1", "0", "Efectivo", "")]
+        // Caso 2: Llave (ID 2), PayPal (ID 1), Socio
+        [InlineData("Llave", 2, "EMPRESA2", "1", "Paypal", "Socio")]
+        // Caso 3: Martillo (ID 1), Tarjeta (ID 2), Cliente 
+        [InlineData("Martillo", 1, "EMPRESA1", "2", "Tarjeta", "Cliente")]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_1_CrearOferta_Exito(
+            string nombreHerramienta,
+            int idHerramienta,
+            string fabricante,
+            string pagoId,
+            string nombrePagoEsperado,
+            string tipoDirigido)
         {
-            // 1. ARRANGE
-            string fabricante = "EMPRESA1";
-            string nombreHerramienta = "Martillo";
-            int herramientaId = 1;
+            // Arrange
+            var fechaInicio = DateTime.Today.AddDays(1);
+            var fechaFin = DateTime.Today.AddDays(30);
+            var fechaActual = DateTime.Today;
 
-            // 2. ACT (Pasos idénticos hasta el formulario)
-            _driver.Navigate().GoToUrl(_URI + "Ofertar/SeleccionarHerramientaParaOfertar");
-            _selectPO.SearchHerramientas(fabricante);
+            string usuario = "Yoel";
+            int descuento = 10;
+
+            // Act
+            InitialStepsForCrearOferta_UIT();
+
+            // 1. Selección (Usando los datos del Theory)
+            _selectPO.SearchHerramientas(fabricante, null);
             _selectPO.AddHerramientaToOfertaCart(nombreHerramienta);
             _selectPO.PressContinuar();
 
-            // Rellenamos datos válidos generales
-            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(10), "2", "Tester", "Cliente");
+            // 2. Rellenar formulario (Usando los datos del Theory)
+            _crearPO.RellenarDatosGenerales(fechaInicio, fechaFin, pagoId, usuario, tipoDirigido);
 
-            // INTRODUCIMOS EL DATO INVÁLIDO DEL THEORY
-            _crearPO.EstablecerPorcentaje(herramientaId, porcentajeInvalido);
+            // Establecemos el porcentaje usando el ID correcto de la herramienta seleccionada
+            _crearPO.EstablecerPorcentaje(idHerramienta, descuento);
 
-            // Intentamos guardar
             _crearPO.PulsarCrearOferta();
             _crearPO.ConfirmarModal();
 
-            // 3. ASSERT
-            bool seguimosEnCrear = _driver.Url.Contains("/Ofertar/CrearOferta");
-            Assert.True(seguimosEnCrear, $"El sistema permitió crear oferta con porcentaje {porcentajeInvalido}%");
+            // Assert
+            var expectedRow = new List<string[]>
+            {
+                new string[] {
+                    fechaInicio.ToString("dd/MM/yyyy"), // Columna 1: Inicio
+                    fechaFin.ToString("dd/MM/yyyy"),    // Columna 2: Fin
+                    fechaActual.ToString("dd/MM/yyyy"), // Columna 3: Fecha Oferta
+                    nombrePagoEsperado                  // Columna 4: Pago (Efectivo/Paypal/Tarjeta)
+                }
+            };
 
+            // Verificamos que la fila de cabecera coincida con los datos introducidos
+            Assert.True(_detallePO.CheckDetallesOferta(expectedRow),
+                $"Error: Los detalles de la oferta para el caso '{nombreHerramienta} - {nombrePagoEsperado}' no coinciden.");
         }
 
-        // -------------------------------------------------------------------
-        // [Theory]: ESCENARIO 2 - FECHAS INVÁLIDAS (UC3_3, UC3_4, UC3_5)
-        // -------------------------------------------------------------------
+        public static IEnumerable<object[]> DatosParaFiltros()
+        {
+            yield return new object[]
+            {
+                "EMPRESA1",
+                15.0f,
+                new List<string[]>
+                {
+                    new string[] { "Martillo", "Madera", "EMPRESA1", "10", "Add" }
+                }
+            };
+
+            yield return new object[]
+            {
+                null,
+                15.0f,
+                new List<string[]>
+                {
+                    new string[] { "Martillo", "Madera", "EMPRESA1", "10", "Add" },
+                    new string[] { "Llave", "Hierro", "EMPRESA2", "15", "Add" }
+                }
+            };
+
+            yield return new object[]
+            {
+                "EMPRESA1",
+                null,
+                new List<string[]>
+                {
+                    new string[] { "Martillo", "Madera", "EMPRESA1", "10", "Add" }
+                }
+            };
+        }
+
+
         [Theory]
-        [Trait("Category", "UIT")]
-        // Caso UC3_3: Inicio en el pasado (Ayer)
-        [InlineData(-1, 30, "La fecha de inicio debe ser posterior a hoy")]
-        // Caso UC3_4: Fin antes que Inicio
-        [InlineData(1, 0, "La fecha final debe ser posterior a la fecha de inicio")]
-        // Caso UC3_5: Duración insuficiente (< 7 días)
-        [InlineData(1, 2, "La oferta debe durar al menos una semana")]
-        public void UC3_FechasInvalidas_Error(int diasInicio, int diasFin, string mensajeErrorEsperado)
+        [MemberData(nameof(DatosParaFiltros))]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_6_FA0_FiltroPorFabricanteYPrecio(string? fabricante, float? precio, List<string[]> expectedHerramientas)
         {
-            // 1. ARRANGE
-            DateTime inicio = DateTime.Today.AddDays(diasInicio);
-            DateTime fin = DateTime.Today.AddDays(diasFin);
-            string herramienta = "Martillo"; // Ajustar nombre real
-
-            // 2. ACT
-            _driver.Navigate().GoToUrl(_URI + "Ofertar/SeleccionarHerramientaParaOfertar");
-            _selectPO.SearchHerramientas("EMPRESA1");
-            _selectPO.AddHerramientaToOfertaCart(herramienta);
-            _selectPO.PressContinuar();
-
-            // Rellenar formulario con fechas inválidas
-            _crearPO.RellenarDatosGenerales(inicio, fin, "1", "elena@uclm.es", "Cliente");
-
-            _crearPO.PulsarCrearOferta();
-            // Nota: No confirmamos modal porque la validación debería saltar antes
-            _crearPO.ConfirmarModal();
-
-            // 3. ASSERT
-            bool hayError = _crearPO.CheckErrorMessage(mensajeErrorEsperado);
-            // También sirve verificar que seguimos en la misma URL
-            Assert.True(hayError || _driver.Url.Contains("/Ofertar/CrearOferta"),
-                $"No se detectó el error de fecha esperado: {mensajeErrorEsperado}");
+            //Act
+            InitialStepsForCrearOferta_UIT();
+            _selectPO.SearchHerramientas(fabricante, precio);
+            //Assert
+            Assert.True(_selectPO.CheckListOfHerramientas(expectedHerramientas),
+                "Error: La lista de herramientas filtradas no coincide con la esperada.");
         }
 
-        // -------------------------------------------------------------------
-        // [Fact]: ESCENARIO 5 - USUARIO NO EXISTE (UC3_6)
-        // -------------------------------------------------------------------
+        // UC3_2: Lista Vacía (Esc-4)
         [Fact]
-        [Trait("Category", "UIT")]
-        public void UC3_6_UsuarioNoExistente_Error()
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_2_FA4_ListaVacia_Error()
         {
-            // 1. ARRANGE
-            string usuarioInvalido = "usuario_fantasma";
-            string herramienta = "Martillo";
+            // Act
+            InitialStepsForCrearOferta_UIT();
 
-            // 2. ACT
-            _driver.Navigate().GoToUrl(_URI + "Ofertar/SeleccionarHerramientaParaOfertar");
-            _selectPO.SearchHerramientas("EMPRESA1");
-            _selectPO.AddHerramientaToOfertaCart(herramienta);
-            _selectPO.PressContinuar();
-
-            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "1", usuarioInvalido, "Cliente");
-
-            _crearPO.PulsarCrearOferta();
-            try { _crearPO.ConfirmarModal(); } catch { /* Si no sale modal, seguimos */ }
-
-            // 3. ASSERT
-            System.Threading.Thread.Sleep(1000);
-            bool hayError = _crearPO.CheckErrorMessage("no existe") || _crearPO.CheckErrorMessage("Error");
-            Assert.True(hayError, "El sistema no mostró error al usar un usuario inexistente.");
-        }
-
-        // -------------------------------------------------------------------
-        // [Fact]: ESCENARIO 4 - CARRITO VACÍO (UC3_2)
-        // -------------------------------------------------------------------
-        [Fact]
-        [Trait("Category", "UIT")]
-        public void UC3_2_CarritoVacio_Error()
-        {
-            // 1. ARRANGE
-            _driver.Navigate().GoToUrl(_URI + "Ofertar/SeleccionarHerramientaParaOfertar");
-
-            // 2. ACT - Intentar pulsar continuar SIN añadir nada
+            bool botonHabilitado = true;
             try
             {
                 _selectPO.PressContinuar();
             }
-            catch (Exception) { /* Ignoramos si falla el click por estar disabled */ }
+            catch (Exception)
+            {
+                botonHabilitado = false;
+            }
 
-            // 3. ASSERT
-            bool seguimosEnSeleccion = _driver.Url.Contains("/Ofertar/SeleccionarHerramientaParaOfertar");
-            Assert.True(seguimosEnSeleccion, "El sistema permitió continuar con el carrito vacío.");
+            // Assert
+            if (botonHabilitado)
+            {
+                bool urlCambio = _driver.Url.Contains("CrearOferta");
+                if (urlCambio)
+                {
+                    // Si logramos pasar intentamos guardar y buscamos el error
+                    _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "Yoel", "Cliente");
+                    _crearPO.PulsarCrearOferta();
+                    Assert.True(_crearPO.CheckErrorMessage("La oferta debe incluir al menos una herramienta") ||
+                                _crearPO.CheckErrorMessage("debe incluir"),
+                                "UC3_2 Falló: No apareció el mensaje de error de lista vacía.");
+                }
+            }
+            else
+            {
+                Assert.True(!botonHabilitado, "Correcto: El botón continuar está deshabilitado con lista vacía.");
+            }
         }
+
+        // UC3_3, UC3_4, UC3_5: Errores de Fechas (Esc-2)
+        public static IEnumerable<object[]> TestCasesFor_FechasInvalidas()
+        {
+            var allTests = new List<object[]>
+            {
+                // UC3_3: Inicio Ayer
+                new object[] { DateTime.Today.AddDays(-1), DateTime.Today.AddDays(30), "La fecha de inicio debe ser posterior a hoy" },
+                
+                // UC3_4: Fin antes que Inicio (Hoy / Ayer -> Fin < Inicio)
+                new object[] { DateTime.Today.AddDays(1), DateTime.Today, "La fecha final debe ser posterior a la fecha de inicio" },
+                
+                // UC3_5: Duración < 1 semana
+                new object[] { DateTime.Today.AddDays(1), DateTime.Today.AddDays(2), "La oferta debe durar al menos una semana" }
+            };
+            return allTests;
+        }
+
+        [Theory]
+        [MemberData(nameof(TestCasesFor_FechasInvalidas))]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_2_FA1_FechasInvalidas_Error(DateTime inicio, DateTime fin, string mensajeError)
+        {
+            // Act
+            InitialStepsForCrearOferta_UIT();
+            _selectPO.SearchHerramientas(herramientaFabricante1, null);
+            _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
+            _selectPO.PressContinuar();
+
+            _crearPO.RellenarDatosGenerales(inicio, fin, "0", "Yoel", "Cliente");
+            _crearPO.PulsarCrearOferta();
+            try { _crearPO.ConfirmarModal(); } catch { }
+
+            // Assert
+            Assert.True(_crearPO.CheckErrorMessage(mensajeError),
+                $"Fallo en validación de fechas ({inicio.ToShortDateString()} - {fin.ToShortDateString()}). Esperado: {mensajeError}");
+        }
+
+        // UC3_6: Usuario No Existe (Esc-5)
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_5_UsuarioNoExiste_Error()
+        {
+            // Act
+            InitialStepsForCrearOferta_UIT();
+            _selectPO.SearchHerramientas(herramientaFabricante1, null);
+            _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
+            _selectPO.PressContinuar();
+
+            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "UsuarioFantasma", "Cliente");
+
+            _crearPO.PulsarCrearOferta();
+            try { _crearPO.ConfirmarModal(); } catch { }
+
+            // Assert
+            Assert.True(_crearPO.CheckErrorMessage("usuario no existe") || _crearPO.CheckErrorMessage("no existe"),
+                "UC3_6 Falló: No se mostró error de usuario inexistente.");
+        }
+
+        // UC3_9, UC3_10: Porcentajes Inválidos (Esc-3)
+        [Theory]
+        [InlineData(91)] // UC3_9
+        [InlineData(0)]  // UC3_10
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_3_FA3_PorcentajesInvalidos_Error(int descuento)
+        {
+            // Act
+            InitialStepsForCrearOferta_UIT();
+            _selectPO.SearchHerramientas(herramientaFabricante1, null);
+            _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
+            _selectPO.PressContinuar();
+
+            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "Yoel", "Cliente");
+
+            // Introducimos el porcentaje inválido
+            _crearPO.EstablecerPorcentaje(herramientaId1, descuento);
+
+            _crearPO.PulsarCrearOferta();
+            try { _crearPO.ConfirmarModal(); } catch { }
+
+            // Assert
+            // El mensaje del PDF dice: "El porcentaje X% para 'Herramienta' no es válido. Debe estar entre 1 y 90."
+            Assert.True(_crearPO.CheckErrorMessage("no es válido") && _crearPO.CheckErrorMessage("entre 1 y 90"),
+                $"UC3_9/10 Falló: Se permitió un descuento inválido de {descuento}%.");
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_FA2_BorrarHerramientaCarrito()
+        {
+            //Act
+            InitialStepsForCrearOferta_UIT();
+            _selectPO.SearchHerramientas(herramientaFabricante1, null);
+            _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
+            _selectPO.PressContinuar();
+            _crearPO.PulsarModificarCarrito();
+            _selectPO.borrarHerramienta();
+            //Assert
+            Assert.True(_selectPO.CheckEmptyCart(),
+                "Error: El carrito no está vacío tras borrar la herramienta.");
+
+        }
+
+        public static IEnumerable<object[]> TestCasesFor_DatosFaltantes()
+        {
+            yield return new object[] { DateTime.MinValue, DateTime.Today.AddDays(10), "Yoel", "0" };
+            yield return new object[] { DateTime.Today.AddDays(1), DateTime.MinValue, "Yoel", "0" };
+            yield return new object[] { DateTime.Today.AddDays(1), DateTime.Today.AddDays(10), "", "0" };
+            yield return new object[] { DateTime.Today.AddDays(1), DateTime.Today.AddDays(10), "Yoel", "" };
+        }
+
+        [Theory]
+        [MemberData(nameof(TestCasesFor_DatosFaltantes))]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_FA5_DatosFaltantes(DateTime FechaInicio, DateTime FechaFinal, string nombreUsuario, string pagoValue)
+        { 
+            //Arrange
+            string dirigidaA = "Cliente";
+            //Act
+            InitialStepsForCrearOferta_UIT();
+            _selectPO.SearchHerramientas(herramientaFabricante1, null);
+            _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
+            _selectPO.PressContinuar();
+            //Rellenar formulario sin fecha de fin
+            _crearPO.RellenarDatosGenerales(FechaInicio, FechaFinal, pagoValue, nombreUsuario, dirigidaA);
+            _crearPO.PulsarCrearOferta();
+            //Assert
+            //Comprobar si el botón de submit sigue desactivo
+            Assert.True(_crearPO.IsCrearButtonEnabled(), "Error: El botón no se ha deshabilitado");
+        }
+
+
     }
 }

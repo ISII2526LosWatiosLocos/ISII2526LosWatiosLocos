@@ -9,25 +9,35 @@ namespace AppForSEII2526.UIT.CU_Oferta
     public class SelectHerramientasParaOfertar_PO : PageObject
     {
         private By inputfabricante = By.Id("fabricanteSelected");
+        private By inputPrecio = By.Id("inputPrecio");
         private By buttonBuscar = By.Id("buscarHerramientas");
         private By tableOferta = By.Id("TableOfOferta");
+        private By _borrarHerramientaButton = By.Id("removeHerramienta_Martillo");
 
-        // Nuevo ID más claro
         private By buttonContinuar = By.Id("btn_continuar_oferta");
 
         public SelectHerramientasParaOfertar_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
 
-        public void SearchHerramientas(string nombreFabricante)
+        public void SearchHerramientas(string? nombreFabricante, float? precio)
         {
             WaitForBeingClickable(inputfabricante);
-
-            if (string.IsNullOrEmpty(nombreFabricante)) nombreFabricante = "All";
-
-            new SelectElement(_driver.FindElement(inputfabricante)).SelectByText(nombreFabricante);
+            if (nombreFabricante != null)
+            {
+                var fabricanteInputElement = _driver.FindElement(inputfabricante);
+                fabricanteInputElement.SendKeys(nombreFabricante);
+            }
+            if (precio != null)
+            {
+                var precioInputElement = _driver.FindElement(inputPrecio);
+                precioInputElement.Clear();
+                precioInputElement.SendKeys(precio.ToString());
+            }
             _driver.FindElement(buttonBuscar).Click();
+
         }
+
 
         public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
         {
@@ -38,6 +48,7 @@ namespace AppForSEII2526.UIT.CU_Oferta
         {
             By btnAddLocator = By.Id($"btn_add_{nombreHerramienta}");
 
+            ClickWithRetry(btnAddLocator);
             // Esperar y clicar
             WaitForBeingClickable(btnAddLocator);
             _driver.FindElement(btnAddLocator).Click();
@@ -47,11 +58,33 @@ namespace AppForSEII2526.UIT.CU_Oferta
             WaitForBeingVisible(btnRemoveLocator);
         }
 
+        public void borrarHerramienta()
+        {
+            WaitForBeingClickable(_borrarHerramientaButton);
+            _driver.FindElement(_borrarHerramientaButton).Click();
+        }
+
         public void PressContinuar()
         {
             // Como hemos esperado al carrito arriba, este botón ya debería estar habilitado
             WaitForBeingClickable(buttonContinuar);
             _driver.FindElement(buttonContinuar).Click();
+        }
+
+        public bool CheckEmptyCart()
+        {
+            var botonesContinuar = _driver.FindElements(By.Id("btn_continuar_oferta"));
+
+
+            bool carritoVisible = botonesContinuar.Count > 0 && botonesContinuar[0].Displayed;
+
+            if (carritoVisible)
+            {
+                return false;
+
+                throw new Exception("Error: El carrito debería estar vacío, pero el botón 'Continuar' es visible.");
+            }
+            return true;
         }
     }
 }
