@@ -27,6 +27,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         public CrearAlquiler_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
+
         public void RellenarDatosGenerales( DateTime inicio,
                                             DateTime fin,
                                             string usuario,
@@ -64,11 +65,13 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             WaitForBeingVisible(_fechaFin);
             InputDateInDatePicker(_fechaFin, fin);
 
-            // Selectores
-            
-            //new SelectElement(_driver.FindElement(_metodoPago)).SelectByValue(metodoPago);
+            var select = new SelectElement(_driver.FindElement(_metodoPago));
+            // select.SelectByValue("1"); // Por value (PayPal)
+            select.SelectByText(metodoPago);
+
         }
 
+        // acepta int para evitar ambigüedades y envía el número correcto al input
         public void EstablecerCantidad(int herramientaId, int cantidad)
         {
             By inputCantidad = By.Id($"cantidad_{herramientaId}");
@@ -76,10 +79,12 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             WaitForBeingVisible(inputCantidad);
             var element = _driver.FindElement(inputCantidad);
 
-            //element.SendKeys(Keys.Control + "a");
-            //element.SendKeys(Keys.Delete);
-            element.SendKeys(inputCantidad.ToString());
+            // Borra y escribe el número correcto
+            element.Clear();
+            // En algunos navegadores/input tipo number puede ser necesario enviar como string
+            element.SendKeys(cantidad.ToString());
         }
+
         public void PulsarCrearAlquiler()
         {
             WaitForBeingClickable(_submitButton);
