@@ -28,6 +28,9 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         // Mensajes de error
         By errorMessages = By.ClassName("Error");
 
+
+        By buttonModificarCarrito = By.Id("btnModificarCarrito");
+
         public CrearReparacion_PO(IWebDriver driver, ITestOutputHelper output)
             : base(driver, output)
         {
@@ -124,5 +127,45 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeoutSeconds));
             wait.Until(ExpectedConditions.ElementIsVisible(locator));
         }
+
+
+
+
+        // Dentro de la clase CrearReparacion_PO:
+
+        // --- AF2: Modificar Carrito (Volver a la selección de herramientas) ---
+        public void PulsarModificarCarrito()
+        {
+            WaitForBeingClickable(buttonModificarCarrito);
+            _driver.FindElement(buttonModificarCarrito).Click();
+        }
+
+        // --- AF2: Verificar si una herramienta está presente en el formulario ---
+        public bool CheckHerramientaPresente(int herramientaId)
+        {
+            // Usamos el ID de la Cantidad para verificar que la sección de la herramienta exista
+            By inputCantidad = By.Id($"cantidad_{herramientaId}");
+
+            // Si encuentra al menos un elemento con ese ID, la herramienta está presente
+            return _driver.FindElements(inputCantidad).Any();
+        }
+
+
+        // --- AF5: Verificar si el botón Guardar está habilitado ---
+        public bool IsGuardarButtonEnabled()
+        {
+            // Verifica si el botón Guardar está presente y habilitado
+            try
+            {
+                WaitForBeingVisible(buttonGuardar, timeoutSeconds: 3); // Esperamos a que aparezca
+                return _driver.FindElement(buttonGuardar).Enabled;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false; // Si no lo encuentra, lo consideramos deshabilitado/no visible
+            }
+        }
     }
+
+
 }

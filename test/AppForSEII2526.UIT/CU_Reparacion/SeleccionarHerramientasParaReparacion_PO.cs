@@ -17,7 +17,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         By inputTo = By.Id("toDate");
         By tableReparacion = By.Id("TableReparacion");
         By errorShownBy = By.Id("ErrorsShown");
-        By BotonRepararHerramientas= By.Id("ReparacionHerramientaBoton");
+        By BotonRepararHerramientas = By.Id("ReparacionHerramientaBoton");
         public SeleccionarHerramientasParaReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
 
@@ -51,7 +51,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 
             _driver.FindElement(BotonbuscarHerramientas).Click();
 
-      
+
 
 
         }
@@ -72,7 +72,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         }
         public void AddHerramientaToReparacionCart(string herramientaNombre)
         {
-           
+
             WaitForBeingClickable(By.Id("ReparacionData_" + herramientaNombre));
 
             _driver.FindElement(By.Id("ReparacionData_" + herramientaNombre)).Click();
@@ -88,8 +88,48 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 
         public bool ReparacionNotAvailable()
         {
-            
+
             return _driver.FindElement(BotonRepararHerramientas).Displayed == false;
         }
+
+
+
+        public void PressRepararHerramientas()
+        {
+            WaitForBeingClickable(BotonRepararHerramientas);
+            _driver.FindElement(BotonRepararHerramientas).Click();
+
+        }
+
+        public bool IsRepararButtonEnabled()
+        {
+            try
+            {
+                return _driver.FindElement(BotonRepararHerramientas).Enabled;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+ 
+        public bool CheckContinuarButtonEnabled()
+        {
+            
+            try
+            {
+           
+                IWebElement boton = _driver.FindElement(BotonRepararHerramientas);
+                return boton.Enabled;
+            }
+            catch (NoSuchElementException)
+            {
+              
+                return false;
+            }
+        }
     }
+
+
 }
