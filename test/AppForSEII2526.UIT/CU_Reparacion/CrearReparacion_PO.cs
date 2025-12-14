@@ -86,6 +86,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         // PASO 6: Guardar reparación
         public void PulsarGuardarReparacion()
         {
+            By buttonGuardar = By.Id("Submit");
             WaitForBeingClickable(buttonGuardar);
             _driver.FindElement(buttonGuardar).Click();
         }
@@ -136,8 +137,8 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         // --- AF2: Modificar Carrito (Volver a la selección de herramientas) ---
         public void PulsarModificarCarrito()
         {
-            WaitForBeingClickable(buttonModificarCarrito);
-            _driver.FindElement(buttonModificarCarrito).Click();
+            WaitForBeingClickable(By.Id("ModificarHerramientas"));
+            _driver.FindElement(By.Id("ModificarHerramientas")).Click();
         }
 
         // --- AF2: Verificar si una herramienta está presente en el formulario ---
@@ -154,16 +155,9 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         // --- AF5: Verificar si el botón Guardar está habilitado ---
         public bool IsGuardarButtonEnabled()
         {
-            // Verifica si el botón Guardar está presente y habilitado
-            try
-            {
-                WaitForBeingVisible(buttonGuardar, timeoutSeconds: 3); // Esperamos a que aparezca
-                return _driver.FindElement(buttonGuardar).Enabled;
-            }
-            catch (WebDriverTimeoutException)
-            {
-                return false; // Si no lo encuentra, lo consideramos deshabilitado/no visible
-            }
+            try { return _driver.FindElement(By.Id("Submit")).Enabled; }
+            catch { 
+                return false; }
         }
     }
 
