@@ -1,6 +1,6 @@
 ﻿
 using AppForMovies.UIT.Shared;
-using AppForSEII2526.UIT.CU_Oferta;
+using AppForSEII2526.UIT.CU_Reparacion;
 using AppForSEII2526.UIT.Shared;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
@@ -49,9 +49,8 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 
         // Page Objects
 
-        private readonly SelectHerramientasParaOfertar_PO _selectPO;
-        private readonly CrearOferta_PO _crearPO;
-        private readonly DetalleOferta_PO _detallePO;
+        private readonly SeleccionarHerramientasParaReparacion_PO _selectPO;
+        
 
         public CURepararacion_UIT(ITestOutputHelper output) : base(output)
         {
