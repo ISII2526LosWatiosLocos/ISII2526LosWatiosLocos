@@ -9,7 +9,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
     public class SelectHerramientasParaAlquilar_PO : PageObject
     {
         By inputNombre = By.Id("inputNombreHerramienta");
-        By inputMaterial = By.Id("inputMaterialHeramienta");
+        By inputMaterial = By.Id("inputMaterialHerramienta");
         By tablaHerramientas = By.Id("TablaDeHerramientas");
         private By botonContinuar = By.Id("btn_continuar_alquiler");
         public SelectHerramientasParaAlquilar_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)

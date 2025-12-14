@@ -36,26 +36,37 @@ namespace AppForSEII2526.UIT.CU_Alquiler
                                             string correo,
                                             string metodoPago)
         {
-            WaitForBeingVisible(_fechaInicio);
+
+            WaitForBeingVisible(_nombreUsuario);
+            _driver.FindElement(_nombreUsuario).Clear();
+            _driver.FindElement(_nombreUsuario).SendKeys(usuario);
+
+            WaitForBeingVisible(_apellidosUsuario);
+            _driver.FindElement(_apellidosUsuario).Clear();
+            _driver.FindElement(_apellidosUsuario).SendKeys(apellidos);
+
+            WaitForBeingVisible(_direccion);
+            _driver.FindElement(_direccion).Clear();
+            _driver.FindElement(_direccion).SendKeys(direccion);
+
+            WaitForBeingVisible(_telefono);
+            _driver.FindElement(_telefono).Clear();
+            _driver.FindElement(_telefono).SendKeys(telefono);
+
+            WaitForBeingVisible(_correo);
+            _driver.FindElement(_correo).Clear();
+            _driver.FindElement(_correo).SendKeys(correo);
+            
             // Fechas (usando método heredado de PageObject)
+            WaitForBeingVisible(_fechaInicio);
             InputDateInDatePicker(_fechaInicio, inicio);
+
+            WaitForBeingVisible(_fechaFin);
             InputDateInDatePicker(_fechaFin, fin);
 
             // Selectores
-            new SelectElement(_driver.FindElement(_metodoPago)).SelectByValue(metodoPago);
-
-            // Texto
-            _driver.FindElement(_nombreUsuario).Clear();
-            _driver.FindElement(_nombreUsuario).SendKeys(usuario);
-            _driver.FindElement(_apellidosUsuario).Clear();
-            _driver.FindElement(_apellidosUsuario).SendKeys(apellidos);
-            _driver.FindElement(_direccion).Clear();
-            _driver.FindElement(_direccion).SendKeys(direccion);
-            _driver.FindElement(_telefono).Clear();
-            _driver.FindElement(_telefono).SendKeys(telefono);
-            _driver.FindElement(_correo).Clear();
-            _driver.FindElement(_correo).SendKeys(correo);
-
+            
+            //new SelectElement(_driver.FindElement(_metodoPago)).SelectByValue(metodoPago);
         }
 
         public void EstablecerCantidad(int herramientaId, int cantidad)
@@ -65,8 +76,8 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             WaitForBeingVisible(inputCantidad);
             var element = _driver.FindElement(inputCantidad);
 
-            element.SendKeys(Keys.Control + "a");
-            element.SendKeys(Keys.Delete);
+            //element.SendKeys(Keys.Control + "a");
+            //element.SendKeys(Keys.Delete);
             element.SendKeys(inputCantidad.ToString());
         }
         public void PulsarCrearAlquiler()
