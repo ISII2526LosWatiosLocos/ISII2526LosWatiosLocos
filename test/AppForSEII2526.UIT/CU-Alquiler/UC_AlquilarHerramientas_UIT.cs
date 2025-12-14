@@ -73,13 +73,13 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             {
                 //Nota: Solo compruebo la parte inicial debido a la complejidad de comprobar adicionalmente los items de la oferta.
                 new string[] {
-                    usuario + apellidos,                // Columna 1
+                    usuario,                            // Columna 0
+                    apellidos,                           //Columna 1
                     direccion,                          // Columna 2
                     fechaActual.ToString("dd/MM/yyyy"), // Columna 3 
                     fechaInicio.ToString("dd/MM/yyyy"), // Columna 4  
                     fechaFin.ToString("dd/MM/yyyy"),    // Columna 5 
-                    herramientaPrecio1.ToString(),// Columna 6
-            
+                    "$"+herramientaPrecio1.ToString("0.00")// Columna 6
                 }
             };
 
