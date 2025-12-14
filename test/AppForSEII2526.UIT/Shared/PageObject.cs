@@ -167,6 +167,23 @@ namespace AppForSEII2526.UIT.Shared
 
         }
 
+        public void ClickWithRetry(By locator)
+        {
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+            wait.IgnoreExceptionTypes(typeof(StaleElementReferenceException), typeof(ElementClickInterceptedException));
+
+            wait.Until(driver =>
+            {
+                var element = driver.FindElement(locator);
+                if (element.Displayed && element.Enabled)
+                {
+                    element.Click();
+                    return true; // Click exitoso, salimos
+                }
+                return false; // Aún no se puede clicar, reintentar
+            });
+        }
+
 
         //it wait for "seconds" till all the webelements of the page are loaded
         public void ImplicitWait(int seconds) =>

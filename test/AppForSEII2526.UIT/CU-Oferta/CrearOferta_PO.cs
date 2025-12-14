@@ -85,5 +85,11 @@ namespace AppForSEII2526.UIT.CU_Oferta
                 return false; // No salió el mensaje de error
             }
         }
+        //Comprobar si el botón de crear está activo
+        public bool IsCrearButtonEnabled()
+        {
+            WaitForBeingVisible(_submitButton);
+            return _driver.FindElement(_submitButton).Enabled;
+        }
     }
 }

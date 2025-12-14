@@ -9,6 +9,7 @@ namespace AppForSEII2526.UIT.CU_Oferta
     public class SelectHerramientasParaOfertar_PO : PageObject
     {
         private By inputfabricante = By.Id("fabricanteSelected");
+        private By inputPrecio = By.Id("inputPrecio");
         private By buttonBuscar = By.Id("buscarHerramientas");
         private By tableOferta = By.Id("TableOfOferta");
         private By _borrarHerramientaButton = By.Id("removeHerramienta_Martillo");
@@ -19,15 +20,24 @@ namespace AppForSEII2526.UIT.CU_Oferta
         {
         }
 
-        public void SearchHerramientas(string nombreFabricante)
+        public void SearchHerramientas(string? nombreFabricante, float? precio)
         {
             WaitForBeingClickable(inputfabricante);
-
-            if (string.IsNullOrEmpty(nombreFabricante)) nombreFabricante = "All";
-
-            new SelectElement(_driver.FindElement(inputfabricante)).SelectByText(nombreFabricante);
+            if (nombreFabricante != null)
+            {
+                var fabricanteInputElement = _driver.FindElement(inputfabricante);
+                fabricanteInputElement.SendKeys(nombreFabricante);
+            }
+            if (precio != null)
+            {
+                var precioInputElement = _driver.FindElement(inputPrecio);
+                precioInputElement.Clear();
+                precioInputElement.SendKeys(precio.ToString());
+            }
             _driver.FindElement(buttonBuscar).Click();
+
         }
+
 
         public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
         {
@@ -38,6 +48,7 @@ namespace AppForSEII2526.UIT.CU_Oferta
         {
             By btnAddLocator = By.Id($"btn_add_{nombreHerramienta}");
 
+            ClickWithRetry(btnAddLocator);
             // Esperar y clicar
             WaitForBeingClickable(btnAddLocator);
             _driver.FindElement(btnAddLocator).Click();
