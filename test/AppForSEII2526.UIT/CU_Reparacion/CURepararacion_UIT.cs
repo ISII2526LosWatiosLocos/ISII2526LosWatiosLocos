@@ -1,6 +1,8 @@
 ﻿
 using AppForMovies.UIT.Shared;
+using AppForSEII2526.UIT.CU_Oferta;
 using AppForSEII2526.UIT.Shared;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,40 +36,58 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         private const float PrecioHerramientaReparacion2 = 17.5f;
 
 
+
+        // Datos del cliente (PASO 5)
+        private const string clienteNombre = "Juan";
+        private const string clienteApellidos = "Pérez García";
+        private const string telefonoOpcional = "666123456";
+        private const string descripcionProblema = "Fallo en el mecanismo";
+        private const int cantidad = 1;
+
+
+
+
+        // Page Objects
+
+        private readonly SelectHerramientasParaOfertar_PO _selectPO;
+        private readonly CrearOferta_PO _crearPO;
+        private readonly DetalleOferta_PO _detallePO;
+
         public CURepararacion_UIT(ITestOutputHelper output) : base(output)
         {
+
+            seleccionarHerramientasParaReparacion_PO = new SeleccionarHerramientasParaReparacion_PO(_driver, output);
+        // METER AQUI LUEGO 
         }
 
-        private void Precondition_perform_login()
+       
+    
+
+
+        private void InitialStepsForRepararHerramientas()
         {
-            Perform_login("elena@uclm.es", "Password1234%");
-        }
-
-        private void InitialStepsForRentalHerramientas()
-        {
-            Precondition_perform_login();
-            //we wait for the option of the menu to be visible
-            seleccionarHerramientasParaReparacion_PO.WaitForBeingVisible(By.Id("CrearReparacion"));
-            //we click on the menu
-            _driver.FindElement(By.Id("CrearReparacion")).Click();
+            _driver.Navigate().GoToUrl(_URI + "Reparacion/SeleccionHerramientaParaReparaciones");
         }
 
 
-        [InlineData(HerramientaId1, HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1, HerramientaTiempoReparacion1, PrecioHerramientaReparacion1, "", "")]
+        //UC2_1 FLUJO BÁSICO - Creacioón exitosa
+        [Theory]
+        [InlineData( HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1, HerramientaTiempoReparacion1, PrecioHerramientaReparacion1, "", "")]
+
+
+
+        [InlineData( HerramientaNombre2, HerramientaMaterial2, HerramientaFabricante2, HerramientaTiempoReparacion2, PrecioHerramientaReparacion2, "", "")]
         [Trait("LevelTesting", "Funcional Testing")]
 
-
-        [InlineData(HerramientaId2, HerramientaNombre2, HerramientaMaterial2, HerramientaFabricante2, HerramientaTiempoReparacion2, PrecioHerramientaReparacion2, "", "")]
-        [Trait("LevelTesting", "Funcional Testing")]
-
-        public void UC2_AF1_UC2_4_5_filtering(string HerramientaNombre, string HerramientaMaterial, string HerramientaFabricante, int HerramientaTiempoReparacion, int PrecioHerramientaReparacion, string FiltroNombre, string FiltroTiempoReparacion
+        public void UC2_1_FlujoBasico(string HerramientaNombre, string HerramientaMaterial, string HerramientaFabricante, int HerramientaTiempoReparacion, float PrecioHerramientaReparacion, string FiltroNombre, string FiltroTiempoReparacion
      )
         {
+            //paso 1 cliente selecciona Reparar Herrmainetas
             //Arrange
-            InitialStepsForRentalHerramientas();
-            var expectedHerramientas = new List<string[]> { new string[] { HerramientaNombre, HerramientaMaterial, HerramientaFabricante }, };
+            InitialStepsForRepararHerramientas();
+            var expectedHerramientas = new List<string[]> { new string[] { HerramientaNombre, HerramientaMaterial, HerramientaFabricante, PrecioHerramientaReparacion.ToString("F2"), HerramientaTiempoReparacion.ToString() }, };
 
-            //Act
+         
             seleccionarHerramientasParaReparacion_PO.BuscarHerramientas(FiltroNombre, FiltroTiempoReparacion, "", "");
 
             //Assert
@@ -87,7 +107,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             //Arrange
 
 
-            InitialStepsForRentalHerramientas();
+            InitialStepsForRepararHerramientas();
             var expectedHerramientas = new List<string[]> { new string[] { HerramientaNombre2, HerramientaMaterial2, HerramientaFabricante2 }, };
 
             string desde = DateTime.Today.AddDays(2).ToString("dd/MM/yyyy");
@@ -139,7 +159,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 
             // Act
 
-            InitialStepsForRentalHerramientas();
+            InitialStepsForRepararHerramientas();
 
             // Assert
 
@@ -160,7 +180,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         public void UC2_AF1_UC2_11_RentingNotavailable()
         {
             //Arrange
-            InitialStepsForRentalHerramientas();
+            InitialStepsForRepararHerramientas();
             //Act
             seleccionarHerramientasParaReparacion_PO.AddHerramientaToReparacionCart(HerramientaNombre1);
             seleccionarHerramientasParaReparacion_PO.RemoveHerramientaFromReparacionCart(HerramientaNombre1);
