@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -171,20 +172,16 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             }
         }
 
-        /** 
-        // UC3_3, UC3_4, UC3_5: Errores de Fechas (Esc-2)
         public static IEnumerable<object[]> TestCasesFor_FechasInvalidas()
         {
             var allTests = new List<object[]>
             {
-                // UC3_3: Inicio Ayer
-                new object[] { DateTime.Today.AddDays(-1), DateTime.Today.AddDays(30), "La fecha de inicio debe ser posterior a hoy" },
+                // Inicio Ayer
+                new object[] { DateTime.Today.AddDays(-1), DateTime.Today.AddDays(30), "La fecha de inicio debe ser posterior a la actualidad."},
                 
-                // UC3_4: Fin antes que Inicio (Hoy / Ayer -> Fin < Inicio)
-                new object[] { DateTime.Today.AddDays(1), DateTime.Today, "La fecha final debe ser posterior a la fecha de inicio" },
+                // Fin antes que Inicio (Hoy / Ayer -> Fin < Inicio)
+                new object[] { DateTime.Today.AddDays(1), DateTime.Today,  "La fecha de fin debe ser mayor que la de inicio."  },
                 
-                // UC3_5: Duración < 1 semana
-                new object[] { DateTime.Today.AddDays(1), DateTime.Today.AddDays(2), "La oferta debe durar al menos una semana" }
             };
             return allTests;
         }
@@ -196,19 +193,19 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         {
             // Act
             InitialStepsForCrearAlquiler_UIT();
-            _selectPO.SearchHerramientas(herramientaFabricante1);
-            _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
-            _selectPO.PressContinuar();
+            _selectPO.BuscarHerramientas(herramientaNombre1,herramientaMaterial1);
+            _selectPO.AñadirHerramientasAlCarroDeAlquiler(herramientaNombre1);
+            _selectPO.Continuar();
 
-            _crearPO.RellenarDatosGenerales(inicio, fin, "0", "Yoel", "Cliente");
-            _crearPO.PulsarCrearOferta();
+            _crearPO.RellenarDatosGenerales(inicio, fin, "Yoel", "CS", "Calle AAAA", "656376257", "jfkdsj@gmail.com", "PayPal");
+            _crearPO.PulsarCrearAlquiler();
             try { _crearPO.ConfirmarModal(); } catch { }
 
             // Assert
             Assert.True(_crearPO.CheckErrorMessage(mensajeError),
                 $"Fallo en validación de fechas ({inicio.ToShortDateString()} - {fin.ToShortDateString()}). Esperado: {mensajeError}");
         }
-
+        /**
         // UC3_6: Usuario No Existe (Esc-5)
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
