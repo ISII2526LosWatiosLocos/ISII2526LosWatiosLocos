@@ -11,21 +11,28 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         By inputNombre = By.Id("inputNombreHerramienta");
         By inputMaterial = By.Id("inputMaterialHerramienta");
         By tablaHerramientas = By.Id("TablaDeHerramientas");
+        By buscarHerramientas = By.Id("buscarHerramientas");
         private By botonContinuar = By.Id("btn_continuar_alquiler");
         public SelectHerramientasParaAlquilar_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
-        public void BuscarHerramientas(string nombre, string material)
+        public void BuscarHerramientas(string? nombre, string? material)
         {
-            WaitForBeingVisible(inputNombre);
-            var nom = _driver.FindElement(inputNombre);
-            nom.Clear();
-            nom.SendKeys(nombre);
-
-            WaitForBeingVisible(inputMaterial);
-            var mat = _driver.FindElement(inputMaterial);
-            mat.Clear();
-            mat.SendKeys(material);
+            if (nombre != null)
+            {
+                WaitForBeingVisible(inputNombre);
+                var nom = _driver.FindElement(inputNombre);
+                nom.Clear();
+                nom.SendKeys(nombre);
+            }
+            if (material != null)
+            {
+                WaitForBeingVisible(inputMaterial);
+                var mat = _driver.FindElement(inputMaterial);
+                mat.Clear();
+                mat.SendKeys(material);
+            }
+            _driver.FindElement(buscarHerramientas).Click();
         }
 
         public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)

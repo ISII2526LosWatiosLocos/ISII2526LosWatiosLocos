@@ -41,7 +41,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         // UC4_1: Flujo Básico - Creación Exitosa (Esc-1)
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC4_1_CrearOferta_Exito()
+        public void UC4_1_CrearAlquiler_Exito()
         {
             // Arrange
             var fechaInicio = DateTime.Today.AddDays(1);
@@ -86,11 +86,57 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             Assert.True(_detallePO.CheckDetallesAlquiler(expectedRow),
                 "Error: Los detalles de la oferta (Fechas, Pago, Tipo) no coinciden.");
         }
-        /** 
-        // UC3_2: Lista Vacía (Esc-4)
+
+        public static IEnumerable<object[]> DatosParaFiltros()
+        {
+            yield return new object[]
+            {
+                "Martillo",
+                "Madera",
+                new List<string[]>
+                {
+                    new string[] { "Martillo", "Madera", "EMPRESA1", "10", "Añadir" }
+                }
+            };
+
+            yield return new object[]
+            {
+                null,
+                "Hierro",
+                new List<string[]>
+                {
+                    new string[] { "Llave", "Hierro", "EMPRESA2", "15", "Añadir" }
+                }
+            };
+
+            yield return new object[]
+            {
+                "Martillo",
+                null,
+                new List<string[]>
+                {
+                    new string[] { "Martillo", "Madera", "EMPRESA1", "10", "Añadir" }
+                }
+            };
+        }
+
+        [Theory]
+        [MemberData(nameof(DatosParaFiltros))]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC4_FiltroPorFabricanteYPrecio(string? nombre, string? material, List<string[]> expectedHerramientas)
+        {
+            //Act
+            InitialStepsForCrearAlquiler_UIT();
+            _selectPO.BuscarHerramientas(nombre, material);
+            //Assert
+            Assert.True(_selectPO.CheckListOfHerramientas(expectedHerramientas),
+                "Error: La lista de herramientas filtradas no coincide con la esperada.");
+        }
+
+
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_2_ListaVacia_Error()
+        public void UC4_ListaVacia_Error()
         {
             // Act
             InitialStepsForCrearAlquiler_UIT();
@@ -98,7 +144,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             bool botonHabilitado = true;
             try
             {
-                _selectPO.PressContinuar();
+                _selectPO.Continuar();
             }
             catch (Exception)
             {
@@ -108,15 +154,15 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             // Assert
             if (botonHabilitado)
             {
-                bool urlCambio = _driver.Url.Contains("CrearOferta");
+                bool urlCambio = _driver.Url.Contains("CrearAlquiler");
                 if (urlCambio)
                 {
                     // Si logramos pasar intentamos guardar y buscamos el error
-                    _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "Yoel", "Cliente");
-                    _crearPO.PulsarCrearOferta();
+                    _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30),"Yoel","CS","Calle OMG","12345789","xd@gmail.com","PayPal");
+                    _crearPO.PulsarCrearAlquiler();
                     Assert.True(_crearPO.CheckErrorMessage("La oferta debe incluir al menos una herramienta") ||
                                 _crearPO.CheckErrorMessage("debe incluir"),
-                                "UC3_2 Falló: No apareció el mensaje de error de lista vacía.");
+                                "UC4_2 Falló: No apareció el mensaje de error de lista vacía.");
                 }
             }
             else
@@ -125,6 +171,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             }
         }
 
+        /** 
         // UC3_3, UC3_4, UC3_5: Errores de Fechas (Esc-2)
         public static IEnumerable<object[]> TestCasesFor_FechasInvalidas()
         {
