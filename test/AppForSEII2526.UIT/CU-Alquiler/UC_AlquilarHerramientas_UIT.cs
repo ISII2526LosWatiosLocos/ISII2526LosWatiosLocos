@@ -21,6 +21,8 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         private const string herramientaMaterial1 = "Madera";
         private const float herramientaPrecio1 = 10.0f;
         private const int herramientaId1 = 1;
+        private const string nombreInvalido = "Fantasma";
+        private const string apellidosInvalido = "Fantasmez";
         // Page Objects
         private readonly SelectHerramientasParaAlquilar_PO _selectPO;
         private readonly CrearAlquiler_PO _crearPO;
@@ -205,55 +207,27 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             Assert.True(_crearPO.CheckErrorMessage(mensajeError),
                 $"Fallo en validación de fechas ({inicio.ToShortDateString()} - {fin.ToShortDateString()}). Esperado: {mensajeError}");
         }
-        /**
-        // UC3_6: Usuario No Existe (Esc-5)
+
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_6_UsuarioNoExiste_Error()
+        public void UC4_UsuarioNoExiste_Error()
         {
             // Act
             InitialStepsForCrearAlquiler_UIT();
-            _selectPO.SearchHerramientas(herramientaFabricante);
-            _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
-            _selectPO.PressContinuar();
+            _selectPO.BuscarHerramientas(herramientaNombre1, herramientaMaterial1);
+            _selectPO.AñadirHerramientasAlCarroDeAlquiler(herramientaNombre1);
+            _selectPO.Continuar();
 
-            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "UsuarioFantasma", "Cliente");
+            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), nombreInvalido, apellidosInvalido, "Calle Siniestra", "00000", "fantasmita@hola.com", "Efectivo");
 
-            _crearPO.PulsarCrearOferta();
+            _crearPO.PulsarCrearAlquiler();
             try { _crearPO.ConfirmarModal(); } catch { }
 
             // Assert
-            Assert.True(_crearPO.CheckErrorMessage("usuario no existe") || _crearPO.CheckErrorMessage("no existe"),
-                "UC3_6 Falló: No se mostró error de usuario inexistente.");
+            Assert.True(_crearPO.CheckErrorMessage("El Usuario "+ nombreInvalido + " " + apellidosInvalido + " no existe."),
+                "No se mostró error de usuario inexistente.");
         }
-
-        // UC3_9, UC3_10: Porcentajes Inválidos (Esc-3)
-        [Theory]
-        [InlineData(91)] // UC3_9
-        [InlineData(0)]  // UC3_10
-        [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_PorcentajesInvalidos_Error(int descuento)
-        {
-            // Act
-            InitialStepsForCrearAlquiler_UIT();
-            _selectPO.SearchHerramientas(herramientaFabricante1);
-            _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
-            _selectPO.PressContinuar();
-
-            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "Yoel", "Cliente");
-
-            // Introducimos el porcentaje inválido
-            _crearPO.EstablecerPorcentaje(herramientaId1, descuento);
-
-            _crearPO.PulsarCrearOferta();
-            try { _crearPO.ConfirmarModal(); } catch { }
-
-            // Assert
-            // El mensaje del PDF dice: "El porcentaje X% para 'Herramienta' no es válido. Debe estar entre 1 y 90."
-            Assert.True(_crearPO.CheckErrorMessage("no es válido") && _crearPO.CheckErrorMessage("entre 1 y 90"),
-                $"UC3_9/10 Falló: Se permitió un descuento inválido de {descuento}%.");
-        }
-
+        /**
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC3_7_BorrarHerramientaCarrito()
