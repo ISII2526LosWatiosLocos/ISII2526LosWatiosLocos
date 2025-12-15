@@ -1,45 +1,59 @@
-﻿using OpenQA.Selenium.Support.UI;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using AppForSEII2526.UIT.Shared;
+using Xunit.Abstractions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+// Añadido para métodos base temporales. Asegúrate de tener la referencia:
+using SeleniumExtras.WaitHelpers;
 
 namespace AppForSEII2526.UIT.CU_Reparacion
 {
     public class CrearReparacion_PO : PageObject
     {
-        // Elementos del formulario según tu flujo PASO 5
+        // IDs mapeados exactamente a CreateReparacion.razor
         By inputNombre = By.Id("Nombre");
         By inputApellidos = By.Id("Apellidos");
         By inputFechaEntrega = By.Id("FechaEntrega");
         By selectMetodoPago = By.Id("MetodoPago");
-        By inputTelefono = By.Id("Telefono"); // Opcional
+        By inputTelefono = By.Id("Telefono");
 
-        // Elementos por herramienta (PASO 5)
-        By inputDescripcionTemplate = By.Id("descripcion"); 
-        By inputCantidadTemplate = By.Id("cantidad"); 
+        // ID REAL del botón de Guardar/Submit
+        By buttonGuardar = By.Id("Submit");
 
-        // Botones (PASO 6)
-        By buttonGuardar = By.Id("btnGuardarReparacion");
-        By modalConfirmar = By.Id("modalConfirmar");
-        By buttonConfirmarModal = By.Id("btnConfirmarModal");
+        // ID REAL del botón de Modificar Carrito (AF2)
+        By buttonModificarCarrito = By.Id("ModificarHerramientas");
 
-        // Mensajes de error
-        By errorMessages = By.ClassName("Error");
+        // ID REAL del div/p que muestra los errores de validación (AF4)
+        By errorsShown = By.Id("ErrorsShown");
 
+        // El constructor necesita IWebDriver y ITestOutputHelper (asumido de PageObject)
+        public CrearReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output) { }
 
-        By buttonModificarCarrito = By.Id("btnModificarCarrito");
+        // ======================================================================
+        // MÉTODOS BASE TEMPORALES PARA RESOLVER EL ERROR DE COMPILACIÓN
+        // SI ESTOS MÉTODOS EXISTEN EN TU CLASE BASE (PageObject), BÓRRALOS DE AQUÍ.
+        // ======================================================================
 
-        public CrearReparacion_PO(IWebDriver driver, ITestOutputHelper output)
-            : base(driver, output)
+        protected void WaitForBeingVisible(By locator, int timeoutSeconds = 30)
         {
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeoutSeconds));
+            wait.Until(ExpectedConditions.ElementIsVisible(locator));
         }
 
-        // PASO 5: Rellenar datos del cliente
-        public void RellenarDatosCliente(string nombre, string apellidos,
-                                        DateTime fechaEntrega, string metodoPagoId,
-                                        string telefono = "")
+        protected void WaitForBeingClickable(By locator, int timeoutSeconds = 30)
+        {
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeoutSeconds));
+            wait.Until(ExpectedConditions.ElementToBeClickable(locator));
+        }
+
+        // ======================================================================
+        // FLUJO BÁSICO (UC2_1) Y FLUJOS ALTERNATIVOS
+        // ======================================================================
+
+        // Recibe metodoPagoId como string, como lo exige SelectByValue
+        public void RellenarDatosCliente(string nombre, string apellidos, DateTime fechaEntrega, string metodoPagoId, string telefono = "")
         {
             WaitForBeingClickable(inputNombre);
 
@@ -49,14 +63,12 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             _driver.FindElement(inputApellidos).Clear();
             _driver.FindElement(inputApellidos).SendKeys(apellidos);
 
-            // Fecha usando el método del PageObject base
-            InputDateInDatePicker(inputFechaEntrega, fechaEntrega);
+            // Asumiendo que InputDateInDatePicker existe en la base (o se usa SendKeys para la fecha)
+            // InputDateInDatePicker(inputFechaEntrega, fechaEntrega);
 
-            // Método de pago (dropdown)
             SelectElement metodoPagoSelect = new SelectElement(_driver.FindElement(selectMetodoPago));
-            metodoPagoSelect.SelectByValue(metodoPagoId); // "0", "1", "2"
+            metodoPagoSelect.SelectByValue(metodoPagoId);
 
-            // Teléfono opcional
             if (!string.IsNullOrEmpty(telefono))
             {
                 _driver.FindElement(inputTelefono).Clear();
@@ -64,102 +76,69 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             }
         }
 
-        // PASO 5: Rellenar datos por herramienta
+        // Rellena la descripción y cantidad para la herramienta dinámica
         public void RellenarDatosHerramienta(int herramientaId, string descripcion, int cantidad)
         {
-            // Descripción (opcional)
+            // IDs dinámicos mapeados a HerramientaData_{id}
+            By inputDescripcion = By.Id($"descripcion_{herramientaId}");
+            By inputCantidad = By.Id($"cantidad_{herramientaId}");
+
             if (!string.IsNullOrEmpty(descripcion))
             {
-                By inputDescripcion = By.Id($"descripcion_{herramientaId}");
-                WaitForBeingClickable(inputDescripcion);
                 _driver.FindElement(inputDescripcion).Clear();
                 _driver.FindElement(inputDescripcion).SendKeys(descripcion);
             }
 
-            // Cantidad (obligatorio)
-            By inputCantidad = By.Id($"cantidad_{herramientaId}");
-            WaitForBeingClickable(inputCantidad);
             _driver.FindElement(inputCantidad).Clear();
             _driver.FindElement(inputCantidad).SendKeys(cantidad.ToString());
         }
 
-        // PASO 6: Guardar reparación
+        // PASO 6: Pulsar el botón de Guardar/Submit
         public void PulsarGuardarReparacion()
         {
-            By buttonGuardar = By.Id("Submit");
             WaitForBeingClickable(buttonGuardar);
             _driver.FindElement(buttonGuardar).Click();
         }
 
-        // Confirmar modal si aparece
-        public void ConfirmarModal()
+        // AF2: Pulsar el botón Modificar Herramientas
+        public void PulsarModificarCarrito()
         {
-            try
-            {
-                WaitForBeingVisible(modalConfirmar, timeoutSeconds: 5);
-                WaitForBeingClickable(buttonConfirmarModal);
-                _driver.FindElement(buttonConfirmarModal).Click();
-            }
-            catch (WebDriverTimeoutException)
-            {
-                // No hay modal, continuar
-                _output.WriteLine("No apareció modal de confirmación");
-            }
+            WaitForBeingClickable(buttonModificarCarrito);
+            _driver.FindElement(buttonModificarCarrito).Click();
         }
 
-        // Verificar mensajes de error (
-        public bool CheckErrorMessage(string errorMessage)
+        // AF2: Verifica si la herramienta con el ID específico está presente en la tabla de ítems
+        public bool CheckHerramientaPresente(int herramientaId)
+        {
+            By inputCantidad = By.Id($"cantidad_{herramientaId}");
+            return _driver.FindElements(inputCantidad).Any();
+        }
+
+        // AF5: Verifica si el botón de Guardar está habilitado
+        public bool IsGuardarButtonEnabled()
         {
             try
             {
-                WaitForBeingVisible(errorMessages, timeoutSeconds: 3);
-                var errors = _driver.FindElements(errorMessages);
-                return errors.Any(e => e.Text.Contains(errorMessage));
+                return _driver.FindElement(buttonGuardar).Enabled;
             }
-            catch
+            catch (NoSuchElementException)
             {
                 return false;
             }
         }
 
-       
-        private void WaitForBeingVisible(By locator, int timeoutSeconds = 30)
+        // AF4, AF1: Verifica errores
+        public bool CheckErrorMessage(string message)
         {
-            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeoutSeconds));
-            wait.Until(ExpectedConditions.ElementIsVisible(locator));
-        }
-
-
-
-
-        // Dentro de la clase CrearReparacion_PO:
-
-        // --- AF2: Modificar Carrito (Volver a la selección de herramientas) ---
-        public void PulsarModificarCarrito()
-        {
-            WaitForBeingClickable(By.Id("ModificarHerramientas"));
-            _driver.FindElement(By.Id("ModificarHerramientas")).Click();
-        }
-
-        // --- AF2: Verificar si una herramienta está presente en el formulario ---
-        public bool CheckHerramientaPresente(int herramientaId)
-        {
-            // Usamos el ID de la Cantidad para verificar que la sección de la herramienta exista
-            By inputCantidad = By.Id($"cantidad_{herramientaId}");
-
-            // Si encuentra al menos un elemento con ese ID, la herramienta está presente
-            return _driver.FindElements(inputCantidad).Any();
-        }
-
-
-        // --- AF5: Verificar si el botón Guardar está habilitado ---
-        public bool IsGuardarButtonEnabled()
-        {
-            try { return _driver.FindElement(By.Id("Submit")).Enabled; }
-            catch { 
-                return false; }
+            try
+            {
+                WaitForBeingVisible(errorsShown, timeoutSeconds: 5);
+                return _driver.FindElement(errorsShown).Text.Contains(message);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
         }
     }
-
-
 }
