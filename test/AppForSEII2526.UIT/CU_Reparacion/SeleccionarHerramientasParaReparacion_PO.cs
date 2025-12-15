@@ -30,7 +30,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             WaitForBeingClickable(inputTitle);
             _driver.FindElement(inputTitle).SendKeys(nombre);
 
-            _driver.FindElement(inputTitle).SendKeys(nombre);
+            
 
             if (tiempoReparacion == "")
                 tiempoReparacion = "0";

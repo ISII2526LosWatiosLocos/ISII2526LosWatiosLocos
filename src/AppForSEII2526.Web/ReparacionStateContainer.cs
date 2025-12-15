@@ -10,7 +10,7 @@ namespace AppForSEII2526.Web
    
         {
           
-            public CrearReparacionDTO Reparacion { get; private set; } = new CrearReparacionDTO()
+            public CrearReparacionDTO Reparacion { get; set; } = new CrearReparacionDTO()
             {
                 ReparacionesItems = new List<ReparacionesItemDTO>()
             };
