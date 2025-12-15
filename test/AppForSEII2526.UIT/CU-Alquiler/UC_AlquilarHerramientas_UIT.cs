@@ -155,7 +155,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             // Assert
             if (botonHabilitado)
             {
-                bool urlCambio = _driver.Url.Contains("CrearAlquiler");
+                bool urlCambio = _driver.Url.Contains("Alquila tus herramientas");
                 if (urlCambio)
                 {
                     // Si logramos pasar intentamos guardar y buscamos el error
@@ -189,7 +189,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         [Theory]
         [MemberData(nameof(TestCasesFor_FechasInvalidas))]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_FechasInvalidas_Error(DateTime inicio, DateTime fin, string mensajeError)
+        public void UC4_FechasInvalidas_Error(DateTime inicio, DateTime fin, string mensajeError)
         {
             // Act
             InitialStepsForCrearAlquiler_UIT();
