@@ -86,6 +86,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         {
             try
             {
+                // El elemento tiene atributo hidden, debemos asegurar que es visible
                 WaitForBeingVisible(_ErrorsShown);
                 string actualError = _driver.FindElement(_ErrorsShown).Text;
                 return actualError.Contains(message);
