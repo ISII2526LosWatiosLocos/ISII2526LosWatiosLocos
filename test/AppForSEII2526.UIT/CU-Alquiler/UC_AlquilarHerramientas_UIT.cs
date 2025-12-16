@@ -23,6 +23,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         private const int herramientaId1 = 1;
         private const string nombreInvalido = "Fantasma";
         private const string apellidosInvalido = "Fantasmez";
+        private const string calleInvalida = "No empieza por Calle";
         // Page Objects
         private readonly SelectHerramientasParaAlquilar_PO _selectPO;
         private readonly CrearAlquiler_PO _crearPO;
@@ -126,7 +127,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         [Theory]
         [MemberData(nameof(DatosParaFiltros))]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC4_FiltroPorFabricanteYPrecio(string? nombre, string? material, List<string[]> expectedHerramientas)
+        public void UC4_FiltroPorNombreYMaterial(string? nombre, string? material, List<string[]> expectedHerramientas)
         {
             //Act
             InitialStepsForCrearAlquiler_UIT();
@@ -227,6 +228,29 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             Assert.True(_crearPO.CheckErrorMessage("El Usuario "+ nombreInvalido + " " + apellidosInvalido + " no existe."),
                 "No se mostró error de usuario inexistente.");
         }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC4_CalleInvalida_Error()
+        {
+            // Act
+            InitialStepsForCrearAlquiler_UIT();
+            _selectPO.BuscarHerramientas(herramientaNombre1, herramientaMaterial1);
+            _selectPO.AñadirHerramientasAlCarroDeAlquiler(herramientaNombre1);
+            _selectPO.Continuar();
+
+            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "Yoel", "CS", calleInvalida, "00000", "hello@hola.com", "Efectivo");
+
+            _crearPO.PulsarCrearAlquiler();
+            try { _crearPO.ConfirmarModal(); } catch { }
+
+            // Assert
+            Assert.True(_crearPO.CheckErrorMessage("¡Error! La dirección de envío debe empezar por la palabra Calle"),
+                "No se mostró error de calle inválida.");
+        }
+
+
+
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC4_BorrarHerramientaCarrito()
