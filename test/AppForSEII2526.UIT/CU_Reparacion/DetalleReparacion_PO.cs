@@ -1,42 +1,33 @@
-﻿// Path: test/AppForSEII2526.UIT/CU_Reparacion/DetalleReparacion_PO.cs
-using AppForSEII2526.UIT.Shared;
+﻿using System;
 using OpenQA.Selenium;
-using System.Collections.Generic;
 using Xunit.Abstractions;
+using AppForSEII2526.UIT.Shared;
+using System.Collections.Generic;
 
 namespace AppForSEII2526.UIT.CU_Reparacion
 {
-    public class DetalleReparacion_PO : PageObject
+    public class GetDetailsReparacion_PO : PageObject
     {
-        // Selectores CORREGIDOS basados en DetalleReparacion.razor
-        private readonly By _tableReparacionItems = By.Id("HerramientasReparacion"); // ID de la tabla de ítems
-
-        // XPath para el Nombre y Apellidos (el dato está en el td que sigue al th)
-        private readonly By _nombreCliente = By.XPath("//th[text()='Nombre y Apellidos']/following-sibling::td");
-
-        private readonly By _fechaEntrega = By.Id("FechaEntrega");   // ID en el td de la fecha de entrega
-        private readonly By _precioTotal = By.Id("PrecioTotal");     // ID en el td del período de reparación/precio total
-
-        public DetalleReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
+        public GetDetailsReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
 
-        public bool CheckReparacionItemTable(List<string[]> expectedItems)
+        private By tablaReparacionItemBy = By.Id("HerramientasEnReparacion");
+
+        public bool CheckDetallesReparacion(string nombreCompleto, DateTime fechaEntrega, DateTime fechaRecogida, string metodoPago, string totalCoste)
         {
-            // Las columnas en el Razor son: ID, Nombre, Precio, Cantidad, Descripción
-            return CheckBodyTable(expectedItems, _tableReparacionItems);
+            WaitForBeingVisible(By.Id("Name"));
+
+            bool result = true;
+
+            result &= _driver.FindElement(By.Id("Name")).Text.Contains(nombreCompleto);
+            result &= _driver.FindElement(By.Id("FechaEntrega")).Text.Contains(fechaEntrega.ToString("dd/MM/yyyy"));
+            result &= _driver.FindElement(By.Id("FechaRecogida")).Text.Contains(fechaRecogida.ToString("dd/MM/yyyy"));
+            result &= _driver.FindElement(By.Id("MetodoPago")).Text.Contains(metodoPago);
+            result &= _driver.FindElement(By.Id("TotalCoste")).Text.Contains(totalCoste);
+
+            return result;
         }
 
-        public bool CheckReparacionSummary(string expectedNombreApellidos, string expectedFechaEntrega, string expectedPrecioTotal)
-        {
-            WaitForBeingVisible(_fechaEntrega);
-
-            bool nombreApellidosOK = _driver.FindElement(_nombreCliente).Text.Contains(expectedNombreApellidos);
-            bool fechaEntregaOK = _driver.FindElement(_fechaEntrega).Text.Contains(expectedFechaEntrega);
-
-            bool precioTotalOK = _driver.FindElement(_precioTotal).Text.Contains(expectedPrecioTotal);
-
-            return nombreApellidosOK && fechaEntregaOK && precioTotalOK;
-        }
     }
 }

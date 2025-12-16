@@ -1,67 +1,82 @@
-﻿using AppForSEII2526.Web.API;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
+﻿
+using AppForSEII2526.Web.API;
 namespace AppForSEII2526.Web
 {
     public class ReparacionStateContainer
-   
+    {
+        // Adaptado: ReparacionForCreateDTO -> CrearReparacionDTO
+        public CrearReparacionDTO Reparacion { get; private set; } = new CrearReparacionDTO()
         {
-          
-            public CrearReparacionDTO Reparacion { get; private set; } = new CrearReparacionDTO()
-            {
-                ReparacionesItems = new List<ReparacionesItemDTO>()
-            };
+            // Adaptado: ReparacionItem -> Items
+            // Nota: Tu DTO usa List<T>, así que inicializamos como List.
+            ReparacionesItems = new List<ReparacionesItemDTO>()
+        };
 
-            public float PrecioTotal
+        public event Action? OnChange;
+        private void NotifyStateChanged() => OnChange?.Invoke();
+
+        // He adaptado la entrada para recibir la herramienta seleccionada en la vista
+        public void AddReparacionItem(HerramientasParaReparaciónDTO item)
+        {
+            // Adaptado: Comprobamos por Nombre porque no tenemos ID fiables en el DTO de selección
+            if (!Reparacion.ReparacionesItems.Any(ri => ri.HerramientaNombre == item.Nombre))
             {
-                get
+                Reparacion.ReparacionesItems.Add(new ReparacionesItemDTO()
                 {
-                   
-                    return Reparacion.PrecioTotal;
-                }
-            }
+                    // Adaptado: Mapeo de propiedades a tus nombres de DTO
+                    // IdHerramienta = ??? (Lo omitimos o ponemos 0 si no lo tienes)
+                    HerramientaNombre = item.Nombre,
+                    HerramientaDescripcion = "", // Campo obligatorio en tu DTO, inicializado vacío
+                    HerramientaPrecio = item.Precio,
+                    HerramientaCantidad = 1 // Inicializamos a 1
 
-            public event Action? OnChange;
+                    // Nota: Tu ReparacionesItemDTO no tiene 'NombreFabricante' ni 'TiempoReparacion'
+                    // ni 'PrecioTotal' guardado, así que no los asignamos aquí.
+                });
 
-            private void NotifyStateChanged() => OnChange?.Invoke();
-
-            public void AgregarHerramientaAReparacion(HerramientasParaReparaciónDTO herramienta)
-            {
-                if (!Reparacion.ReparacionesItems.Any(ri => ri.HerramientaNombre == herramienta.Nombre))
-                {
-                    Reparacion.ReparacionesItems.Add(new ReparacionesItemDTO()
-                    {
-                        HerramientaNombre = herramienta.Nombre,           
-                        HerramientaPrecio = herramienta.Precio,
-                        HerramientaDescripcion = $"Reparar {herramienta.Nombre}",
-                        HerramientaCantidad = 1
-                    });
-                    NotifyStateChanged();
-                }
-            }
-
-            public void QuitarItemDeReparacion(ReparacionesItemDTO item)
-            {
-                Reparacion.ReparacionesItems.Remove(item);
-                NotifyStateChanged();
-            }
-
-            public void VaciarReparacion()
-            {
-                Reparacion.ReparacionesItems.Clear();
-                NotifyStateChanged();
-            }
-
-            public void ReparacionProcesada()
-            {
-                Reparacion = new CrearReparacionDTO()
-                {
-                    ReparacionesItems = new List<ReparacionesItemDTO>()
-                };
                 NotifyStateChanged();
             }
         }
+
+        public void RemoveReparacionItem(ReparacionesItemDTO item)
+        {
+            // Adaptado: Buscamos por Nombre
+            var itemToRemove = Reparacion.ReparacionesItems.FirstOrDefault(ri => ri.HerramientaNombre == item.HerramientaNombre);
+            if (itemToRemove != null)
+            {
+                Reparacion.ReparacionesItems.Remove(itemToRemove);
+                NotifyStateChanged();
+            }
+        }
+
+        public void ClearReparacionItems()
+        {
+            Reparacion.ReparacionesItems.Clear();
+            NotifyStateChanged();
+        }
+
+        public void ReparacionProcessed()
+        {
+            Reparacion = new CrearReparacionDTO()
+            {
+                ReparacionesItems = new List<ReparacionesItemDTO>(),
+                // Mantenemos la lógica de fecha que tenías antes por si acaso
+                FechaEntrega = DateTime.Now.AddDays(1)
+            };
+            NotifyStateChanged();
+        }
+
+        // Propiedad extra útil para mostrar el total en la UI (basada en tu código anterior)
+        public decimal PrecioTotal
+        {
+            get
+            {
+                return Math.Round(
+                    (decimal)Reparacion.ReparacionesItems.Sum(i => i.HerramientaPrecio * i.HerramientaCantidad),
+                    2,
+                    MidpointRounding.AwayFromZero
+                );
+            }
+        }
+    }
 }

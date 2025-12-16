@@ -1,270 +1,307 @@
-﻿// Path: test/AppForSEII2526.UIT/CU_Reparacion/CURepararacion_UIT.cs
-using AppForMovies.UIT.Shared;
+﻿using AppForMovies.UIT.Shared;
 using AppForSEII2526.UIT.Shared;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
 using System.Collections.Generic;
-using Xunit;
-using Xunit.Abstractions;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AppForSEII2526.UIT.CU_Reparacion
 {
-    public class CURepararacion_UIT : UC_UIT
+    public class UC_Reparacion_UIT : UC_UIT
     {
-        private readonly SeleccionarHerramientasParaReparacion_PO _selectPO;
-        private readonly CrearReparacion_PO _crearPO;
-        private readonly DetalleReparacion_PO _detallePO;
+        private GetSelectReparacion_PO getSelectReparacion_PO;
+        private GetDetailsReparacion_PO getDetailsReparacion_PO;
+        private CreateReparacion_PO createReparacion_PO;
 
-        // ... (Constantes de datos) ...
-        private const int HerramientaId1 = 1;
-        private const string HerramientaNombre1 = "Martillo";
-        private const string HerramientaMaterial1 = "Acero";
-        private const string HerramientaFabricante1 = "herramientas SA";
-        private const float PrecioHerramientaReparacion1 = 57.40f;
-        private const int HerramientaTiempoReparacion1 = 33;
+        private const string llave = "Llave inglesa";
+        private const int llaveid = 1;
+        private const string materialLlave = "Acero";
+        private const string FabricanteLlave = "BOSCH";
+        private const string tiempoReparacionLlave = "30";
+        private const float precioLlave = 150;
 
-        private const int HerramientaId2 = 3;
-        private const string HerramientaNombre2 = "LLave";
-        private const string HerramientaMaterial2 = "Acero";
-        private const string HerramientaFabricante2 = "herramientas SA";
-        private const float PrecioHerramientaReparacion2 = 17.50f;
-        private const int HerramientaTiempoReparacion2 = 17;
+        private const string destornillador = "Destornillador de estrella";
+        private const int destornilladorid = 3;
+        private const string materialDestornillador = "Acero y Plástico";
+        private const string FabricanteDestornillador = "BOSCH";
+        private const string tiempoReparacionDestornillador = "5";
+        private const float precioDestornillador = 45;
 
-        private const string clienteNombre = "Juan";
-        private const string clienteApellidos = "Pérez García";
-        private const string telefonoOpcional = "666123456";
-        private const string descripcionProblema = "Fallo en el mecanismo";
-        private const int cantidadItem = 1;
-        private const string metodoPagoValue = "1";
-
-        private readonly DateTime fechaEntregaValida = DateTime.Today.AddDays(7);
-        private readonly DateTime fechaEntregaInvalida = DateTime.Today.AddDays(-1);
-
-
-        public CURepararacion_UIT(ITestOutputHelper output) : base(output)
+        public UC_Reparacion_UIT(ITestOutputHelper output) : base(output)
         {
-            _selectPO = new SeleccionarHerramientasParaReparacion_PO(_driver, output);
-            _crearPO = new CrearReparacion_PO(_driver, output);
-            _detallePO = new DetalleReparacion_PO(_driver, output);
+            getSelectReparacion_PO = new GetSelectReparacion_PO(_driver, _output);
+            getDetailsReparacion_PO = new GetDetailsReparacion_PO(_driver, _output);
+            createReparacion_PO = new CreateReparacion_PO(_driver, _output);
         }
 
-        protected void InitialStepsForRepararHerramientas()
+        public void Primer_Paso_Seleccionar_Herramienta()
         {
-            // Ya no incluimos Perform_login aquí, basándonos en su última indicación.
-            _driver.Navigate().GoToUrl(_URI + "Reparacion/SeleccionHerramientaParaReparaciones");
+            Initial_step_opening_the_web_page();
+            getSelectReparacion_PO.WaitForBeingVisible(By.Id("Reparación"));
+            _driver.FindElement(By.Id("Reparación")).Click();
+            Thread.Sleep(1000);
         }
 
-        // UC2_1 FLUJO BÁSICO - Listado Inicial (Paso 2)
-        [Fact]
-        [Trait("Category", "UIT")]
-        public void UC2_1_FlujoBasico_ListadoInicial_Exito()
-        {
-            // 1. ARRANGE
-            InitialStepsForRepararHerramientas();
 
-            var expectedHerramientas = new List<string[]> {
-                new string[] { HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1, PrecioHerramientaReparacion1.ToString("F2") },
-                new string[] { HerramientaNombre2, HerramientaMaterial2, HerramientaFabricante2, PrecioHerramientaReparacion2.ToString("F2") }
-            };
 
-            // 2. ACT
-            _selectPO.BuscarHerramientas("", "");
 
-            // 3. ASSERT
-            Assert.True(_selectPO.CheckListOfHerramientas(expectedHerramientas), "Fallo: El listado inicial de herramientas no es correcto.");
-        }
-
-        // UC2_2 FLUJO BÁSICO - Creación Exitosa (End-to-end)
-        [Fact]
-        [Trait("Category", "UIT")]
-        public void UC2_2_CrearReparacion_FlujoBasico_Exito()
-        {
-            // 1. ARRANGE
-            string nombreHerramienta = HerramientaNombre1;
-            float precioTotal = PrecioHerramientaReparacion1 * cantidadItem;
-            string precioTotalEsperado = precioTotal.ToString("N2");
-            string fechaEntregaFormato = fechaEntregaValida.ToString("dd/MM/yyyy");
-
-            var expectedDetailItem = new List<string[]> {
-                new string[] { HerramientaId1.ToString(), nombreHerramienta, PrecioHerramientaReparacion1.ToString("N2") + "€", cantidadItem.ToString(), descripcionProblema }
-            };
-
-            // 2. ACT
-            InitialStepsForRepararHerramientas();
-            _selectPO.BuscarHerramientas("", "");
-            _selectPO.AñadirHerramientaAReparacionCart(nombreHerramienta);
-            _selectPO.ProcesarReparacion();
-
-            // Rellenar Formulario (Paso 5)
-            _crearPO.RellenarDatosGenerales(clienteNombre, clienteApellidos, telefonoOpcional, fechaEntregaValida, metodoPagoValue);
-
-            // CORRECCIÓN: Usar RellenarDatosItemReparacion que maneja la descripción
-            _crearPO.RellenarDatosItemReparacion(HerramientaId1, cantidadItem, descripcionProblema);
-
-            // Confirmar (Paso 6)
-            _crearPO.PulsarCrearReparacion();
-            _crearPO.ConfirmarModal();
-
-            // 3. ASSERT
-            System.Threading.Thread.Sleep(2000);
-            bool urlCorrecta = _driver.Url.Contains("/Reparacion/DetalleReparacion");
-            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
-
-            Assert.True(_detallePO.CheckReparacionSummary($"{clienteNombre} {clienteApellidos}", fechaEntregaFormato, precioTotalEsperado),
-                "Fallo: El resumen del detalle de la reparación no es correcto.");
-            Assert.True(_detallePO.CheckReparacionItemTable(expectedDetailItem), "Fallo: Los detalles de los ítems de reparación no son correctos.");
-        }
-
-        // UC2_FA0 FLUJO ALTERNATIVO 0 - Filtrado
+        // PASOS 1-7, FLUJO BÁSICO COMPLETO
         [Theory]
-        [InlineData(HerramientaNombre1, "")]
-        [InlineData("", "33")]
-        [InlineData(HerramientaNombre1, "33")]
-        [Trait("Category", "UIT")]
-        public void UC2_FA0_Filtrado_Exito(string filtroNombre, string filtroTiempo)
+        [InlineData(nombreCliente1, apellidosCliente1, "+34 600111222", tiempoReparacionLlave, "Efectivo")]
+        [InlineData(nombreCliente2, apellidosCliente2, "+34 700333444", tiempoReparacionLlave, "PayPal")]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void FlujoBásico(string nombreCliente, string apellidosCliente, string telefono, string dias, string metodoPago)
         {
-            // 1. ARRANGE
-            InitialStepsForRepararHerramientas();
-            var expectedHerramientas = new List<string[]> {
-                new string[] { HerramientaNombre1, HerramientaMaterial1, HerramientaFabricante1, PrecioHerramientaReparacion1.ToString("F2") },
+            // Arrange
+            Primer_Paso_Seleccionar_Herramienta();
+            Thread.Sleep(1000);
+
+            // Act
+            getSelectReparacion_PO.BuscarHerramientas(llave, tiempoReparacionLlave);
+            Thread.Sleep(1000);
+            getSelectReparacion_PO.AñadirHerramientaAlCarro(llave);
+            getSelectReparacion_PO.ContinuarReparacion();
+            Thread.Sleep(1000);
+            DateTime fechaEntrega = DateTime.Now;
+            DateTime fechaRecogidaCalculada = fechaEntrega.AddDays(int.Parse(dias));
+
+            // Rellenamos el formulario con la fecha de inicio
+            createReparacion_PO.RellenarFormularioReparacion(nombreCliente, apellidosCliente, telefono, fechaEntrega, metodoPago);
+            Thread.Sleep(1000);
+
+            createReparacion_PO.ClickRegistrarButton();
+            Thread.Sleep(1000);
+            createReparacion_PO.ConfirmDialog();
+            Thread.Sleep(1000);
+
+            // Assert
+            Assert.True(getDetailsReparacion_PO.CheckDetallesReparacion(
+                nombreCliente + " " + apellidosCliente,
+                fechaEntrega.Date,
+                fechaRecogidaCalculada.Date,
+
+                metodoPago,
+                "150,00 €"
+            ));
+        }
+
+
+        // PASOS 2 y 3, FLUJO ALTERNATIVO 0 - Filtros
+        [Theory]
+        [InlineData(llave, tiempoReparacionLlave, llave, FabricanteLlave, materialLlave, precioLlave, tiempoReparacionLlave)] // Filtro por Nombre y Tiempo
+        [InlineData(llave, "", llave, FabricanteLlave, materialLlave, precioLlave, tiempoReparacionLlave)] // Filtro por Nombre
+        [InlineData("", tiempoReparacionDestornillador, destornillador, FabricanteDestornillador, materialDestornillador, precioDestornillador, tiempoReparacionDestornillador)] // Filtro por Tiempo
+
+        public void FB_P2_P3_FA0_FiltroNombreYTiempo(
+            string nombreHerramientaFiltro,
+            string tiempoReparacionFiltro,
+            string nombreEsperado,
+            string fabricanteEsperado,
+            string materialEsperado,
+            float precioEsperado,
+            string tiempoReparacionEsperado)
+        {
+            //Arrange
+            Primer_Paso_Seleccionar_Herramienta();
+
+            var herramientasEsperadas = new List<string[]>
+            {
+              new string[] {
+              nombreEsperado,
+              fabricanteEsperado,
+              materialEsperado,
+              precioEsperado.ToString() + " €",
+              tiempoReparacionEsperado,
+              "Añadir"
+      }
             };
 
-            // 2. ACT
-            _selectPO.BuscarHerramientas(filtroNombre, filtroTiempo);
+            //Act
+            getSelectReparacion_PO.BuscarHerramientas(nombreHerramientaFiltro, tiempoReparacionFiltro);
+            Thread.Sleep(1000); // Esperar a que la tabla se refresque
 
-            // 3. ASSERT
-            Assert.True(_selectPO.CheckListOfHerramientas(expectedHerramientas), $"Fallo al filtrar por Nombre:'{filtroNombre}' y Tiempo:'{filtroTiempo}'.");
+            //Assert
+            Assert.True(getSelectReparacion_PO.VerificarTablaDeHerramientas(herramientasEsperadas));
+
         }
 
-        // UC2_FA1 FLUJO ALTERNATIVO 1 - Fecha de Entrega Anterior a Hoy (Paso 5)
+        //PASO 6 - FLUJO ALTERNATIVO 1 - Fecha Entrega mala
         [Fact]
-        [Trait("Category", "UIT")]
-        public void UC2_FA1_FechaEntregaInvalida_Error()
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void FB_P6_FA1_FechaEntregaMala()
         {
-            // 1. ARRANGE
-            InitialStepsForRepararHerramientas();
-            _selectPO.AñadirHerramientaAReparacionCart(HerramientaNombre1);
-            _selectPO.ProcesarReparacion();
+            Primer_Paso_Seleccionar_Herramienta();
+            Thread.Sleep(1000);
+            getSelectReparacion_PO.AñadirHerramientaAlCarro(llave);
+            getSelectReparacion_PO.ContinuarReparacion();
 
-            // 2. ACT
-            _crearPO.RellenarDatosGenerales(clienteNombre, clienteApellidos, telefonoOpcional, fechaEntregaInvalida, metodoPagoValue);
+            DateTime fechaMala = DateTime.Now.AddDays(-5);
 
-            // CORRECCIÓN: Usar RellenarDatosItemReparacion
-            _crearPO.RellenarDatosItemReparacion(HerramientaId1, cantidadItem, descripcionProblema);
+            //ACT
+            createReparacion_PO.RellenarFormularioReparacion(nombreCliente1, apellidosCliente1, "", fechaMala, "PayPal");
+            Thread.Sleep(1000);
+            createReparacion_PO.ClickRegistrarButton();
+            Thread.Sleep(1000);
+            createReparacion_PO.ConfirmDialog();
+            Thread.Sleep(1000);
 
-            _crearPO.PulsarCrearReparacion();
+            //ASSERT
+            Assert.True(createReparacion_PO.CheckValidationError("Errors: (*) La fecha de entrega no puede ser anterior a hoy"));
 
-            // 3. ASSERT
-            bool seguimosEnCrear = _driver.Url.Contains("/Reparacion/CreateReparacion");
-            Assert.True(seguimosEnCrear, $"El sistema permitió crear reparación con fecha inválida.");
-
-            bool hayError = _crearPO.CheckErrorMessage("debe ser posterior");
-            Assert.True(hayError, "El sistema no mostró error por fecha de entrega inválida.");
         }
 
-        // UC2_FA2 FLUJO ALTERNATIVO 2 - Modificar Carrito
+
+
+        // PASO 3, FLUJO ALTERNATIVO 2 - Modificar carrito desde Select
         [Fact]
-        [Trait("Category", "UIT")]
-        public void UC2_FA2_ModificarCarrito_EliminarItem()
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void FB_P3_FA2_ModificarCarritoDesdeSelect()
         {
-            // 1. ARRANGE
-            string nombreHerramienta2 = HerramientaNombre2;
-            float precioTotal = PrecioHerramientaReparacion2 * cantidadItem;
-            string precioTotalEsperado = precioTotal.ToString("N2");
-            string fechaEntregaFormato = fechaEntregaValida.ToString("dd/MM/yyyy");
+            // Arrange
+            Primer_Paso_Seleccionar_Herramienta();
+            getSelectReparacion_PO.BuscarHerramientas("", "");
+            Thread.Sleep(1000);
 
-            var expectedDetailItem = new List<string[]> {
-                new string[] { HerramientaId2.ToString(), nombreHerramienta2, PrecioHerramientaReparacion2.ToString("N2") + "€", cantidadItem.ToString(), descripcionProblema }
-            };
+            // Act - 1. Añadimos dos herramientas
+            getSelectReparacion_PO.AñadirHerramientaAlCarro(llave); // Precio: 150
+            getSelectReparacion_PO.AñadirHerramientaAlCarro(destornillador); // Precio: 45
+            //Eliminamos la llave
+            Thread.Sleep(1000);
+            getSelectReparacion_PO.QuitarDelCarrito(llave);
+            Thread.Sleep(1000);
 
-            // 2. ACT
-            InitialStepsForRepararHerramientas();
-            _selectPO.AñadirHerramientaAReparacionCart(HerramientaNombre1);
-            _selectPO.AñadirHerramientaAReparacionCart(HerramientaNombre2);
-            _selectPO.RemoveHerramientaFromReparacionCart(HerramientaNombre1);
+            // Assert
+            string precioEsperado = "45,00 €";
+            string precioActual = getSelectReparacion_PO.ObtenerTotalEstimado();
 
-            _selectPO.ProcesarReparacion();
+            Assert.Equal(precioEsperado, precioActual);
 
-            // Rellenar formulario (Paso 5)
-            _crearPO.RellenarDatosGenerales(clienteNombre, clienteApellidos, telefonoOpcional, fechaEntregaValida, metodoPagoValue);
-
-            // CORRECCIÓN: Usar RellenarDatosItemReparacion para la herramienta que queda
-            _crearPO.RellenarDatosItemReparacion(HerramientaId2, cantidadItem, descripcionProblema);
-
-            _crearPO.PulsarCrearReparacion();
-            _crearPO.ConfirmarModal();
-            System.Threading.Thread.Sleep(2000);
-
-            // 3. ASSERT
-            bool urlDetalle = _driver.Url.Contains("/Reparacion/DetalleReparacion");
-            Assert.True(urlDetalle, $"Fallo: El flujo no se completó tras modificar el carrito.");
-
-            Assert.True(_detallePO.CheckReparacionSummary($"{clienteNombre} {clienteApellidos}", fechaEntregaFormato, precioTotalEsperado),
-                "Fallo: El precio total o cliente en el detalle no refleja la modificación del carrito.");
-            Assert.True(_detallePO.CheckReparacionItemTable(expectedDetailItem), "Fallo: Los ítems en el detalle no reflejan la modificación del carrito.");
         }
 
-        // UC2_FA3 FLUJO ALTERNATIVO 3 - Carrito Vacío (al Paso 4)
+        // PASO 5 - FLUJO ALTERNATIVO 2 - MODIFICAR CARRITO DESDE POST
         [Fact]
-        [Trait("Category", "UIT")]
-        public void UC2_FA3_CarritoVacio_NoPermiteContinuar()
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void FB_P5_FA2_ModificarCarritoDesdePost()
         {
-            // 1. ARRANGE
-            InitialStepsForRepararHerramientas();
+            // Arrange
+            Primer_Paso_Seleccionar_Herramienta();
+            Thread.Sleep(500);
+            getSelectReparacion_PO.AñadirHerramientaAlCarro(llave);
+            getSelectReparacion_PO.AñadirHerramientaAlCarro(destornillador);
+            getSelectReparacion_PO.ContinuarReparacion();
+            Thread.Sleep(1000);
+            createReparacion_PO.ClickModificarHerramientas();
+            Thread.Sleep(1000);
+            getSelectReparacion_PO.QuitarDelCarrito(llave);
+            Thread.Sleep(1000);
 
-            // 2. ACT
-            bool isNotAvailable = _selectPO.ReparacionNotAvailable();
+            // Assert
+            string precioEsperado = "45,00 €";
+            string precioActual = getSelectReparacion_PO.ObtenerTotalEstimado();
 
-            // 3. ASSERT
-            Assert.True(isNotAvailable, "El botón 'Procesar Reparación' estaba activo con el carrito vacío.");
+            Assert.Equal(precioEsperado, precioActual);
+
+
+
         }
 
-        // UC2_FA4 FLUJO ALTERNATIVO 4 - Campo Obligatorio Faltante (Paso 6)
+
+        // PASO 4, FLUJO ALTERNATIVO 3 - Carrito vacío
         [Fact]
-        [Trait("Category", "UIT")]
-        public void UC2_FA4_CrearReparacion_CampoObligatorioFaltante_Error()
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void FB_P4_FA3_CarritoVacio()
         {
-            // 1. ARRANGE
-            InitialStepsForRepararHerramientas();
-            _selectPO.AñadirHerramientaAReparacionCart(HerramientaNombre1);
-            _selectPO.ProcesarReparacion();
+            //Arrange
+            Primer_Paso_Seleccionar_Herramienta();
+            getSelectReparacion_PO.BuscarHerramientas("", "");
+            Thread.Sleep(500);
 
-            // 2. ACT
-            // Omitiendo 'Apellidos' (campo obligatorio)
-            _crearPO.RellenarDatosGenerales(clienteNombre, "", telefonoOpcional, fechaEntregaValida, metodoPagoValue);
+            //Act
+            // Sin herramientas en el carrito
 
-            // CORRECCIÓN: Usar RellenarDatosItemReparacion
-            _crearPO.RellenarDatosItemReparacion(HerramientaId1, cantidadItem, descripcionProblema);
-
-            _crearPO.PulsarCrearReparacion();
-
-            // 3. ASSERT
-            bool seguimosEnCrear = _driver.Url.Contains("/Reparacion/CreateReparacion");
-            Assert.True(seguimosEnCrear, $"El sistema permitió crear reparación sin campos obligatorios.");
-
-            bool hayError = _crearPO.CheckErrorMessage("El campo Apellidos es obligatorio");
-            Assert.True(hayError, "El sistema no mostró error por campo obligatorio faltante.");
+            //Assert
+            Assert.True(getSelectReparacion_PO.RepararHerramientaNoDisponible());
         }
 
-        // UC2_FA5 FLUJO ALTERNATIVO 5 - Cantidad Cero (Paso 6)
+        private const string nombreCliente1 = "Billy";
+        private const string nombreCliente2 = "Amador";
+        private const string nombreCliente3 = "Shawn";
+        private DateTime fechaBuena = DateTime.Now.AddDays(new Random().Next(1, 11));
+        private const string apellidosCliente1 = "Chalabi";
+        private const string apellidosCliente2 = "Rivas";
+        private const string apellidosCliente3 = "Frost";
+
+        private const string descripcionLlave = "Mu inglesa no parece la llave eh";
+        private const string descripcionDestornillador = "Era de punta plana pero bueno";
+
+
+
+
+
+
+        // PASO 6 - FLUJO ALTERNATIVO 4 - Datos no rellenados
+        [Theory]
+        [InlineData("", apellidosCliente1, "Errors: (*) The NombreCliente field is required.")]
+        [InlineData(nombreCliente1, "", "Errors: (*) The ApellidoCliente field is required.")]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void FB_P6_FA4_DatosNoRellenados(
+            string nombreCliente,
+            string apellidosCliente,
+            string errorEsperado)
+        {
+            Primer_Paso_Seleccionar_Herramienta();
+            Thread.Sleep(1000);
+            getSelectReparacion_PO.AñadirHerramientaAlCarro(destornillador);
+            Thread.Sleep(1000);
+            getSelectReparacion_PO.ContinuarReparacion();
+            DateTime fechaValida = DateTime.Now.AddDays(5);
+            Thread.Sleep(1000);
+            //ACT
+            createReparacion_PO.RellenarFormularioReparacion(nombreCliente, apellidosCliente, "", fechaValida, "Efectivo");
+            Thread.Sleep(1000);
+            createReparacion_PO.RellenarDescripcionReparacion(descripcionDestornillador, destornilladorid);
+            createReparacion_PO.ClickRegistrarButton();
+            Thread.Sleep(1000);
+            createReparacion_PO.ConfirmDialog();
+            Thread.Sleep(1000);
+            //ASSERT
+            Assert.True(createReparacion_PO.CheckValidationError(errorEsperado));
+        }
+
+
+
+        //PASO 6, FLUJO ALTERNATIVO 5 - Carrito vacío, 0 herramientas seleccionadas 
         [Fact]
-        [Trait("Category", "UIT")]
-        public void UC2_FA5_CrearReparacion_CantidadCero_BotonInactivo()
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void FB_P6_FA5_CarritoVacio()
         {
-            // 1. ARRANGE
-            InitialStepsForRepararHerramientas();
-            _selectPO.AñadirHerramientaAReparacionCart(HerramientaNombre1);
-            _selectPO.ProcesarReparacion();
+            //Arrange
+            Primer_Paso_Seleccionar_Herramienta();
+            Thread.Sleep(1000);
+            getSelectReparacion_PO.AñadirHerramientaAlCarro(destornillador);
+            getSelectReparacion_PO.ContinuarReparacion();
+            Thread.Sleep(1000);
+            createReparacion_PO.RellenarDescripcionReparacion(descripcionDestornillador, destornilladorid);
+            Thread.Sleep(1000);
+            createReparacion_PO.ClickModificarHerramientas();
+            Thread.Sleep(1000);
+            getSelectReparacion_PO.QuitarDelCarrito(destornillador);
+            Thread.Sleep(1000);
 
-            // 2. ACT
-            // Rellenar datos, pero con Cantidad = 0
-            _crearPO.RellenarDatosGenerales(clienteNombre, clienteApellidos, telefonoOpcional, fechaEntregaValida, metodoPagoValue);
-
-            // CORRECCIÓN: Usar RellenarDatosItemReparacion
-            _crearPO.RellenarDatosItemReparacion(HerramientaId1, 0, descripcionProblema);
-
-            // 3. ASSERT
-            // El botón debe estar inactivo/deshabilitado
-            Assert.True(_crearPO.IsCrearReparacionButtonDisabled(), "El botón 'Guardar' no se inhabilitó al establecer cantidad 0.");
+            //Act
+            // Sin herramientas en el carrito
+            //Assert
+            Assert.True(getSelectReparacion_PO.RepararHerramientaNoDisponible());
         }
+
+
+
+
+
+
+
+
     }
 }

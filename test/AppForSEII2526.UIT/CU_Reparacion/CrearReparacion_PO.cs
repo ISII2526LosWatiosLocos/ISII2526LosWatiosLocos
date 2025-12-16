@@ -1,119 +1,86 @@
-﻿// Path: test/AppForSEII2526.UIT/CU_Reparacion/CrearReparacion_PO.cs
-using AppForSEII2526.UIT.Shared;
+﻿using AppForSEII2526.UIT.Shared;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Support.UI;
 using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using Xunit.Abstractions;
 
 namespace AppForSEII2526.UIT.CU_Reparacion
 {
-    public class CrearReparacion_PO : PageObject
+    public class CreateReparacion_PO : PageObject
     {
-        // Selectores CORREGIDOS
-        private readonly By _inputNombre = By.Id("Nombre"); 
-        private readonly By _inputApellidos = By.Id("Apellidos"); 
-        private readonly By _inputTelefono = By.Id("Telefono"); 
-        private readonly By _inputFechaEntrega = By.Id("FechaEntrega"); 
-        private readonly By _selectMetodoPago = By.Id("MetodoPago"); 
-        private readonly By _pulsarCrearReparacion = By.Id("Submit"); // Corregido: id="Submit"
-        private readonly By _validationSummary = By.CssSelector(".validation-summary-errors");
 
-        public CrearReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
+        private By inputNombre = By.Id("Nombre");
+        private By inputApellidos = By.Id("Apellido");
+        private By inputTelefono = By.Id("Telefono");
+        private By inputFechaEntrega = By.Id("FechaEntrega");
+        private By inputMetodoPago = By.Id("MetodoPago");
+        private By btnRegistrarReparacion = By.Id("Submit");
+        private By btnModificarHerramientas = By.Id("ModifyReparacion");
+        private By dialogOkButton = By.Id("Button_DialogOK");
+        private By tableOfReparacionItems = By.Id("TableOfReparacionItems");
+        public CreateReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
-
-        public void RellenarDatosGenerales(string nombre, string apellidos, string telefono, DateTime fechaEntrega, string metodoPagoValue)
+        public void RellenarFormularioReparacion(string nombreC, string apellidosC, string telefono, DateTime fechaEntrega, string metodoPago)
         {
-            WaitForBeingVisible(_inputNombre);
-            _driver.FindElement(_inputNombre).Clear();
-            _driver.FindElement(_inputNombre).SendKeys(nombre);
+            //Nombre
+            WaitForBeingClickable(inputNombre);
+            _driver.FindElement(inputNombre).Clear();
+            _driver.FindElement(inputNombre).SendKeys(nombreC);
 
-            WaitForBeingVisible(_inputApellidos);
-            _driver.FindElement(_inputApellidos).Clear();
-            _driver.FindElement(_inputApellidos).SendKeys(apellidos);
+            //Apellidos
+            WaitForBeingClickable(inputApellidos);
+            _driver.FindElement(inputApellidos).Clear();
+            _driver.FindElement(inputApellidos).SendKeys(apellidosC);
 
-            if (!string.IsNullOrEmpty(telefono))
-            {
-                WaitForBeingVisible(_inputTelefono);
-                _driver.FindElement(_inputTelefono).Clear();
-                _driver.FindElement(_inputTelefono).SendKeys(telefono);
-            }
-            
-            InputDateInDatePicker(_inputFechaEntrega, fechaEntrega);
-            
-            WaitForBeingVisible(_selectMetodoPago);
-            var selectElement = new SelectElement(_driver.FindElement(_selectMetodoPago));
-            selectElement.SelectByValue(metodoPagoValue);
-        }
-        
-        public void RellenarDatosItemReparacion(int herramientaId, int cantidad, string descripcion)
-        {
-            // IDs CORREGIDOS: cantidad_{id} y descripcion_{id}
-            By inputCantidad = By.Id($"cantidad_{herramientaId}"); 
-            By inputDescripcion = By.Id($"descripcion_{herramientaId}"); 
-            
-            WaitForBeingVisible(inputCantidad);
-            _driver.FindElement(inputCantidad).Clear();
-            _driver.FindElement(inputCantidad).SendKeys(cantidad.ToString()); 
-            
-            if (!string.IsNullOrEmpty(descripcion))
-            {
-                WaitForBeingVisible(inputDescripcion);
-                _driver.FindElement(inputDescripcion).Clear();
-                _driver.FindElement(inputDescripcion).SendKeys(descripcion);
-            }
-        }
-        
-        public void PulsarCrearReparacion()
-        {
-            ClickWithRetry(_pulsarCrearReparacion);
+            //Teléfono
+            WaitForBeingClickable(inputTelefono);
+            _driver.FindElement(inputTelefono).Clear();
+            _driver.FindElement(inputTelefono).SendKeys(telefono);
+
+            //Fecha
+            WaitForBeingClickable(inputFechaEntrega);
+            _driver.FindElement(inputFechaEntrega).SendKeys(fechaEntrega.ToString("dd/MM/yyyy"));
+
+            //Método de Pago
+            WaitForBeingClickable(inputMetodoPago);
+            var selectElement = new SelectElement(_driver.FindElement(inputMetodoPago));
+            selectElement.SelectByText(metodoPago);
         }
 
-        public void ConfirmarModal()
+        public void RellenarDescripcionReparacion(string descripcion, int idHerramienta)
         {
-            PressOkModalDialog();
-        }
-        
-        // MÉTODO CheckErrorMessage CONFIRMADO Y CORREGIDO
-        public bool CheckErrorMessage(string expectedError)
-        {
-            // 1. Verificar resumen de validación
-            try
-            {
-                WaitForBeingVisible(_validationSummary);
-                IWebElement validationElement = _driver.FindElement(_validationSummary);
-                if (validationElement.Text.Contains(expectedError))
-                {
-                    _output.WriteLine($"Mensaje de Validación Encontrado: {validationElement.Text}");
-                    return true;
-                }
-            }
-            catch (Exception) 
-            {
-            }
-            
-            // 2. Verificar cuerpo del modal (si el error viene del servidor)
-            By _modalDialog = By.Id("DialogModal"); 
-            if (CheckModalBodyText(expectedError, _modalDialog))
-            {
-                _output.WriteLine("Error Encontrado en el Cuerpo del Modal.");
-                return true;
-            }
-            
-            return false;
+            By descripcionInput = By.Id($"Descripcion_{idHerramienta}");
+            WaitForBeingClickable(descripcionInput);
+            _driver.FindElement(descripcionInput).Clear();
+            _driver.FindElement(descripcionInput).SendKeys(descripcion);
         }
 
-        public bool IsCrearReparacionButtonDisabled()
+        public void ClickRegistrarButton()
         {
-            try
-            {
-                IWebElement element = _driver.FindElement(_pulsarCrearReparacion);
-                return !element.Enabled || element.GetAttribute("disabled") != null;
-            }
-            catch (Exception)
-            {
-                return true; 
-            }
+            WaitForBeingClickable(btnRegistrarReparacion);
+            _driver.FindElement(btnRegistrarReparacion).Click();
+        }
+
+        public void ConfirmDialog()
+        {
+            WaitForBeingClickable(dialogOkButton);
+            _driver.FindElement(dialogOkButton).Click();
+        }
+
+        public void ClickModificarHerramientas()
+        {
+            WaitForBeingClickable(btnModificarHerramientas);
+            _driver.FindElement(btnModificarHerramientas).Click();
+        }
+
+        public bool CheckValidationError(string error)
+        {
+            return _driver.PageSource.Contains(error);
         }
     }
 }

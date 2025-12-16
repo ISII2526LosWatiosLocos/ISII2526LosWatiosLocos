@@ -1,296 +1,250 @@
-﻿@page "/Reparacion/CreateReparacion"
+﻿@page "/reparacion/createreparacion"
 
 @inject NavigationManager navigation
 @using AppForSEII2526.Web.Components.Shared
 @using AppForSEII2526.Web.API
-
+@using Microsoft.AspNetCore.Authorization
 @inject AppForHerramientasAPIClient apiclient
-@inject ILogger<CreateReparacion> logger
-@inject ReparacionStateContainer ReparacionStateContainer
+@inject ILogger<CrearReparacionDTO> logger
+@inject ReparacionStateContainer reparacionState
 
+<h3>Crear Reparación</h3>
 
-
-<h3>CreateReparacion</h3>
-
-@* rental is the object that will be edited thanks to the form *@
 <EditForm Model="reparacion" OnValidSubmit="OpenDialog">
     <div class="row">
-
-
         <DataAnnotationsValidator />
         <ValidationSummary class="row alert alert-danger" />
+    </div>
+    <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+        <p id="ErrorsShown">Errors: @messageError</p>
+    </div>
 
-    
+    @* DATOS DEL CLIENTE *@
+    <div class="row g-3">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                @* DTO usa "Nombre", no "NombreCliente" *@
+                <InputText @bind-Value="reparacion.Nombre" class="form-control" id="Nombre" placeholder="Nombre" />
+                <label for="Nombre">Nombre Cliente</label>
+            </div>
         </div>
-
-    <div class="row alert alert-danger" role="alert" hidden="@EsconderErrores ">
-        <p id="ErrorsShown">Errors: @MensajeError</p>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                @* DTO usa "Apellidos", no "ApellidoCliente" *@
+                <InputText @bind-Value="reparacion.Apellidos" class="form-control" id="Apellido" placeholder="Apellido" />
+                <label for="Apellido">Apellido Cliente</label>
+            </div>
+        </div>
     </div>
 
     <div class="row g-3">
         <div class="col-md">
             <div class="form-floating mb-3">
-                <InputText @bind-Value="reparacion.Nombre"
-                   class="form-control" id="Nombre" />
-                <label for="Nombre">Nombre </label>
+                @* DTO usa "telefono" (minúscula) *@
+                <InputText @bind-Value="reparacion.Telefono" class="form-control" id="Telefono" placeholder="+34..." />
+                <label for="Telefono">Nº Teléfono (Empieza por +34)</label>
             </div>
-
+        </div>
+        @* FECHAS: Tu controlador requiere Entrega y Recogida *@
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="reparacion.FechaEntrega" class="form-control" id="FechaEntrega" />
+                <label for="FechaEntrega">Fecha de Entrega</label>
+            </div>
         </div>
         <div class="col-md">
             <div class="form-floating mb-3">
-                <InputText @bind-Value="reparacion.Apellidos" class="form-control" id="Apellidos" />
-                <label for="Apellidos">Apellidos </label>
-         
+                @* Necesario para pasar la validación del controlador *@
+                <InputDate @bind-Value="reparacion.FechaRecogida" class="form-control" id="FechaRecogida" />
+                <label for="FechaRecogida">Fecha de Recogida</label>
             </div>
         </div>
+    </div>
 
-
-
-        <div class="col-md">
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="reparacion.Telefono"
-                           class="form-control"
-                           id="Telefono"
-                           placeholder="Opcional" />
-                <label for="Telefono">Teléfono (opcional)</label>
-            </div>
-        </div>
-
-
-            <div class="row g-3">
-                <div class="col-md">
-                    <div class="form-floating mb-3">
-                        <InputDate @bind-Value="reparacion.FechaEntrega" class="form-control" id="FechaEntrega" />
-                        <label for="FechaEntrega">Fecha de Entrega</label>
-                    </div>
-                </div>
-            </div>
-
-
-
-
-        <div class="row g-2">
-            <div class="col-md">
-                <div class="form-floating">
-                    @* Un dropdown para seleccionar el método de pago *@
-                    @* MIRAR *@
-                    <InputSelect class="form-select" @bind-Value="@reparacion.MetodoPagoId" id="MetodoPago">
-                        <option value="">Seleccionar método</option>
-                         <option value="1">Tarjeta</option>
-                        <option value="2">PayPal</option>
-                        <option value="3">Efectivo</option>
-
-                    </InputSelect>
-                    <label for="MetodoPago">Método de Pago</label>
-                </div>
-            </div>
-        </div>
-
-
-
-
-
-
-
+    <div class="row g-2">
         <div class="col-md">
             <div class="form-floating">
-                @*this button will be used to ask the user if he want to proceed to repare the tools*@
+                @* DTO usa "MetodoPagoId" (int) *@
+                <InputSelect class="form-select" @bind-Value="@reparacion.MetodoPagoId" id="MetodoPago">
+                    @* Asumiendo IDs típicos: 1=Tarjeta, 2=PayPal, 3=Efectivo (Ajustar según tu BDD) *@
+                    <option value="1">Tarjeta de Crédito</option>
+                    <option value="2">PayPal</option>
+                    <option value="3">Efectivo</option>
+                </InputSelect>
+                <label for="MetodoPago">Método de Pago</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
                 <button class="btn btn-primary" type="submit" id="Submit">
-                    Repara tus herramientas
+                    Registrar Reparación
                 </button>
             </div>
         </div>
     </div>
-</EditForm>
 
+    @* --- DETALLE DE HERRAMIENTAS Y TOTAL --- *@
+    <h4>Detalle Reparación</h4>
+    <p>
+        <b>Total Estimado:</b> <span id="TotalEstimado">@TotalEstimado.ToString("N2")</span> €
+        <button class="btn btn-outline-primary" type="button" @onclick="ModifyReparacionItems" id="ModifyReparacion">
+            Modifica las herramientas
+        </button>
+    </p>
 
-
-
-
-<h4>Detalle de la Reparación</h4>
-<p><b>Fecha desde:</b> @reparacion.FechaEntrega.ToString("dd/MM/yyyy") <b>hasta:</b> @reparacion.FechaRecogida.AddDays(5).ToString("dd/MM/yyyy")</p>
-<p>
-    <b>Precio total:</b> @PrecioTotal.ToString("N2")€
-    <button class="btn btn-outline-primary" type="button" @onclick="ModificarHerramientas" id="ModificarHerramientas">
-        Modificar herramientas
-    </button>
-</p>
-
-
-<div class="mh-100 table-responsive">
-    <table class="table table-condensed table-hover" id="TableOfReparacionItems">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-               
-                <th>Cantidad</th>
-                <th>Descripción</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in reparacion.ReparacionesItems)
-            {
-                <tr id="HerramientaData_@item.HerramientaId">
-
-                    @*Código para nombre*@
-                    <td>@item.HerramientaNombre</td>
-
-
-
-                    
-
-                    @*Código para cantidad*@
-                    <td>
-                        <div class="input-group input-group-sm">
-                            <button class="btn btn-outline-secondary"
-                                    type="button"
-                                    @onclick="@(() => DisminuirCantidad(item))">
-                                -
-                            </button>
-
-                            <InputNumber @bind-Value="item.HerramientaCantidad"
-                                         class="form-control text-center"
-                                         id="@($"cantidad_{item.HerramientaId}")"
-                                         min="1" />
-
-                            <button class="btn btn-outline-secondary"
-                                    type="button"
-                                    @onclick="@(() => AumentarCantidad(item))">
-                                +
-                            </button>
-                        </div>
-                    </td>
-
-
-
-                    @*Código para descripción*@
-
-                    <td>
-                        <InputText @bind-Value="item.HerramientaDescripcion"
-                                   class="form-control form-control-sm"
-                                   id="@($"descripcion_{item.HerramientaId}")"
-                                   placeholder="Ej: Madera, Acero, etc." />
-                    </td>
-
+    <div class="mh-100 table-responsive">
+        <table class="table table-condensed table-hover" id="TableOfReparacionItems">
+            <thead>
+                <tr>
+                    <th>Herramienta</th>
+                    <th>Cantidad</th>
+                    <th>Descripción</th>
+                    <th>Precio Unit.</th>
+                    <th>Total Línea</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-
-</div>
+            </thead>
+            <tbody>
+                @* DTO usa "ReparacionesItems" *@
+                @foreach (var item in reparacion.ReparacionesItems)
+                {
+                    <tr id="HerramientaData_@item.HerramientaId">
+                        <td>@(string.IsNullOrEmpty(item.HerramientaNombre) ? item.HerramientaId.ToString() : item.HerramientaNombre)</td>
+                        <td>
+                            @* DTO Item usa "HerramientaCantidad" *@
+                            <InputNumber @bind-Value="item.HerramientaCantidad" class="form-control form-control-sm" style="width: 80px;" />
+                        </td>
+                        <td>
+                            @* DTO Item usa "HerramientaDescripcion" *@
+                            <InputText @bind-Value="item.HerramientaDescripcion" class="form-control form-control-sm" id="@($"Descripcion_{item.HerramientaId}")" />
+                        </td>
+                        <td>@item.HerramientaPrecio.ToString("C")</td>
+                        <td>@((item.HerramientaPrecio * item.HerramientaCantidad).ToString("C"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</EditForm>
 
 @if (DialogIsOpen)
 {
-    <Dialog Caption="Reparar Herramientas"
-            Message="¿quieres prodecer a seleccionar las herramientas para reparar?"
+    <Dialog Caption="Confirmar Reparación"
+            Message="¿Quieres registrar esta orden de reparación?"
             OnClose="@OnDialogClose"
             Type=Dialog.Category.SaveNot>
     </Dialog>
 }
 
 @code {
+    private string messageError = "";
+    private bool hideErrors => messageError.Length == 0;
 
+    // Usamos el DTO correcto del StateContainer
+    private CrearReparacionDTO reparacion => reparacionState.Reparacion;
 
-    private string MensajeError = "";
-    private bool EsconderErrores { get { return MensajeError.Length == 0; } }
+    private bool DialogIsOpen;
 
-      private bool DialogIsOpen; 
-
-
-    private decimal PrecioTotal
+    // Inicialización
+    protected override void OnInitialized()
     {
-        get
+        // Inicializar fechas por defecto si vienen vacías
+        if (reparacion.FechaEntrega == default)
         {
-
-            return Convert.ToDecimal(reparacion.ReparacionesItems.Sum(ri => ri.HerramientaCantidad));
+            reparacion.FechaEntrega = new DateTimeOffset(DateTime.Today.AddDays(1));
         }
+        if (reparacion.FechaRecogida == default)
+        {
+            reparacion.FechaRecogida = new DateTimeOffset(DateTime.Today.AddDays(7)); 
+        }
+
+        // Inicializar cadenas si son nulas para evitar errores en Inputs
+        reparacion.Nombre ??= "";
+        reparacion.Apellidos ??= "";
+        reparacion.Telefono ??= "+34";
     }
-    private void ModificarHerramientas()
-    {
-        navigation.NavigateTo("/Reparaciones/seleccionherramientaparareparacion");
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private CrearReparacionDTO reparacion => ReparacionStateContainer.Reparacion;
-
 
     private void OpenDialog()
     {
+        if (reparacion.ReparacionesItems != null && reparacion.ReparacionesItems.Count > 0)
+        {
+            // Pequeña validación local antes de abrir
+            if (!reparacion.Telefono.StartsWith("+34"))
+            {
+                messageError = "El teléfono debe empezar por +34";
+                return;
+            }
+            if (reparacion.FechaRecogida <= reparacion.FechaEntrega)
+            {
+                messageError = "La fecha de recogida debe ser posterior a la de entrega.";
+                return;
+            }
 
-
-        DialogIsOpen = true;
+            messageError = "";
+            DialogIsOpen = true;
+        }
+        else
+        {
+            messageError = "Error: Debes añadir al menos una herramienta a la reparación.";
+        }
     }
 
     private async Task OnDialogClose(bool isOk)
     {
-
         DialogIsOpen = false;
         if (isOk)
         {
-            if (reparacion.ReparacionesItems.Count > 0)
+            if (reparacion.ReparacionesItems != null && reparacion.ReparacionesItems.Count > 0)
             {
                 try
                 {
-                  var reparacionCreada = await apiclient.CreateReparacionAsync(reparacion);
-                  ReparacionStateContainer.ReparacionProcesada(); 
+                    // Calculamos el total antes de enviar, aunque el backend lo recalcula/suma
+                    reparacion.PrecioTotal = (float)TotalEstimado;
 
-                   navigation.NavigateTo($"/Reparaciones/DetailReparacion/{reparacionCreada.Id}");
+                    var resultado = await apiclient.CreateReparacionAsync(reparacion);
+
+                    // Limpiamos estado
+                    reparacionState.ReparacionProcessed();
+
+                    // Navegamos al detalle usando el ID devuelto
+                    navigation.NavigateTo($"/reparacion/getdetailsreparacion?Id={resultado.Id}");
                 }
-                catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
+                catch (ApiException<ValidationProblemDetails> ex)
                 {
-                    if (apiexceptionvalidation.Result.Errors.Values != null)
+                    messageError = "Error de validación: ";
+                    if (ex.Result.Errors != null)
                     {
-                        MensajeError = "";
-                        foreach (var errors in apiexceptionvalidation.Result.Errors.Values)
-                            //https://learn.microsoft.com/en-us/dotnet/api/system.string.join?view=net-7.0
-                           MensajeError = string.Join("(*) ", MensajeError, string.Join(" (*) ", errors));
+                        foreach (var errs in ex.Result.Errors.Values)
+                        {
+                            messageError += string.Join(", ", errs) + ". ";
+                        }
                     }
                 }
-
-
-                catch (ApiException apiexception)
+                catch (ApiException ex)
                 {
-                    //we need to inform user that there was some other error while processing the request
-                    MensajeError = "Error while processing your request, please try again later!";
-
+                    messageError = $"Error del servidor ({ex.StatusCode}): {ex.Message}";
+                }
+                catch (Exception ex)
+                {
+                    messageError = "Error procesando tu solicitud.";
+                    Console.WriteLine(ex);
                 }
             }
-
         }
     }
 
-
-
-
-
-    private void AumentarCantidad(ReparacionesItemDTO item)
+    private decimal TotalEstimado
     {
-        item.HerramientaCantidad++;
-        // Si necesitas actualizar el precio total
-        StateHasChanged();
-    }
-
-    private void DisminuirCantidad(ReparacionesItemDTO item)
-    {
-        if (item.HerramientaCantidad > 1)
+        get
         {
-            item.HerramientaCantidad--;
-            StateHasChanged();
+            if (reparacion.ReparacionesItems == null) return 0;
+            // Suma usando las propiedades correctas del Item DTO
+            double total = reparacion.ReparacionesItems.Sum(ri => ri.HerramientaPrecio * ri.HerramientaCantidad);
+            return Convert.ToDecimal(total);
         }
     }
 
+    private void ModifyReparacionItems()
+    {
+        navigation.NavigateTo("/reparacion/getselectreparacion");
+    }
 }
-
-
