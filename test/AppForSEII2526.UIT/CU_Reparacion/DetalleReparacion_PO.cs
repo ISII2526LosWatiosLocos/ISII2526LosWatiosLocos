@@ -8,17 +8,33 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 {
     public class DetalleReparacion_PO : PageObject
     {
-        // Asumiendo que la tabla de elementos en la vista de detalle tiene un ID para CheckBodyTable
-        private readonly By _tableReparacionItems = By.Id("TableReparacion");
+        // Selectores asumidos basados en Flujo Básico 7
+        private readonly By _tableReparacionItems = By.Id("TableReparacionItems"); // ID asumido
+        private readonly By _nombreCliente = By.Id("Detail_NombreCliente"); // ID asumido
+        private readonly By _fechaEntrega = By.Id("Detail_FechaEntrega");   // ID asumido
+        private readonly By _precioTotal = By.Id("Detail_PrecioTotal");     // ID asumido
+
 
         public DetalleReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
 
-        public bool CheckReparacionDetailTable(List<string[]> expectedItems)
+        // Comprueba la tabla de ítems de reparación
+        public bool CheckReparacionItemTable(List<string[]> expectedItems)
         {
-            // Reutiliza el método de la clase base para comprobar el contenido de la tabla
+            // Flujo Básico 7: herramientas a reparar (nombre, precio, descripción del problema y cantidad).
             return CheckBodyTable(expectedItems, _tableReparacionItems);
+        }
+
+        // Comprueba los datos del encabezado/resumen (Flujo Básico 7)
+        public bool CheckReparacionSummary(string expectedNombreApellidos, string expectedFechaEntrega, string expectedPrecioTotal)
+        {
+            WaitForBeingVisible(_nombreCliente);
+            bool nombreApellidosOK = _driver.FindElement(_nombreCliente).Text.Contains(expectedNombreApellidos);
+            bool fechaEntregaOK = _driver.FindElement(_fechaEntrega).Text.Contains(expectedFechaEntrega);
+            bool precioTotalOK = _driver.FindElement(_precioTotal).Text.Contains(expectedPrecioTotal);
+
+            return nombreApellidosOK && fechaEntregaOK && precioTotalOK;
         }
     }
 }
