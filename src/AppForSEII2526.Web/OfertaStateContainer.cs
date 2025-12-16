@@ -25,7 +25,6 @@ namespace AppForSEII2526.Web
 
         private void NotifyStateChanged() => OnChange?.Invoke();
 
-        // PASO 3: Añadir herramienta al carrito de ofertas
         public void AddHerramientaToOferta(HerramientasParaOfertarDTO herramienta)
         {
             if (!Oferta.Items.Any(item => item.NombreHerramienta == herramienta.Nombre))
@@ -59,7 +58,6 @@ namespace AppForSEII2526.Web
             NotifyStateChanged();
         }
 
-        // PASO 6/7: Al terminar el proceso, reseteamos todo
         public void OfertaProcesada()
         {
 

@@ -107,7 +107,6 @@
 </div>
 
 @code {
-    // 2. CAPTURAMOS EL ID QUE VIENE POR LA URL
     [Parameter]
     public int? IdRecibido { get; set; }
 
@@ -118,7 +117,6 @@
     private bool isLoading = false;
     private bool hasSearched = false;
 
-    // 3. AUTOMATIZACIÓN: Si recibimos un ID por URL, buscamos automáticamente
     protected override async Task OnParametersSetAsync()
     {
         if (IdRecibido.HasValue && IdRecibido.Value > 0)
