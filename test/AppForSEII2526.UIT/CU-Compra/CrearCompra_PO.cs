@@ -88,5 +88,13 @@ namespace AppForSEII2526.UIT.CU_Compra
                 return false; // No salió el mensaje de error
             }
         }
+
+        //Comprobar si el botón de crear está activo
+        public bool IsCrearButtonEnabled()
+        {
+            WaitForBeingVisible(_Submit);
+            return _driver.FindElement(_Submit).Enabled;
+        }
+
     }
 }

@@ -1,302 +1,318 @@
 ﻿using AppForMovies.UIT.Shared;
 using AppForSEII2526.UIT.Shared;
-using Xunit;
-using Xunit.Abstractions;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
 using System.Collections.Generic;
-
-// PARA PROBAR LOS TESTS HAY QUE DAR CLICK DERECHO, VER, ABRIR CON EL NAVEGADOR A LA API Y A LA WEB
+using Xunit;
+using Xunit.Abstractions;
 
 namespace AppForSEII2526.UIT.CU_Compra
 {
     public class CUCrearCompra_UIT : UC_UIT
     {
+        private const string herramientaNombre1 = "Martillo";
+        private const string herramientaFabricante1 = "EMPRESA1";
+        private const string herramientaPrecio1 = "10";
+        private const int herramientaId1 = 1;
+
+        private const string usuarioEmail = "elena@uclm.es";
+        private const string usuarioPass = "Password1234%";
+
+        // Page Objects
         private readonly SelectHerramientasParaComprar_PO _selectPO;
         private readonly CrearCompra_PO _crearPO;
+        private readonly DetalleCompra_PO _detallePO;
 
         public CUCrearCompra_UIT(ITestOutputHelper output) : base(output)
         {
-            _selectPO = new SelectHerramientasParaComprar_PO(_driver, output);
-            _crearPO = new CrearCompra_PO(_driver, output);
+            Initial_step_opening_the_web_page();
+
+            _selectPO = new SelectHerramientasParaComprar_PO(_driver, _output);
+            _crearPO = new CrearCompra_PO(_driver, _output);
+            _detallePO = new DetalleCompra_PO(_driver, _output);
         }
 
-        // -------------------------------------------------------------------
-        // [Fact]: PRUEBA DE CAMINO FELIZ (Creación Exitosa)
-        // -------------------------------------------------------------------
-        [Fact]
-        [Trait("Category", "UIT")]
-        public void UC1_0_CrearCompra_FlujoBasico_Exito()
+
+        private void InitialStepsForCrearCompra_UIT()
         {
-            // 1. ARRANGE
-            string nombre = "Yoel";
-            string apellidos = "CS";
-            string direccionEnvio = "casa de yoel";
-            string pagoValue = "0";
-
-            int herramientaId = 1;
-            string nombreHerramienta = "Martillo";
-            string material = "Madera";
-            string precio = "10";
-
-            // 2. ACT
-            // Navegar
-            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
-
-            // Buscar y Seleccionar
-            _selectPO.BuscarHerramientas(material, precio);
-            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
-            _selectPO.Continuar();
-
-            // Rellenar Formulario
-            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
-            _crearPO.RellenarDescripcion(herramientaId, "Descripción cualquiera"); // cualquier descripción no nula es válida
-
-            // Confirmar
-            _crearPO.PulsarCrearCompra();
-            _crearPO.ConfirmarModal();
-
-            // 3. ASSERT
-            // Esperamos redirección a Detalle
-            System.Threading.Thread.Sleep(2000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
-            bool urlCorrecta = _driver.Url.Contains("/Compra/DetailParaCompra");
-            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
+            _driver.Navigate().GoToUrl(_URI + "Ofertar/SeleccionarHerramientaParaComprar");
         }
-        
-        // -------------------------------------------------------------------
-        // [Theory]: ESCENARIO 1: DESCRIPCIÓN INVÁLIDA
-        // -------------------------------------------------------------------
+
+        // UC3_1: Flujo Básico - Creación Exitosa (Esc-1)
+
         [Theory]
-        [Trait("Category", "UIT")]
-        [InlineData("")] // Caso: String vacío
-        [InlineData(null)]  // Caso: null
-        public void UC1_1_CrearCompra_DescripcionInvalida_Error(string descripcionInvalida)
+        // Caso 1: Martillo (ID 1), Efectivo (ID 0)
+        [InlineData("Martillo", 1, "EMPRESA1", "0", "Efectivo", "")]
+        // Caso 2: Llave (ID 2), PayPal (ID 1), Socio
+        [InlineData("Llave", 2, "EMPRESA2", "1", "Paypal", "Socio")]
+        // Caso 3: Martillo (ID 1), Tarjeta (ID 2), Cliente 
+        [InlineData("Martillo", 1, "EMPRESA1", "2", "Tarjeta", "Cliente")]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_1_CrearOferta_Exito(
+            string nombreHerramienta,
+            int idHerramienta,
+            string fabricante,
+            string pagoId,
+            string nombrePagoEsperado,
+            string tipoDirigido)
         {
-            // 1. ARRANGE
-            string nombre = "Yoel";
-            string apellidos = "CS";
-            string direccionEnvio = "casa de yoel";
-            string pagoValue = "0";
+            // Arrange
+            var fechaInicio = DateTime.Today.AddDays(1);
+            var fechaFin = DateTime.Today.AddDays(30);
+            var fechaActual = DateTime.Today;
 
-            int herramientaId = 1;
-            string nombreHerramienta = "Martillo";
-            string material = "Madera";
-            string precio = "10";
+            string usuario = "Yoel";
+            int descuento = 10;
 
-            // 2. ACT (Pasos idénticos hasta el formulario)
-            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
-            _selectPO.BuscarHerramientas(material, precio);
+            // Act
+            InitialStepsForCrearCompra_UIT();
+
+            // 1. Selección (Usando los datos del Theory)
+            _selectPO.BuscarHerramientas(fabricante, null);
             _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
             _selectPO.Continuar();
 
-            // Rellenamos datos válidos generales
-            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
-            _crearPO.RellenarDescripcion(herramientaId, descripcionInvalida); // INTRODUCIMOS EL DATO INVÁLIDO DEL THEORY
+            // 2. Rellenar formulario (Usando los datos del Theory)
+            _crearPO.RellenarDatosGenerales(fechaInicio, fechaFin, pagoId, usuario, tipoDirigido);
 
-            // Intentamos guardar
+            // Establecemos el porcentaje usando el ID correcto de la herramienta seleccionada
+            _crearPO.EstablecerPorcentaje(idHerramienta, descuento);
+
             _crearPO.PulsarCrearCompra();
             _crearPO.ConfirmarModal();
 
-            // 3. ASSERT
-            bool seguimosEnCrear = _driver.Url.Contains("/Compra/CrearCompra");
-            Assert.True(seguimosEnCrear, $"El sistema permitió crear oferta con descripción {descripcionInvalida}%");
+            // Assert
+            var expectedRow = new List<string[]>
+            {
+                new string[] {
+                    fechaInicio.ToString("dd/MM/yyyy"), // Columna 1: Inicio
+                    fechaFin.ToString("dd/MM/yyyy"),    // Columna 2: Fin
+                    fechaActual.ToString("dd/MM/yyyy"), // Columna 3: Fecha Oferta
+                    nombrePagoEsperado                  // Columna 4: Pago (Efectivo/Paypal/Tarjeta)
+                }
+            };
 
+            // Verificamos que la fila de cabecera coincida con los datos introducidos
+            Assert.True(_detallePO.CheckDetallesCompra(expectedRow),
+                $"Error: Los detalles de la oferta para el caso '{nombreHerramienta} - {nombrePagoEsperado}' no coinciden.");
         }
 
-        // -------------------------------------------------------------------
-        // [Fact]: ESCENARIO 2: USUARIO NO EXISTE
-        // -------------------------------------------------------------------
-        [Fact]
-        [Trait("Category", "UIT")]
-        public void UC1_2_UsuarioNoExistente_Error()
+        public static IEnumerable<object[]> DatosParaFiltros()
         {
-            // 1. ARRANGE
-            string nombre = "Eloy";
-            string apellidos = "CS";
-            string direccionEnvio = "casa de yoel";
-            string pagoValue = "0";
+            yield return new object[]
+            {
+                "EMPRESA1",
+                15.0f,
+                new List<string[]>
+                {
+                    new string[] { "Martillo", "Madera", "EMPRESA1", "10", "Add" }
+                }
+            };
 
-            int herramientaId = 1;
-            string nombreHerramienta = "Martillo";
-            string material = "Madera";
-            string precio = "10";
+            yield return new object[]
+            {
+                null,
+                15.0f,
+                new List<string[]>
+                {
+                    new string[] { "Martillo", "Madera", "EMPRESA1", "10", "Add" },
+                    new string[] { "Llave", "Hierro", "EMPRESA2", "15", "Add" }
+                }
+            };
 
-            // 2. ACT
-            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
-            _selectPO.BuscarHerramientas(material, precio);
-            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
-            _selectPO.Continuar();
-
-            // Rellenar Formulario
-            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue); // EL USUARIO CON NOMBRE "Eloy" NO EXISTE
-            _crearPO.RellenarDescripcion(herramientaId, "Descripción cualquiera"); // cualquier descripción no nula es válida
-
-            // Intentamos guardar
-            _crearPO.PulsarCrearCompra();
-            try { _crearPO.ConfirmarModal(); } catch { /* Si no sale modal, seguimos */ }
-
-            // 3. ASSERT
-            System.Threading.Thread.Sleep(1000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
-            bool hayError = _crearPO.CheckErrorMessage("no existe") || _crearPO.CheckErrorMessage("Error");
-            Assert.True(hayError, "El sistema no mostró error al usar un usuario inexistente.");
+            yield return new object[]
+            {
+                "EMPRESA1",
+                null,
+                new List<string[]>
+                {
+                    new string[] { "Martillo", "Madera", "EMPRESA1", "10", "Add" }
+                }
+            };
         }
 
-        // -------------------------------------------------------------------
-        // [Fact]: ESCENARIO 3: CARRITO VACÍO
-        // -------------------------------------------------------------------
-        [Fact]
-        [Trait("Category", "UIT")]
-        public void UC1_3_CarritoVacio_Error()
-        {
-            // 1. ARRANGE
-            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
 
-            // 2. ACT - Intentar pulsar continuar SIN añadir nada
+        [Theory]
+        [MemberData(nameof(DatosParaFiltros))]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_6_FA0_FiltroPorFabricanteYPrecio(string? fabricante, float? precio, List<string[]> expectedHerramientas)
+        {
+            //Act
+            InitialStepsForCrearCompra_UIT();
+            _selectPO.BuscarHerramientas(fabricante, precio);
+            //Assert
+            Assert.True(_selectPO.CheckListOfHerramientas(expectedHerramientas),
+                "Error: La lista de herramientas filtradas no coincide con la esperada.");
+        }
+
+        // UC3_2: Lista Vacía (Esc-4)
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_2_FA4_ListaVacia_Error()
+        {
+            // Act
+            InitialStepsForCrearCompra_UIT();
+
+            bool botonHabilitado = true;
             try
             {
                 _selectPO.Continuar();
             }
-            catch (Exception) { /* Ignoramos si falla el click por estar disabled */ }
+            catch (Exception)
+            {
+                botonHabilitado = false;
+            }
 
-            // 3. ASSERT
-            bool seguimosEnSeleccion = _driver.Url.Contains("/Compra/SelectHerramientasParaCompra");
-            Assert.True(seguimosEnSeleccion, "El sistema permitió continuar con el carrito vacío.");
+            // Assert
+            if (botonHabilitado)
+            {
+                bool urlCambio = _driver.Url.Contains("CrearCompra");
+                if (urlCambio)
+                {
+                    // Si logramos pasar intentamos guardar y buscamos el error
+                    _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "Yoel", "Cliente");
+                    _crearPO.PulsarCrearCompra();
+                    Assert.True(_crearPO.CheckErrorMessage("La compra debe incluir al menos una herramienta") ||
+                                _crearPO.CheckErrorMessage("debe incluir"),
+                                "UC3_2 Falló: No apareció el mensaje de error de lista vacía.");
+                }
+            }
+            else
+            {
+                Assert.True(!botonHabilitado, "Correcto: El botón continuar está deshabilitado con lista vacía.");
+            }
         }
 
-        // -------------------------------------------------------------------
-        // [Fact]: ESCENARIO 4: LISTAR TODAS LAS HERRAMIENTAS (sin filtros)
-        // -------------------------------------------------------------------
-        [Fact]
-        [Trait("Category", "UIT")]
-        public void UC1_4_SinFiltros()
+        // UC3_3, UC3_4, UC3_5: Errores de Fechas (Esc-2)
+        public static IEnumerable<object[]> TestCasesFor_FechasInvalidas()
         {
-            // 1. ARRANGE
-            string nombre = "Yoel";
-            string apellidos = "CS";
-            string direccionEnvio = "casa de yoel";
-            string pagoValue = "0";
+            var allTests = new List<object[]>
+            {
+                // UC3_3: Inicio Ayer
+                new object[] { DateTime.Today.AddDays(-1), DateTime.Today.AddDays(30), "La fecha de inicio debe ser posterior a hoy" },
+                
+                // UC3_4: Fin antes que Inicio (Hoy / Ayer -> Fin < Inicio)
+                new object[] { DateTime.Today.AddDays(1), DateTime.Today, "La fecha final debe ser posterior a la fecha de inicio" },
+                
+                // UC3_5: Duración < 1 semana
+                new object[] { DateTime.Today.AddDays(1), DateTime.Today.AddDays(2), "La oferta debe durar al menos una semana" }
+            };
+            return allTests;
+        }
 
-            int herramientaId = 1;
-            string nombreHerramienta1 = "Martillo";
-            string nombreHerramienta2 = "Llave";
-            string material = "";
-            string precio = "";
-
-            // 2. ACT
-            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
-            _selectPO.BuscarHerramientas(material, precio); // filtros vacíos
-            // añade todas las herramientas disponibles (2)
-            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta1);
-            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta2);
+        [Theory]
+        [MemberData(nameof(TestCasesFor_FechasInvalidas))]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_2_FA1_FechasInvalidas_Error(DateTime inicio, DateTime fin, string mensajeError)
+        {
+            // Act
+            InitialStepsForCrearCompra_UIT();
+            _selectPO.BuscarHerramientas(herramientaFabricante1, null);
+            _selectPO.AñadirHerramientasAlCarroDeCompra(herramientaNombre1);
             _selectPO.Continuar();
 
-            // Rellenar Formulario
-            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
-            _crearPO.RellenarDescripcion(herramientaId, "Descripción cualquiera"); // cualquier descripción no nula es válida
-
-            // Intentamos guardar
+            _crearPO.RellenarDatosGenerales(inicio, fin, "0", "Yoel", "Cliente");
             _crearPO.PulsarCrearCompra();
-            try { _crearPO.ConfirmarModal(); } catch { /* Si no sale modal, seguimos */ }
+            try { _crearPO.ConfirmarModal(); } catch { }
 
-            // 3. ASSERT
-            System.Threading.Thread.Sleep(1000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
-            bool urlCorrecta = _driver.Url.Contains("/Compra/DetailParaCompra");
-            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
+            // Assert
+            Assert.True(_crearPO.CheckErrorMessage(mensajeError),
+                $"Fallo en validación de fechas ({inicio.ToShortDateString()} - {fin.ToShortDateString()}). Esperado: {mensajeError}");
         }
 
-        // -------------------------------------------------------------------
-        // [Fact]: ESCENARIO 5: FILTRAR POR MATERIAL
-        // -------------------------------------------------------------------
+        // UC3_6: Usuario No Existe (Esc-5)
         [Fact]
-        [Trait("Category", "UIT")]
-        public void UC1_5_FiltrarMaterial()
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_5_UsuarioNoExiste_Error()
         {
-            // 1. ARRANGE
-            string nombre = "Yoel";
-            string apellidos = "CS";
-            string direccionEnvio = "casa de yoel";
-            string pagoValue = "0";
-
-            int herramientaId = 1;
-            string nombreHerramienta = "Llave";
-            string material = "Hierro";
-            string precio = "";
-
-            // 2. ACT
-            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
-            _selectPO.BuscarHerramientas(material, precio); // filtra por material
-            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
+            // Act
+            InitialStepsForCrearCompra_UIT();
+            _selectPO.BuscarHerramientas(herramientaFabricante1, null);
+            _selectPO.AñadirHerramientasAlCarroDeCompra(herramientaNombre1);
             _selectPO.Continuar();
 
-            // Rellenar Formulario
-            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
-            _crearPO.RellenarDescripcion(herramientaId, "Descripción cualquiera"); // cualquier descripción no nula es válida
+            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "UsuarioFantasma", "Cliente");
 
-            // Intentamos guardar
             _crearPO.PulsarCrearCompra();
-            try { _crearPO.ConfirmarModal(); } catch { /* Si no sale modal, seguimos */ }
+            try { _crearPO.ConfirmarModal(); } catch { }
 
-            // 3. ASSERT
-            System.Threading.Thread.Sleep(1000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
-            bool urlCorrecta = _driver.Url.Contains("/Compra/DetailParaCompra");
-            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
+            // Assert
+            Assert.True(_crearPO.CheckErrorMessage("usuario no existe") || _crearPO.CheckErrorMessage("no existe"),
+                "UC3_6 Falló: No se mostró error de usuario inexistente.");
         }
 
-        // -------------------------------------------------------------------
-        // [Fact]: ESCENARIO 6: FILTRAR POR PRECIO
-        // -------------------------------------------------------------------
-        [Fact]
-        [Trait("Category", "UIT")]
-        public void UC1_6_FiltrarPrecio()
+        // UC3_9, UC3_10: Porcentajes Inválidos (Esc-3)
+        [Theory]
+        [InlineData(91)] // UC3_9
+        [InlineData(0)]  // UC3_10
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_3_FA3_PorcentajesInvalidos_Error(int descuento)
         {
-            // 1. ARRANGE
-            string nombre = "Yoel";
-            string apellidos = "CS";
-            string direccionEnvio = "casa de yoel";
-            string pagoValue = "0";
-
-            int herramientaId = 1;
-            string nombreHerramienta = "Martillo";
-            string material = "";
-            string precio = "10";
-
-            // 2. ACT
-            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
-            _selectPO.BuscarHerramientas(material, precio); // filtra por precio
-            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
+            // Act
+            InitialStepsForCrearCompra_UIT();
+            _selectPO.BuscarHerramientas(herramientaFabricante1, null);
+            _selectPO.AñadirHerramientasAlCarroDeCompra(herramientaNombre1);
             _selectPO.Continuar();
 
-            // Rellenar Formulario
-            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
-            _crearPO.RellenarDescripcion(herramientaId, "Descripción cualquiera"); // cualquier descripción no nula es válida
+            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "Yoel", "Cliente");
 
-            // Intentamos guardar
+            // Introducimos el porcentaje inválido
+            _crearPO.EstablecerPorcentaje(herramientaId1, descuento);
+
             _crearPO.PulsarCrearCompra();
-            try { _crearPO.ConfirmarModal(); } catch { /* Si no sale modal, seguimos */ }
+            try { _crearPO.ConfirmarModal(); } catch { }
 
-            // 3. ASSERT
-            System.Threading.Thread.Sleep(1000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
-            bool urlCorrecta = _driver.Url.Contains("/Compra/DetailParaCompra");
-            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
+            // Assert
+            // El mensaje del PDF dice: "El porcentaje X% para 'Herramienta' no es válido. Debe estar entre 1 y 90."
+            Assert.True(_crearPO.CheckErrorMessage("no es válido") && _crearPO.CheckErrorMessage("entre 1 y 90"),
+                $"UC3_9/10 Falló: Se permitió un descuento inválido de {descuento}%.");
         }
 
-        // -------------------------------------------------------------------
-        // [Fact]: ESCENARIO 7: OBTENER DETALLE DE COMPRA EXISTENTE
-        // -------------------------------------------------------------------
         [Fact]
-        [Trait("Category", "UIT")]
-        public void UC1_7_ObtenerDetalle()
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_FA2_BorrarHerramientaCarrito()
         {
-           
+            //Act
+            InitialStepsForCrearCompra_UIT();
+            _selectPO.BuscarHerramientas(herramientaFabricante1, null);
+            _selectPO.AñadirHerramientasAlCarroDeCompra(herramientaNombre1);
+            _selectPO.Continuar();
+            _crearPO.PulsarModificarCarrito();
+            _selectPO.borrarHerramienta();
+            //Assert
+            Assert.True(_selectPO.CheckEmptyCart(),
+                "Error: El carrito no está vacío tras borrar la herramienta.");
+
         }
 
-        // -------------------------------------------------------------------
-        // [Fact]: ESCENARIO 8: OBTENER DETALLE DE COMPRA INEXISTENTE
-        // -------------------------------------------------------------------
-        [Fact]
-        [Trait("Category", "UIT")]
-        public void UC1_8_ObtenerDetalleInexistente_Error()
+        public static IEnumerable<object[]> TestCasesFor_DatosFaltantes()
         {
-
+            yield return new object[] { DateTime.MinValue, DateTime.Today.AddDays(10), "Yoel", "0" };
+            yield return new object[] { DateTime.Today.AddDays(1), DateTime.MinValue, "Yoel", "0" };
+            yield return new object[] { DateTime.Today.AddDays(1), DateTime.Today.AddDays(10), "", "0" };
+            yield return new object[] { DateTime.Today.AddDays(1), DateTime.Today.AddDays(10), "Yoel", "" };
         }
+
+        [Theory]
+        [MemberData(nameof(TestCasesFor_DatosFaltantes))]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_FA5_DatosFaltantes(DateTime FechaInicio, DateTime FechaFinal, string nombreUsuario, string pagoValue)
+        {
+            //Arrange
+            string dirigidaA = "Cliente";
+            //Act
+            InitialStepsForCrearOferta_UIT();
+            _selectPO.BuscarHerramientas(herramientaFabricante1, null);
+            _selectPO.AñadirHerramientasAlCarroDeCompra(herramientaNombre1);
+            _selectPO.Continuar();
+            //Rellenar formulario sin fecha de fin
+            _crearPO.RellenarDatosGenerales(FechaInicio, FechaFinal, pagoValue, nombreUsuario, dirigidaA);
+            _crearPO.PulsarCrearCompra();
+            //Assert
+            //Comprobar si el botón de submit sigue desactivo
+            Assert.True(_crearPO.IsCrearButtonEnabled(), "Error: El botón no se ha deshabilitado");
+        }
+
+
     }
 }

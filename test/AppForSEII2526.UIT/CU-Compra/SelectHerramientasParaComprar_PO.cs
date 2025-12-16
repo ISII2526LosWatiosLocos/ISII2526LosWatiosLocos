@@ -55,6 +55,22 @@ namespace AppForSEII2526.UIT.CU_Compra
             WaitForBeingVisible(btnRemoveLocator);
         }
 
+        public bool CheckEmptyCart()
+        {
+            var botonesContinuar = _driver.FindElements(By.Id("btn_continuar_oferta"));
+
+
+            bool carritoVisible = botonesContinuar.Count > 0 && botonesContinuar[0].Displayed;
+
+            if (carritoVisible)
+            {
+                return false;
+
+                throw new Exception("Error: El carrito debería estar vacío, pero el botón 'Continuar' es visible.");
+            }
+            return true;
+        }
+
         public void Continuar()
         {
             // Como hemos esperado al carrito arriba, este botón ya debería estar habilitado
