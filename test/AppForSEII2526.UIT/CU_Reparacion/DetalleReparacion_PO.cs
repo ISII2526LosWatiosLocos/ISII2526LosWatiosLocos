@@ -8,32 +8,34 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 {
     public class DetalleReparacion_PO : PageObject
     {
-        // Selectores asumidos basados en Flujo Básico 7
-        private readonly By _tableReparacionItems = By.Id("TableReparacionItems"); // ID asumido
-        private readonly By _nombreCliente = By.Id("Detail_NombreCliente"); // ID asumido
-        private readonly By _fechaEntrega = By.Id("Detail_FechaEntrega");   // ID asumido
-        private readonly By _precioTotal = By.Id("Detail_PrecioTotal");     // ID asumido
+        // Selectores CORREGIDOS basados en DetalleReparacion.razor
+        private readonly By _tableReparacionItems = By.Id("HerramientasReparacion"); // CORREGIDO: id="HerramientasReparacion"
+        // Se usa XPath para el nombre/apellidos ya que no tiene un ID único en el Razor proporcionado
+        private readonly By _nombreCliente = By.XPath("//th[text()='Nombre y Apellidos']/following-sibling::td"); 
+        private readonly By _fechaEntrega = By.Id("FechaEntrega");   // CORREGIDO: id="FechaEntrega"
+        private readonly By _precioTotal = By.Id("PrecioTotal");     // CORREGIDO: id="PrecioTotal"
 
-
+        
         public DetalleReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
 
-        // Comprueba la tabla de ítems de reparación
         public bool CheckReparacionItemTable(List<string[]> expectedItems)
         {
-            // Flujo Básico 7: herramientas a reparar (nombre, precio, descripción del problema y cantidad).
+            // Columnas esperadas en el Razor: ID, Nombre, Precio, Cantidad, Descripción
             return CheckBodyTable(expectedItems, _tableReparacionItems);
         }
-
-        // Comprueba los datos del encabezado/resumen (Flujo Básico 7)
+        
         public bool CheckReparacionSummary(string expectedNombreApellidos, string expectedFechaEntrega, string expectedPrecioTotal)
         {
-            WaitForBeingVisible(_nombreCliente);
+            WaitForBeingVisible(_fechaEntrega); // Se usa FechaEntrega para la espera
+            
+            // Nombre y Apellidos (usando el XPath)
             bool nombreApellidosOK = _driver.FindElement(_nombreCliente).Text.Contains(expectedNombreApellidos);
+            
             bool fechaEntregaOK = _driver.FindElement(_fechaEntrega).Text.Contains(expectedFechaEntrega);
             bool precioTotalOK = _driver.FindElement(_precioTotal).Text.Contains(expectedPrecioTotal);
-
+            
             return nombreApellidosOK && fechaEntregaOK && precioTotalOK;
         }
     }
