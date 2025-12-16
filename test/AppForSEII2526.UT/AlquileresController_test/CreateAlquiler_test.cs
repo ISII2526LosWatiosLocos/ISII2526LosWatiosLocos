@@ -73,8 +73,8 @@ namespace AppForSEII2526.UT.AlquileresController_test
 
             var alquilerItems = new List<AlquilarItemsDTO>
             {
-                new AlquilarItemsDTO (4, 10), // id, cantidad
-                new AlquilarItemsDTO(7, 15)
+                new AlquilarItemsDTO (1, 10), // id, cantidad
+                new AlquilarItemsDTO(2, 15)
             };
 
             var alquilerDireccionInvalida = new CrearAlquilerDTO(
@@ -140,7 +140,7 @@ namespace AppForSEII2526.UT.AlquileresController_test
                 "abc@hello.com",
                 new List<AlquilarItemsDTO>
                 {
-                    new AlquilarItemsDTO(4, 0) // Cantidad 0 no válida
+                    new AlquilarItemsDTO(1, 0) // Cantidad 0 no válida
                 }
             );
 

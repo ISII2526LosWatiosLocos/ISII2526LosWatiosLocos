@@ -1,5 +1,4 @@
 ﻿using AppForMovies.UIT.Shared;
-using AppForSEII2526.UIT.CU_Oferta;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
 using System.Collections.Generic;
@@ -75,7 +74,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             // Assert
             var expectedRow = new List<string[]>
             {
-                //Nota: Solo compruebo la parte inicial debido a la complejidad de comprobar adicionalmente los items de la oferta.
+                //Nota: Solo compruebo la parte inicial debido a la complejidad de comprobar adicionalmente los items del alquiler.
                 new string[] {
                     usuario,                            // Columna 0
                     apellidos,                           //Columna 1
@@ -88,7 +87,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             };
 
             Assert.True(_detallePO.CheckDetallesAlquiler(expectedRow),
-                "Error: Los detalles de la oferta (Fechas, Pago, Tipo) no coinciden.");
+                "Error: Los detalles del alquiler no coinciden.");
         }
 
         public static IEnumerable<object[]> DatosParaFiltros()
@@ -164,7 +163,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
                     // Si logramos pasar intentamos guardar y buscamos el error
                     _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30),"Yoel","CS","Calle OMG","12345789","xd@gmail.com","PayPal");
                     _crearPO.PulsarCrearAlquiler();
-                    Assert.True(_crearPO.CheckErrorMessage("La oferta debe incluir al menos una herramienta") ||
+                    Assert.True(_crearPO.CheckErrorMessage("El alquiler debe incluir al menos una herramienta") ||
                                 _crearPO.CheckErrorMessage("debe incluir"),
                                 "UC4_2 Falló: No apareció el mensaje de error de lista vacía.");
                 }
