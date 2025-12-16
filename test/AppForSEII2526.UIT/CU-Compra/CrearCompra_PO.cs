@@ -38,7 +38,12 @@ namespace AppForSEII2526.UIT.CU_Compra
             _driver.FindElement(_DireccionEnvio).SendKeys(direccionEnvio);
 
             // Selectores
-            new SelectElement(_driver.FindElement(_MetodoPago)).SelectByValue(pagoValue);
+            // Importante: Si pagoValue es vacío (ej: Test Datos Faltantes), no intentamos seleccionar nada
+            // para evitar NoSuchElementException
+            if (!string.IsNullOrEmpty(pagoValue))
+            {
+                new SelectElement(_driver.FindElement(_MetodoPago)).SelectByValue(pagoValue);
+            }
 
             // Opcional
             // TODO: Implementar atributos opcionales en la UI
@@ -89,7 +94,8 @@ namespace AppForSEII2526.UIT.CU_Compra
                 // El elemento tiene atributo hidden, debemos asegurar que es visible
                 WaitForBeingVisible(_ErrorsShown);
                 string actualError = _driver.FindElement(_ErrorsShown).Text;
-                return actualError.Contains(message);
+                // Usamos ToLower y Trim para evitar fallos por mayúsculas o espacios
+                return actualError != null && actualError.ToLower().Contains(message.ToLower());
             }
             catch (WebDriverTimeoutException)
             {

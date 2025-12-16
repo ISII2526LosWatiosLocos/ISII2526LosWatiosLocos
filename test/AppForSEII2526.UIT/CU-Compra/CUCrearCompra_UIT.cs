@@ -61,7 +61,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             string nombre = "Yoel";
             string apellidos = "CS";
             string direccionEnvio = "casa de yoel";
-            string pagoValue = pagoId; // Efectivo
+            string pagoValue = pagoId;
 
             // Act
             InitialStepsForCrearCompra_UIT();
@@ -240,10 +240,12 @@ namespace AppForSEII2526.UIT.CU_Compra
 
         public static IEnumerable<object[]> TestCasesFor_DatosFaltantes()
         {
-            yield return new object[] { DateTime.MinValue, DateTime.Today.AddDays(10), "Yoel", "0" };
-            yield return new object[] { DateTime.Today.AddDays(1), DateTime.MinValue, "Yoel", "0" };
-            yield return new object[] { DateTime.Today.AddDays(1), DateTime.Today.AddDays(10), "", "0" };
-            yield return new object[] { DateTime.Today.AddDays(1), DateTime.Today.AddDays(10), "Yoel", "" };
+            // Se han corregido los datos para que coincidan con la firma del método: string, string, string, string
+            // Antes se enviaban DateTime causando errores de ejecución.
+            yield return new object[] { "", "Apellidos", "Direccion", "0" }; // Falta Nombre
+            yield return new object[] { "Nombre", "", "Direccion", "0" };    // Falta Apellido
+            yield return new object[] { "Nombre", "Apellidos", "", "0" };    // Falta Direccion
+            yield return new object[] { "Nombre", "Apellidos", "Direccion", "" }; // Falta Pago
         }
 
         [Theory]
@@ -263,7 +265,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             _crearPO.PulsarCrearCompra();
             //Assert
             //Comprobar si el botón de submit sigue desactivo
-            Assert.True(_crearPO.IsCrearButtonEnabled(), "Error: El botón no se ha deshabilitado");
+            Assert.True(_crearPO.IsCrearButtonEnabled() == false, "Error: El botón debería estar deshabilitado con datos faltantes");
         }
 
 

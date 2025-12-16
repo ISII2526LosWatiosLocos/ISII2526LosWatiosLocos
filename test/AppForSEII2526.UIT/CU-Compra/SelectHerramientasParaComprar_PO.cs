@@ -24,21 +24,29 @@ namespace AppForSEII2526.UIT.CU_Compra
 
         public void BuscarHerramientas(string material, string precio)
         {
-            WaitForBeingClickable(inputMaterial);
-            if (string.IsNullOrEmpty(material)) material = ""; // String vacío muestra todas, simplemente me aseguro de que no sea null
+            WaitForBeingVisible(inputMaterial);
+            if (string.IsNullOrEmpty(material)) material = "";
             var txtMaterial = _driver.FindElement(inputMaterial);
             txtMaterial.Clear();
             if (!string.IsNullOrEmpty(material))
+            {
                 txtMaterial.SendKeys(material);
+                // Tabular para asegurar que el evento OnChange se dispara antes de buscar
+                txtMaterial.SendKeys(Keys.Tab);
+            }
 
-            WaitForBeingClickable(inputPrecio);
-            if (string.IsNullOrEmpty(precio)) precio = ""; // String vacío muestra todas, simplemente me aseguro de que no sea null
+            WaitForBeingVisible(inputPrecio);
+            if (string.IsNullOrEmpty(precio)) precio = "";
             var txtPrecio = _driver.FindElement(inputPrecio);
             txtPrecio.Clear();
             if (!string.IsNullOrEmpty(precio))
+            {
                 txtPrecio.SendKeys(precio);
+                txtPrecio.SendKeys(Keys.Tab);
+            }
 
-            // Faltaba pulsar el botón buscar para que el filtro surta efecto
+            // Faltaba pulsar el botón buscar para que el filtro surta efecto y esperar a que sea clickeable
+            WaitForBeingClickable(buttonBuscar);
             _driver.FindElement(buttonBuscar).Click();
         }
 
@@ -71,8 +79,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             if (carritoVisible)
             {
                 return false;
-
-                throw new System.Exception("Error: El carrito debería estar vacío, pero el botón 'Continuar' es visible.");
+                // Eliminado código inalcanzable (throw) que había aquí para evitar confusiones lógicas
             }
             return true;
         }
