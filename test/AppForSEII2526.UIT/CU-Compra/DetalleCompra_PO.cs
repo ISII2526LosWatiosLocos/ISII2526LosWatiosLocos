@@ -22,10 +22,6 @@ namespace AppForSEII2526.UIT.CU_Compra
             return CheckBodyTable(expectedDetails, tableCompras);
         }
 
-        /// <summary>
-        /// Verifica los ítems comprados y sus detalles.
-        /// expectedItemDetails: List<string[]> donde cada array contiene [Nombre, Material, Precio, Cantidad, Descripcion]
-        /// </summary>
         public bool CheckItemsDetails(List<string[]> expectedItemDetails)
         {
             try
