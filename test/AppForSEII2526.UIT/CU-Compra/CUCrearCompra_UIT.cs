@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AppForSEII2526.UIT.CU_Compra
 {
@@ -35,7 +36,7 @@ namespace AppForSEII2526.UIT.CU_Compra
 
         private void InitialStepsForCrearCompra_UIT()
         {
-            _driver.Navigate().GoToUrl(_URI + "Ofertar/SeleccionarHerramientaParaComprar");
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
         }
 
         // UC3_1: Flujo Básico - Creación Exitosa (Esc-1)
@@ -48,7 +49,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         // Caso 3: Martillo (ID 1), Tarjeta (ID 2), Cliente 
         [InlineData("Martillo", 1, "EMPRESA1", "2", "Tarjeta", "Cliente")]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_1_CrearOferta_Exito(
+        public void UC3_1_CrearCompra_Exito(
             string nombreHerramienta,
             int idHerramienta,
             string fabricante,
@@ -57,12 +58,10 @@ namespace AppForSEII2526.UIT.CU_Compra
             string tipoDirigido)
         {
             // Arrange
-            var fechaInicio = DateTime.Today.AddDays(1);
-            var fechaFin = DateTime.Today.AddDays(30);
-            var fechaActual = DateTime.Today;
-
-            string usuario = "Yoel";
-            int descuento = 10;
+            string nombre = "Yoel";
+            string apellidos = "CS";
+            string direccionEnvio = "casa de yoel";
+            string pagoValue = "0"; // Efectivo
 
             // Act
             InitialStepsForCrearCompra_UIT();
@@ -73,10 +72,8 @@ namespace AppForSEII2526.UIT.CU_Compra
             _selectPO.Continuar();
 
             // 2. Rellenar formulario (Usando los datos del Theory)
-            _crearPO.RellenarDatosGenerales(fechaInicio, fechaFin, pagoId, usuario, tipoDirigido);
-
-            // Establecemos el porcentaje usando el ID correcto de la herramienta seleccionada
-            _crearPO.EstablecerPorcentaje(idHerramienta, descuento);
+            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
+            _crearPO.RellenarDescripcion(idHerramienta, "Descripción cualquiera"); // cualquier descripción no nula es válida
 
             _crearPO.PulsarCrearCompra();
             _crearPO.ConfirmarModal();
@@ -85,16 +82,13 @@ namespace AppForSEII2526.UIT.CU_Compra
             var expectedRow = new List<string[]>
             {
                 new string[] {
-                    fechaInicio.ToString("dd/MM/yyyy"), // Columna 1: Inicio
-                    fechaFin.ToString("dd/MM/yyyy"),    // Columna 2: Fin
-                    fechaActual.ToString("dd/MM/yyyy"), // Columna 3: Fecha Oferta
-                    nombrePagoEsperado                  // Columna 4: Pago (Efectivo/Paypal/Tarjeta)
+                    nombrePagoEsperado                  // Columna 1: Pago (Efectivo/Paypal/Tarjeta)
                 }
             };
 
             // Verificamos que la fila de cabecera coincida con los datos introducidos
             Assert.True(_detallePO.CheckDetallesCompra(expectedRow),
-                $"Error: Los detalles de la oferta para el caso '{nombreHerramienta} - {nombrePagoEsperado}' no coinciden.");
+                $"Error: Los detalles de la compra para el caso '{nombreHerramienta} - {nombrePagoEsperado}' no coinciden.");
         }
 
         public static IEnumerable<object[]> DatosParaFiltros()
@@ -135,7 +129,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         [Theory]
         [MemberData(nameof(DatosParaFiltros))]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_6_FA0_FiltroPorFabricanteYPrecio(string? fabricante, float? precio, List<string[]> expectedHerramientas)
+        public void UC3_6_FA0_FiltroPorFabricanteYPrecio(string? fabricante, string? precio, List<string[]> expectedHerramientas)
         {
             //Act
             InitialStepsForCrearCompra_UIT();
@@ -170,7 +164,7 @@ namespace AppForSEII2526.UIT.CU_Compra
                 if (urlCambio)
                 {
                     // Si logramos pasar intentamos guardar y buscamos el error
-                    _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "Yoel", "Cliente");
+                    _crearPO.RellenarDatosGenerales("Yoel", "Apellidos", "casa de yoel", "0");
                     _crearPO.PulsarCrearCompra();
                     Assert.True(_crearPO.CheckErrorMessage("La compra debe incluir al menos una herramienta") ||
                                 _crearPO.CheckErrorMessage("debe incluir"),
@@ -194,7 +188,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             _selectPO.AñadirHerramientasAlCarroDeCompra(herramientaNombre1);
             _selectPO.Continuar();
 
-            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "UsuarioFantasma", "Cliente");
+            _crearPO.RellenarDatosGenerales("UsuarioFantasma", "Apellidos", "casa de yoel", "0");
 
             _crearPO.PulsarCrearCompra();
             try { _crearPO.ConfirmarModal(); } catch { }
@@ -232,7 +226,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         [Theory]
         [MemberData(nameof(TestCasesFor_DatosFaltantes))]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_FA5_DatosFaltantes(DateTime FechaInicio, DateTime FechaFinal, string nombreUsuario, string pagoValue)
+        public void UC3_FA5_DatosFaltantes(string nombre, string apellidos, string direccionEnvio, string pagoValue)
         {
             //Arrange
             string dirigidaA = "Cliente";
@@ -242,7 +236,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             _selectPO.AñadirHerramientasAlCarroDeCompra(herramientaNombre1);
             _selectPO.Continuar();
             //Rellenar formulario sin fecha de fin
-            _crearPO.RellenarDatosGenerales(FechaInicio, FechaFinal, pagoValue, nombreUsuario, dirigidaA);
+            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
             _crearPO.PulsarCrearCompra();
             //Assert
             //Comprobar si el botón de submit sigue desactivo
