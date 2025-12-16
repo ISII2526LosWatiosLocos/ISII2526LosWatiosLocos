@@ -277,7 +277,7 @@ namespace AppForSEII2526.UIT.CU_Oferta
             _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
             _selectPO.PressContinuar();
             _crearPO.PulsarModificarCarrito();
-            _selectPO.borrarHerramienta();
+            _selectPO.borrarHerramienta(herramientaNombre1);
             //Assert
             Assert.True(_selectPO.CheckEmptyCart(),
                 "Error: El carrito no está vacío tras borrar la herramienta.");
