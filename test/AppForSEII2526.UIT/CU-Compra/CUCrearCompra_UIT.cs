@@ -97,8 +97,9 @@ namespace AppForSEII2526.UIT.CU_Compra
             _crearPO.ConfirmarModal();
 
             // 3. ASSERT
-            bool seguimosEnCrear = _driver.Url.Contains("/Compra/CrearCompra");
-            Assert.True(seguimosEnCrear, $"El sistema permitió crear oferta con descripción {descripcionInvalida}%");
+            System.Threading.Thread.Sleep(1000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
+            bool hayError = _crearPO.CheckErrorMessage("no tiene descipción") || _crearPO.CheckErrorMessage("Error");
+            Assert.True(hayError, "El sistema mostró error al faltar descripción.");
 
         }
 
@@ -137,7 +138,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             // 3. ASSERT
             System.Threading.Thread.Sleep(1000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
             bool hayError = _crearPO.CheckErrorMessage("no existe") || _crearPO.CheckErrorMessage("Error");
-            Assert.True(hayError, "El sistema no mostró error al usar un usuario inexistente.");
+            Assert.True(hayError, "El sistema mostró error al usar un usuario inexistente.");
         }
 
         // -------------------------------------------------------------------
