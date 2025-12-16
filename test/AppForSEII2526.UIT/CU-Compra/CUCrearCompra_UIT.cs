@@ -13,11 +13,13 @@ namespace AppForSEII2526.UIT.CU_Compra
     {
         private readonly SelectHerramientasParaComprar_PO _selectPO;
         private readonly CrearCompra_PO _crearPO;
+        private readonly DetalleCompra_PO _detallePO;
 
         public CUCrearCompra_UIT(ITestOutputHelper output) : base(output)
         {
             _selectPO = new SelectHerramientasParaComprar_PO(_driver, output);
             _crearPO = new CrearCompra_PO(_driver, output);
+            _detallePO = new DetalleCompra_PO(_driver, output);
         }
 
         // -------------------------------------------------------------------
