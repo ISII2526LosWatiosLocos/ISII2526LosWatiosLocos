@@ -148,7 +148,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         // UC3_2: Lista Vacía (Esc-4)
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_2_FA4_ListaVacia_Error()
+        public void UC3_2_FA4_CarritoVacio_Error()
         {
             // Act
             InitialStepsForCrearCompra_UIT();
@@ -183,43 +183,6 @@ namespace AppForSEII2526.UIT.CU_Compra
             }
         }
 
-        // UC3_3, UC3_4, UC3_5: Errores de Fechas (Esc-2)
-        public static IEnumerable<object[]> TestCasesFor_FechasInvalidas()
-        {
-            var allTests = new List<object[]>
-            {
-                // UC3_3: Inicio Ayer
-                new object[] { DateTime.Today.AddDays(-1), DateTime.Today.AddDays(30), "La fecha de inicio debe ser posterior a hoy" },
-                
-                // UC3_4: Fin antes que Inicio (Hoy / Ayer -> Fin < Inicio)
-                new object[] { DateTime.Today.AddDays(1), DateTime.Today, "La fecha final debe ser posterior a la fecha de inicio" },
-                
-                // UC3_5: Duración < 1 semana
-                new object[] { DateTime.Today.AddDays(1), DateTime.Today.AddDays(2), "La oferta debe durar al menos una semana" }
-            };
-            return allTests;
-        }
-
-        [Theory]
-        [MemberData(nameof(TestCasesFor_FechasInvalidas))]
-        [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_2_FA1_FechasInvalidas_Error(DateTime inicio, DateTime fin, string mensajeError)
-        {
-            // Act
-            InitialStepsForCrearCompra_UIT();
-            _selectPO.BuscarHerramientas(herramientaFabricante1, null);
-            _selectPO.AñadirHerramientasAlCarroDeCompra(herramientaNombre1);
-            _selectPO.Continuar();
-
-            _crearPO.RellenarDatosGenerales(inicio, fin, "0", "Yoel", "Cliente");
-            _crearPO.PulsarCrearCompra();
-            try { _crearPO.ConfirmarModal(); } catch { }
-
-            // Assert
-            Assert.True(_crearPO.CheckErrorMessage(mensajeError),
-                $"Fallo en validación de fechas ({inicio.ToShortDateString()} - {fin.ToShortDateString()}). Esperado: {mensajeError}");
-        }
-
         // UC3_6: Usuario No Existe (Esc-5)
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
@@ -239,33 +202,6 @@ namespace AppForSEII2526.UIT.CU_Compra
             // Assert
             Assert.True(_crearPO.CheckErrorMessage("usuario no existe") || _crearPO.CheckErrorMessage("no existe"),
                 "UC3_6 Falló: No se mostró error de usuario inexistente.");
-        }
-
-        // UC3_9, UC3_10: Porcentajes Inválidos (Esc-3)
-        [Theory]
-        [InlineData(91)] // UC3_9
-        [InlineData(0)]  // UC3_10
-        [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_3_FA3_PorcentajesInvalidos_Error(int descuento)
-        {
-            // Act
-            InitialStepsForCrearCompra_UIT();
-            _selectPO.BuscarHerramientas(herramientaFabricante1, null);
-            _selectPO.AñadirHerramientasAlCarroDeCompra(herramientaNombre1);
-            _selectPO.Continuar();
-
-            _crearPO.RellenarDatosGenerales(DateTime.Today.AddDays(1), DateTime.Today.AddDays(30), "0", "Yoel", "Cliente");
-
-            // Introducimos el porcentaje inválido
-            _crearPO.EstablecerPorcentaje(herramientaId1, descuento);
-
-            _crearPO.PulsarCrearCompra();
-            try { _crearPO.ConfirmarModal(); } catch { }
-
-            // Assert
-            // El mensaje del PDF dice: "El porcentaje X% para 'Herramienta' no es válido. Debe estar entre 1 y 90."
-            Assert.True(_crearPO.CheckErrorMessage("no es válido") && _crearPO.CheckErrorMessage("entre 1 y 90"),
-                $"UC3_9/10 Falló: Se permitió un descuento inválido de {descuento}%.");
         }
 
         [Fact]

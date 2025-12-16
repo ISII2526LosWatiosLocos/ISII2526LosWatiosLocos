@@ -12,6 +12,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         private By inputPrecio = By.Id("Precio");
         private By buttonBuscar = By.Id("BuscarHerramientas");
         private By tableCompras = By.Id("TableOfCompras");
+        private By _borrarHerramientaButton = By.Id("quitarHerramienta_Martillo");
 
         // Nuevo ID más claro
         private By buttonContinuar = By.Id("ComprarHerramientasButton");
@@ -69,6 +70,12 @@ namespace AppForSEII2526.UIT.CU_Compra
                 throw new Exception("Error: El carrito debería estar vacío, pero el botón 'Continuar' es visible.");
             }
             return true;
+        }
+
+        public void borrarHerramienta()
+        {
+            WaitForBeingClickable(_borrarHerramientaButton);
+            _driver.FindElement(_borrarHerramientaButton).Click();
         }
 
         public void Continuar()

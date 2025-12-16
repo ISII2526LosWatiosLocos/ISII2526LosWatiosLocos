@@ -15,6 +15,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         private By _DireccionEnvio = By.Id("DireccionEnvio");
         private By _MetodoPago = By.Id("MetodoPago");
         private By _Submit = By.Id("Submit");
+        private By _modificarButton = By.Id("ModifyHerramientas");
 
         public CrearCompra_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
@@ -61,6 +62,12 @@ namespace AppForSEII2526.UIT.CU_Compra
                 element.SendKeys(descripcion);
             }
 
+        }
+
+        public void PulsarModificarCarrito()
+        {
+            WaitForBeingClickable(_modificarButton);
+            _driver.FindElement(_modificarButton).Click();
         }
 
         public void PulsarCrearCompra()
