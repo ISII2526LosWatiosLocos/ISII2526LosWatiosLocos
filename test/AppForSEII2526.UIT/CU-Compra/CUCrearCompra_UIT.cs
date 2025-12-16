@@ -81,10 +81,15 @@ namespace AppForSEII2526.UIT.CU_Compra
             // Assert
             var expectedRow = new List<string[]>
             {
-                new string[] {
-                    nombrePagoEsperado                  // Columna 1: Pago (Efectivo/Paypal/Tarjeta)
+                new string[]
+                {
+                    nombre,
+                    apellidos,
+                    direccionEnvio,
+                    nombreHerramienta
                 }
             };
+
 
             // Verificamos que la fila de cabecera coincida con los datos introducidos
             Assert.True(_detallePO.CheckDetallesCompra(expectedRow),
