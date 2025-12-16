@@ -40,6 +40,13 @@ namespace AppForSEII2526.UIT.CU_Compra
             string material = "Madera";
             string precio = "10";
 
+            // Datos esperados en la tabla de Detalles (Nombre, Apellidos, Direccion)
+            var expectedDetails = new List<string[]>
+            {
+                new string[] { nombre, apellidos, direccionEnvio }
+            };
+            var expectedItems = new List<string> { nombreHerramienta };
+
             // 2. ACT
             // Navegar
             _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
@@ -58,10 +65,12 @@ namespace AppForSEII2526.UIT.CU_Compra
             _crearPO.ConfirmarModal();
 
             // 3. ASSERT
-            // Esperamos redirección a Detalle
-            System.Threading.Thread.Sleep(2000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
-            bool urlCorrecta = _driver.Url.Contains("/Compra/DetailParaCompra");
-            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
+            // 3.1 Verificar detalles del comprador
+            Assert.True(_detallePO.CheckDetallesCompra(expectedDetails),
+                "Fallo: Los detalles del comprador en la tabla de detalles no coinciden.");
+            // 3.2 Verificar ítems comprados
+            Assert.True(_detallePO.CheckItemsComprados(expectedItems),
+                "Fallo: La lista de ítems comprados no coincide con lo esperado.");
         }
 
         // -------------------------------------------------------------------
