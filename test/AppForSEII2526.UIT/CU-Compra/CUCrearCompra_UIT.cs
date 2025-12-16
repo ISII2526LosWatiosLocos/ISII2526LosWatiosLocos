@@ -301,7 +301,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             //Arrange
             string dirigidaA = "Cliente";
             //Act
-            InitialStepsForCrearOferta_UIT();
+            InitialStepsForCrearCompra_UIT();
             _selectPO.BuscarHerramientas(herramientaFabricante1, null);
             _selectPO.AñadirHerramientasAlCarroDeCompra(herramientaNombre1);
             _selectPO.Continuar();
