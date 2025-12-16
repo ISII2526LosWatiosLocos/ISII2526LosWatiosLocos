@@ -227,23 +227,21 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             Assert.True(_crearPO.CheckErrorMessage("El Usuario "+ nombreInvalido + " " + apellidosInvalido + " no existe."),
                 "No se mostró error de usuario inexistente.");
         }
-        /**
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC3_7_BorrarHerramientaCarrito()
+        public void UC4_BorrarHerramientaCarrito()
         {
             //Act
             InitialStepsForCrearAlquiler_UIT();
-            _selectPO.SearchHerramientas(herramientaFabricante1);
-            _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
-            _selectPO.PressContinuar();
+            _selectPO.BuscarHerramientas(herramientaNombre1, null);
+            _selectPO.AñadirHerramientasAlCarroDeAlquiler(herramientaNombre1);
+            _selectPO.Continuar();
             _crearPO.PulsarModificarCarrito();
-            _selectPO.borrarHerramienta();
+            _selectPO.borrarHerramienta(herramientaNombre1);
             //Assert
             Assert.True(_selectPO.CheckEmptyCart(),
                 "Error: El carrito no está vacío tras borrar la herramienta.");
 
         }
-        **/
     }
 }

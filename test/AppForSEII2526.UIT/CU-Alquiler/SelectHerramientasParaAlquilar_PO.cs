@@ -48,6 +48,27 @@ namespace AppForSEII2526.UIT.CU_Alquiler
             By btnRemoveLocator = By.Id($"quitarHerramienta_{nombreHerramienta}");
             WaitForBeingVisible(btnRemoveLocator);
         }
+        public void borrarHerramienta(string nombreHerramienta)
+        {
+            By botonBorrarHerramienta = By.Id($"quitarHerramienta_{nombreHerramienta}");
+            WaitForBeingClickable(botonBorrarHerramienta);
+            _driver.FindElement(botonBorrarHerramienta).Click();
+        }
+        public bool CheckEmptyCart()
+        {
+            var botonesContinuar = _driver.FindElements(botonContinuar);
+
+
+            bool carritoVisible = botonesContinuar.Count > 0 && botonesContinuar[0].Displayed;
+
+            if (carritoVisible)
+            {
+                return false;
+
+                throw new Exception("Error: El carrito debería estar vacío, pero el botón 'Continuar' es visible.");
+            }
+            return true;
+        }
         public void Continuar()
         {
             // Como hemos esperado al carrito arriba, este botón ya debería estar habilitado
