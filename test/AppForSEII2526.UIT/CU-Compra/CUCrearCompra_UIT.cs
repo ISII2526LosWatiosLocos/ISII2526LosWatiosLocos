@@ -61,7 +61,7 @@ namespace AppForSEII2526.UIT.CU_Compra
             string nombre = "Yoel";
             string apellidos = "CS";
             string direccionEnvio = "casa de yoel";
-            string pagoValue = "0"; // Efectivo
+            string pagoValue = pagoId; // Efectivo
 
             // Act
             InitialStepsForCrearCompra_UIT();
