@@ -3,19 +3,21 @@ using OpenQA.Selenium.Support.UI;
 using AppForSEII2526.UIT.Shared;
 using Xunit.Abstractions;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace AppForSEII2526.UIT.CU_Compra
 {
     internal class SelectHerramientasParaComprar_PO : PageObject
     {
-        // Corrección: selectores apuntando a ID de inputs, no etiquetas span
         private By inputMaterial = By.Id("inputMaterial");
         private By inputPrecio = By.Id("inputPrecio");
         private By buttonBuscar = By.Id("BuscarHerramientas");
         private By tableCompras = By.Id("TableOfCompras");
-        private By _borrarHerramientaButton = By.Id("quitarHerramienta_Martillo");
 
-        // Nuevo ID más claro (Corregido al ID real del botón en Razor)
+        private By _borrarHerramientaMartilloButton = By.Id("quitarHerramienta_Martillo");
+        private By _borrarHerramientaLlaveButton = By.Id("quitarHerramienta_Llave");
+        private By cartItemRemoveButtons = By.XPath("//button[starts-with(@id, 'quitarHerramienta_')]");
+
         private By buttonContinuar = By.Id("ComprarHerramientasButton");
 
         public SelectHerramientasParaComprar_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
@@ -24,21 +26,27 @@ namespace AppForSEII2526.UIT.CU_Compra
 
         public void BuscarHerramientas(string material, string precio)
         {
-            WaitForBeingClickable(inputMaterial);
-            if (string.IsNullOrEmpty(material)) material = ""; // String vacío muestra todas, simplemente me aseguro de que no sea null
+            WaitForBeingVisible(inputMaterial);
+            if (string.IsNullOrEmpty(material)) material = "";
             var txtMaterial = _driver.FindElement(inputMaterial);
             txtMaterial.Clear();
             if (!string.IsNullOrEmpty(material))
+            {
                 txtMaterial.SendKeys(material);
+                txtMaterial.SendKeys(Keys.Tab);
+            }
 
-            WaitForBeingClickable(inputPrecio);
-            if (string.IsNullOrEmpty(precio)) precio = ""; // String vacío muestra todas, simplemente me aseguro de que no sea null
+            WaitForBeingVisible(inputPrecio);
+            if (string.IsNullOrEmpty(precio)) precio = "";
             var txtPrecio = _driver.FindElement(inputPrecio);
             txtPrecio.Clear();
             if (!string.IsNullOrEmpty(precio))
+            {
                 txtPrecio.SendKeys(precio);
+                txtPrecio.SendKeys(Keys.Tab);
+            }
 
-            // Faltaba pulsar el botón buscar para que el filtro surta efecto
+            WaitForBeingClickable(buttonBuscar);
             _driver.FindElement(buttonBuscar).Click();
         }
 
@@ -51,7 +59,6 @@ namespace AppForSEII2526.UIT.CU_Compra
         {
             By btnAddLocator = By.Id($"herramientaParaComprar_{nombreHerramienta}");
 
-            // Esperar y clicar
             WaitForBeingClickable(btnAddLocator);
             _driver.FindElement(btnAddLocator).Click();
 
@@ -62,30 +69,73 @@ namespace AppForSEII2526.UIT.CU_Compra
 
         public bool CheckEmptyCart()
         {
-            // Corregido: Buscamos el botón correcto.
             var botonesContinuar = _driver.FindElements(buttonContinuar);
 
-            // El botón está en un div con hidden="@hideCompraCart", por tanto si está oculto el carro está vacío
             bool carritoVisible = botonesContinuar.Count > 0 && botonesContinuar[0].Displayed;
 
             if (carritoVisible)
             {
                 return false;
-
-                throw new System.Exception("Error: El carrito debería estar vacío, pero el botón 'Continuar' es visible.");
             }
             return true;
         }
 
-        public void borrarHerramienta()
+        public bool TryBorrarHerramienta(string nombreHerramienta)
         {
-            WaitForBeingClickable(_borrarHerramientaButton);
-            _driver.FindElement(_borrarHerramientaButton).Click();
+            By locator = By.Id($"quitarHerramienta_{nombreHerramienta}");
+
+            var buttons = _driver.FindElements(locator);
+
+            if (buttons.Count > 0)
+            {
+                WaitForBeingClickable(locator);
+                buttons[0].Click();
+                return true;
+            }
+
+            return false;
+        }
+
+        public void borrarHerramienta(string nombreHerramienta)
+        {
+            TryBorrarHerramienta(nombreHerramienta);
+        }
+
+        public int CountItemsInCart()
+        {
+            var removeButtons = _driver.FindElements(cartItemRemoveButtons);
+            return removeButtons.Count;
+        }
+
+        public void ClearCart()
+        {
+            int count = CountItemsInCart();
+
+            while (count > 0)
+            {
+                var removeButtons = _driver.FindElements(cartItemRemoveButtons);
+
+                if (removeButtons.Count > 0)
+                {
+                    IWebElement firstRemoveButton = removeButtons[0];
+
+                    WaitForBeingClickable(cartItemRemoveButtons);
+
+                    firstRemoveButton.Click();
+
+                    Thread.Sleep(500);
+
+                    count = CountItemsInCart();
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         public void Continuar()
         {
-            // Como hemos esperado al carrito arriba, este botón ya debería estar habilitado
             WaitForBeingClickable(buttonContinuar);
             _driver.FindElement(buttonContinuar).Click();
         }
