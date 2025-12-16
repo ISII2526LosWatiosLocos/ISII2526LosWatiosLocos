@@ -282,5 +282,57 @@ namespace AppForSEII2526.UIT.CU_Compra
             bool urlCorrecta = _driver.Url.Contains("/Compra/DetailParaCompra");
             Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
         }
+
+        // -------------------------------------------------------------------
+        // [Fact]: PRUEBA DE CAMINO LARGO Y DANDO MUCHAS VUELTAS POR LA UI (Creación Exitosa)
+        // -------------------------------------------------------------------
+        [Fact]
+        [Trait("Category", "UIT")]
+        public void UC1_7_NavegacionModificarCarrito()
+        {
+            // 1. ARRANGE
+            string nombre = "Yoel";
+            string apellidos = "CS";
+            string direccionEnvio = "casa de yoel";
+            string pagoValue = "0";
+
+            int herramientaId = 1;
+            string nombreHerramienta = "Martillo";
+            string material = "Madera";
+            string precio = "10";
+
+            // 2. ACT
+            // Navegar
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
+
+            // Buscar y Seleccionar
+            _selectPO.BuscarHerramientas(material, precio);
+            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
+            _selectPO.Continuar();
+
+            // Rellenar Formulario
+            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
+            _crearPO.RellenarDescripcion(herramientaId, "Descripción cualquiera"); // cualquier descripción no nula es válida
+
+            // Confirmar
+            _crearPO.PulsarCrearCompra();
+            // Retroceder
+            _crearPO.RechazarModal();
+            //Me paseo por la pestaña de selección otra vez
+            _crearPO.PulsarModificarCarrito();
+            //Meto otro martillo porque venga
+            _selectPO.BuscarHerramientas(material, precio);
+            _selectPO.AñadirHerramientasAlCarroDeCompra(nombreHerramienta);
+            _selectPO.Continuar();
+            // Confirmar, ahora sí
+            _crearPO.PulsarCrearCompra();
+            _crearPO.ConfirmarModal();
+
+            // 3. ASSERT
+            // Esperamos redirección a Detalle
+            System.Threading.Thread.Sleep(2000); // DEJAMOS UN POCO DE TIEMPO PARA PROCESAR
+            bool urlCorrecta = _driver.Url.Contains("/Compra/DetailParaCompra");
+            Assert.True(urlCorrecta, $"Fallo: No se redirigió al detalle. URL actual: {_driver.Url}");
+        }
     }
 }

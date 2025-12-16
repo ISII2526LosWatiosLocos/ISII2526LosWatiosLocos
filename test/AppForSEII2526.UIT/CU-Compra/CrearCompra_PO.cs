@@ -83,8 +83,14 @@ namespace AppForSEII2526.UIT.CU_Compra
 
         public void ConfirmarModal()
         {
-            // Usa el método ya existente en tu PageObject base
+            // Usa el método ya existente en el PageObject base
             PressOkModalDialog();
+        }
+
+        public void RechazarModal()
+        {
+            // Usa el método ya existente en el PageObject base
+            PressCancelModalDialog();
         }
 
         public bool CheckErrorMessage(string message)

@@ -16,6 +16,7 @@ namespace AppForSEII2526.UIT.Shared
         private By _modalTitle = By.ClassName("modal-title");
         private By _modalBody = By.ClassName("modal-body");
         private By _okModalDialog = By.Id("Button_DialogOK");
+        private By _cancelModalDialog = By.Id("Button_DialogCancel");
 
 
         protected PageObject(IWebDriver driver, ITestOutputHelper output)
@@ -111,9 +112,12 @@ namespace AppForSEII2526.UIT.Shared
             WaitForBeingVisible(_okModalDialog);
             _driver.FindElement(_okModalDialog).Click();
         }
-
-
-
+        public void PressCancelModalDialog()
+        {
+            //waiting for the message error to be shown
+            WaitForBeingVisible(_cancelModalDialog);
+            _driver.FindElement(_cancelModalDialog).Click();
+        }
 
         public void WaitForBeingClickable(By IdElement)
         {
