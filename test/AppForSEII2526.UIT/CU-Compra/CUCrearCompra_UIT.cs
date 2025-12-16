@@ -110,7 +110,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         public void UC1_2_UsuarioNoExistente_Error()
         {
             // 1. ARRANGE
-            string nombre = "Eloy";
+            string nombre = "Eloy"; // Claramente no Yoel
             string apellidos = "CS";
             string direccionEnvio = "casa de yoel";
             string pagoValue = "0";
@@ -145,12 +145,46 @@ namespace AppForSEII2526.UIT.CU_Compra
         // -------------------------------------------------------------------
         [Fact]
         [Trait("Category", "UIT")]
-        public void UC1_3_CarritoVacio_Error()
+        public void UC1_3_CarritoVacio1_Error()
         {
             // 1. ARRANGE
             _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
 
             // 2. ACT - Intentar pulsar continuar SIN añadir nada
+            try
+            {
+                _selectPO.Continuar();
+            }
+            catch (Exception) { /* Ignoramos si falla el click por estar disabled */ }
+
+            // 3. ASSERT
+            bool seguimosEnSeleccion = _driver.Url.Contains("/Compra/SelectHerramientasParaCompra");
+            Assert.True(seguimosEnSeleccion, "El sistema permitió continuar con el carrito vacío.");
+        }
+
+        // -------------------------------------------------------------------
+        // [Fact]: ESCENARIO 4: CARRITO VACÍO (despues de añadir y quitar herramientas)
+        // -------------------------------------------------------------------
+        [Fact]
+        [Trait("Category", "UIT")]
+        public void UC1_4_CarritoVacio2_Error()
+        {
+            // 1. ARRANGE
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
+
+            // 2. ACT
+            _selectPO.BuscarHerramientas("", "");
+            _selectPO.AñadirHerramientasAlCarroDeCompra("Llave");
+            _selectPO.AñadirHerramientasAlCarroDeCompra("Martillo");
+            _selectPO.AñadirHerramientasAlCarroDeCompra("Llave");
+            _selectPO.AñadirHerramientasAlCarroDeCompra("Martillo");
+            _selectPO.ClearCart();
+            _selectPO.AñadirHerramientasAlCarroDeCompra("Llave");
+            _selectPO.AñadirHerramientasAlCarroDeCompra("Martillo");
+            _selectPO.borrarHerramienta("Llave");
+            _selectPO.borrarHerramienta("Martillo");
+
+            // Intentar pulsar continuar SIN quedar nada en el carrito
             try
             {
                 _selectPO.Continuar();
