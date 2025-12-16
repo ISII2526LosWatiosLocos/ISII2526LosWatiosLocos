@@ -263,7 +263,6 @@ namespace AppForSEII2526.UIT.CU_Oferta
             try { _crearPO.ConfirmarModal(); } catch { }
 
             // Assert
-            // El mensaje del PDF dice: "El porcentaje X% para 'Herramienta' no es válido. Debe estar entre 1 y 90."
             Assert.True(_crearPO.CheckErrorMessage("no es válido") && _crearPO.CheckErrorMessage("entre 1 y 90"),
                 $"UC3_9/10 Falló: Se permitió un descuento inválido de {descuento}%.");
         }
