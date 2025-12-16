@@ -23,6 +23,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         private By _metodoPago = By.Id("PaymentMethod");
         private By _submitButton = By.Id("Submit");
         private By _errorsShown = By.Id("ErrorsShown");
+        private By _modificarHerramientas = By.Id("ModifyHerramientas");
 
         public CrearAlquiler_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
@@ -94,6 +95,11 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         {
             // Usa el método ya existente en tu PageObject base
             PressOkModalDialog();
+        }
+        public void PulsarModificarCarrito()
+        {
+            WaitForBeingClickable(_modificarHerramientas);
+            _driver.FindElement(_modificarHerramientas).Click();
         }
         public bool CheckErrorMessage(string message)
         {
