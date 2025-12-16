@@ -9,24 +9,19 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 {
     public class CrearReparacion_PO : PageObject
     {
-        // Selectores CORREGIDOS basados en CreateReparacion.razor
-        private readonly By _inputNombre = By.Id("Nombre"); // ID Corregido
-        private readonly By _inputApellidos = By.Id("Apellidos"); // ID Corregido
-        private readonly By _inputTelefono = By.Id("Telefono"); // ID Corregido
-        private readonly By _inputFechaEntrega = By.Id("FechaEntrega"); // ID Corregido
-        private readonly By _selectMetodoPago = By.Id("MetodoPago"); // ID Corregido
-
-        private readonly By _pulsarCrearReparacion = By.Id("Submit"); // ID Corregido
-
-        // Selector para el resumen de validación (usado en FA4)
+        // Selectores CORREGIDOS
+        private readonly By _inputNombre = By.Id("Nombre"); 
+        private readonly By _inputApellidos = By.Id("Apellidos"); 
+        private readonly By _inputTelefono = By.Id("Telefono"); 
+        private readonly By _inputFechaEntrega = By.Id("FechaEntrega"); 
+        private readonly By _selectMetodoPago = By.Id("MetodoPago"); 
+        private readonly By _pulsarCrearReparacion = By.Id("Submit"); // Corregido: id="Submit"
         private readonly By _validationSummary = By.CssSelector(".validation-summary-errors");
-
 
         public CrearReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
 
-        // Flujo Básico 5
         public void RellenarDatosGenerales(string nombre, string apellidos, string telefono, DateTime fechaEntrega, string metodoPagoValue)
         {
             WaitForBeingVisible(_inputNombre);
@@ -43,25 +38,24 @@ namespace AppForSEII2526.UIT.CU_Reparacion
                 _driver.FindElement(_inputTelefono).Clear();
                 _driver.FindElement(_inputTelefono).SendKeys(telefono);
             }
-
+            
             InputDateInDatePicker(_inputFechaEntrega, fechaEntrega);
-
+            
             WaitForBeingVisible(_selectMetodoPago);
             var selectElement = new SelectElement(_driver.FindElement(_selectMetodoPago));
             selectElement.SelectByValue(metodoPagoValue);
         }
-
-        // Flujo Básico 5 (Items)
+        
         public void RellenarDatosItemReparacion(int herramientaId, int cantidad, string descripcion)
         {
-            // IDs CORREGIDOS
-            By inputCantidad = By.Id($"cantidad_{herramientaId}");
-            By inputDescripcion = By.Id($"descripcion_{herramientaId}");
-
+            // IDs CORREGIDOS: cantidad_{id} y descripcion_{id}
+            By inputCantidad = By.Id($"cantidad_{herramientaId}"); 
+            By inputDescripcion = By.Id($"descripcion_{herramientaId}"); 
+            
             WaitForBeingVisible(inputCantidad);
             _driver.FindElement(inputCantidad).Clear();
-            _driver.FindElement(inputCantidad).SendKeys(cantidad.ToString());
-
+            _driver.FindElement(inputCantidad).SendKeys(cantidad.ToString()); 
+            
             if (!string.IsNullOrEmpty(descripcion))
             {
                 WaitForBeingVisible(inputDescripcion);
@@ -69,8 +63,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
                 _driver.FindElement(inputDescripcion).SendKeys(descripcion);
             }
         }
-
-        // Flujo Básico 6
+        
         public void PulsarCrearReparacion()
         {
             ClickWithRetry(_pulsarCrearReparacion);
@@ -80,15 +73,13 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         {
             PressOkModalDialog();
         }
-
-        // <<<<<<<<<< AQUÍ ESTÁ EL MÉTODO CheckErrorMessage >>>>>>>>>>
-        // Flujo Alternativo 4 (Datos obligatorios faltantes) y Flujo Alternativo 1 (Fecha inválida)
+        
+        // MÉTODO CheckErrorMessage CONFIRMADO Y CORREGIDO
         public bool CheckErrorMessage(string expectedError)
         {
-            // 1. Verificar resumen de validación (errores de campo)
+            // 1. Verificar resumen de validación
             try
             {
-                // Espera a que el resumen de validación esté visible
                 WaitForBeingVisible(_validationSummary);
                 IWebElement validationElement = _driver.FindElement(_validationSummary);
                 if (validationElement.Text.Contains(expectedError))
@@ -97,35 +88,31 @@ namespace AppForSEII2526.UIT.CU_Reparacion
                     return true;
                 }
             }
-            catch (Exception)
+            catch (Exception) 
             {
-                // No se encontró el resumen de validación, se ignora.
             }
-
-            // 2. Verificar cuerpo del modal (errores de negocio, como FA1 si el error viene del backend)
-            By _modalDialog = By.Id("DialogModal"); // ID asumido para el modal
+            
+            // 2. Verificar cuerpo del modal (si el error viene del servidor)
+            By _modalDialog = By.Id("DialogModal"); 
             if (CheckModalBodyText(expectedError, _modalDialog))
             {
                 _output.WriteLine("Error Encontrado en el Cuerpo del Modal.");
                 return true;
             }
-
+            
             return false;
         }
-        // <<<<<<<<<< FIN DEL MÉTODO CheckErrorMessage >>>>>>>>>>
 
-        // Flujo Alternativo 5
         public bool IsCrearReparacionButtonDisabled()
         {
             try
             {
                 IWebElement element = _driver.FindElement(_pulsarCrearReparacion);
-                // Retorna true si el elemento no está habilitado o tiene el atributo 'disabled'
                 return !element.Enabled || element.GetAttribute("disabled") != null;
             }
             catch (Exception)
             {
-                return true;
+                return true; 
             }
         }
     }

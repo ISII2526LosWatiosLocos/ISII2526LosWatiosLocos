@@ -2,7 +2,6 @@
 using AppForSEII2526.UIT.Shared;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using System;
 using System.Collections.Generic;
 using Xunit.Abstractions;
 
@@ -10,7 +9,6 @@ namespace AppForSEII2526.UIT.CU_Reparacion
 {
     public class SeleccionarHerramientasParaReparacion_PO : PageObject
     {
-        // Selectores confirmados del Razor (SeleccionherramientaParaReparaciones.razor)
         private readonly By _inputNombre = By.Id("inputTitle");
         private readonly By _inputTiempoReparacion = By.Id("inputGenre");
         private readonly By _buscarButton = By.Id("buscarHerramientas");
@@ -28,15 +26,25 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             _driver.FindElement(_inputNombre).Clear();
             _driver.FindElement(_inputNombre).SendKeys(nombre);
 
+            // CORRECCIÓN PARA EL VALOR INICIAL '0' EN inputGenre
             WaitForBeingVisible(_inputTiempoReparacion);
-            _driver.FindElement(_inputTiempoReparacion).Clear();
-            _driver.FindElement(_inputTiempoReparacion).SendKeys(tiempoReparacion);
+            IWebElement tiempoInput = _driver.FindElement(_inputTiempoReparacion);
+
+            // Simular Ctrl+A o Cmd+A para seleccionar todo el contenido y luego borrarlo.
+            tiempoInput.SendKeys(Keys.Control + "a");
+            tiempoInput.SendKeys(Keys.Delete);
+
+            if (!string.IsNullOrEmpty(tiempoReparacion))
+            {
+                tiempoInput.SendKeys(tiempoReparacion);
+            }
 
             _driver.FindElement(_buscarButton).Click();
 
             WaitForBeingVisible(_tableReparacion);
         }
 
+        // Resto de los métodos del PO sin cambios...
         public void AñadirHerramientaAReparacionCart(string nombreHerramienta)
         {
             By addToolButton = By.Id($"OfertaData_{nombreHerramienta}");
