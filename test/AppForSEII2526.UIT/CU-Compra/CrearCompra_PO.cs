@@ -15,6 +15,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         private By _DireccionEnvio = By.Id("DireccionEnvio");
         private By _MetodoPago = By.Id("MetodoPago");
         private By _Submit = By.Id("Submit");
+        private By _modificarButton = By.Id("ModifyHerramientas");
 
         public CrearCompra_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
@@ -63,6 +64,12 @@ namespace AppForSEII2526.UIT.CU_Compra
 
         }
 
+        public void PulsarModificarCarrito()
+        {
+            WaitForBeingClickable(_modificarButton);
+            _driver.FindElement(_modificarButton).Click();
+        }
+
         public void PulsarCrearCompra()
         {
             WaitForBeingClickable(_Submit);
@@ -79,6 +86,7 @@ namespace AppForSEII2526.UIT.CU_Compra
         {
             try
             {
+                // El elemento tiene atributo hidden, debemos asegurar que es visible
                 WaitForBeingVisible(_ErrorsShown);
                 string actualError = _driver.FindElement(_ErrorsShown).Text;
                 return actualError.Contains(message);
@@ -88,5 +96,13 @@ namespace AppForSEII2526.UIT.CU_Compra
                 return false; // No salió el mensaje de error
             }
         }
+
+        //Comprobar si el botón de crear está activo
+        public bool IsCrearButtonEnabled()
+        {
+            WaitForBeingVisible(_Submit);
+            return _driver.FindElement(_Submit).Enabled;
+        }
+
     }
 }
