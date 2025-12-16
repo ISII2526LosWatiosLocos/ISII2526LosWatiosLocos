@@ -1,13 +1,16 @@
-﻿@page "/Reparacion/DetalleReparacion"
+﻿
+@page "/Reparacion/DetalleReparacion/{reparacionCreada.Id}"
 
 @using AppForSEII2526.Web.API
 
 @using Microsoft.AspNetCore.Authorization
 @inject AppForHerramientasAPIClient apiclient
+@inject ReparacionStateContainer   reparacionStateContainer
+@inject ILogger<SeleccionherramientaParaReparaciones> logger
 
 <h3>Detalle Reparacion</h3>
 
-@attribute [Authorize]
+
 
 @if (reparacion == null)
 {

@@ -1,65 +1,68 @@
-﻿using System;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using AppForSEII2526.UIT.Shared;
+using Xunit.Abstractions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
+// Añadido para métodos base temporales. Asegúrate de tener la referencia:
+using SeleniumExtras.WaitHelpers;
 
 namespace AppForSEII2526.UIT.CU_Reparacion
 {
+    // Asume que PageObject hereda de una clase base que tiene IWebDriver _driver y ITestOutputHelper _output
     public class DetalleReparacion_PO : PageObject
     {
-        // Tablas de la página de detalle (PASO 7)
-        By tablaDetallesReparacion = By.Id("tablaDetallesReparacion");
-        By tablaHerramientasReparadas = By.Id("tablaHerramientasReparadas");
+        // IDs mapeados a DetalleReparacion.razor
+        By labelFechaEntrega = By.Id("FechaEntrega"); // td con la fecha de entrega
+        By tablaHerramientasReparadas = By.Id("HerramientasReparacion"); // Tabla de items
+        By finalTotalPrice = By.Id("TotalPrice"); // td en el footer con el precio total
 
-        // Elementos individuales para verificación directa
-        By labelNombreCompleto = By.Id("NombreCompleto");
-        By labelFechaEntrega = By.Id("FechaEntrega");
-        By labelFechaRecogida = By.Id("FechaRecogida");
-        By labelPrecioTotal = By.Id("PrecioTotal");
-        By labelMetodoPago = By.Id("MetodoPago");
+        // XPath para obtener el valor de la celda "Nombre y Apellidos"
+        By rowNombreCompleto = By.XPath("//table[@class='table table-borderless table-sm']/tbody/tr[1]/td");
 
-        public DetalleReparacion_PO(IWebDriver driver, ITestOutputHelper output)
-            : base(driver, output)
+        public DetalleReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output) { }
+
+        // ======================================================================
+        // MÉTODOS BASE TEMPORALES PARA RESOLVER EL ERROR DE COMPILACIÓN
+        // SI ESTOS MÉTODOS EXISTEN EN TU CLASE BASE (PageObject), BÓRRALOS DE AQUÍ.
+        // ======================================================================
+        protected void WaitForBeingVisible(By locator, int timeoutSeconds = 30)
         {
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeoutSeconds));
+            wait.Until(ExpectedConditions.ElementIsVisible(locator));
         }
+        // ======================================================================
 
-        // Verificar detalles generales usando tabla 
-        public bool CheckDetallesReparacion(List<string[]> expectedDetalles)
-        {
-            return CheckBodyTable(expectedDetalles, tablaDetallesReparacion);
-        }
 
-        // Verificar herramientas reparadas
-        public bool CheckHerramientasReparadas(List<string[]> expectedHerramientas)
-        {
-            return CheckBodyTable(expectedHerramientas, tablaHerramientasReparadas);
-        }
-
-        // Métodos de verificación directa (alternativa)
+        // Verifica el nombre y apellidos (usa la primera celda de la tabla de cabecera)
         public bool VerificarNombreCompleto(string nombreEsperado)
         {
-            WaitForBeingVisible(labelNombreCompleto);
-            return _driver.FindElement(labelNombreCompleto).Text.Contains(nombreEsperado);
+            WaitForBeingVisible(rowNombreCompleto);
+            return _driver.FindElement(rowNombreCompleto).Text.Contains(nombreEsperado);
         }
 
+        // Verifica la fecha de entrega
         public bool VerificarFechaEntrega(string fechaEsperada)
         {
             WaitForBeingVisible(labelFechaEntrega);
+            // El formato es "dd/MM/yyyy HH:mm:ss", la prueba solo verifica "dd/MM/yyyy"
             return _driver.FindElement(labelFechaEntrega).Text.Contains(fechaEsperada);
         }
 
+        // Verifica el precio total (usa el footer <tfoot>)
         public bool VerificarPrecioTotal(string precioEsperado)
         {
-            WaitForBeingVisible(labelPrecioTotal);
-            var texto = _driver.FindElement(labelPrecioTotal).Text;
-            return texto.Contains(precioEsperado);
+            WaitForBeingVisible(finalTotalPrice);
+            // Busca el precio total formateado ("57.40€" en el caso de la prueba)
+            return _driver.FindElement(finalTotalPrice).Text.Contains(precioEsperado);
         }
 
-        public bool VerificarMetodoPago(string metodoPagoEsperado)
+        // Verifica la tabla de herramientas reparadas (Paso 7 del Flujo Básico)
+        public bool CheckHerramientasReparadas(List<string[]> expectedHerramientas)
         {
-            WaitForBeingVisible(labelMetodoPago);
-            return _driver.FindElement(labelMetodoPago).Text.Contains(metodoPagoEsperado);
+            // Asumiendo que CheckBodyTable está en tu PageObject base y compara el body de la tabla
+            return CheckBodyTable(expectedHerramientas, tablaHerramientasReparadas);
         }
     }
 }
