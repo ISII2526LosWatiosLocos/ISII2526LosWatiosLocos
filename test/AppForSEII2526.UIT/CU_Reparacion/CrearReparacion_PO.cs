@@ -1,128 +1,93 @@
-﻿using OpenQA.Selenium.Support.UI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Path: test/AppForSEII2526.UIT/CU_Reparacion/CrearReparacion_PO.cs
+using AppForSEII2526.UIT.Shared;
+using OpenQA.Selenium;
+using Xunit.Abstractions;
 
 namespace AppForSEII2526.UIT.CU_Reparacion
 {
     public class CrearReparacion_PO : PageObject
     {
-        // Elementos del formulario según tu flujo PASO 5
-        By inputNombre = By.Id("Nombre");
-        By inputApellidos = By.Id("Apellidos");
-        By inputFechaEntrega = By.Id("FechaEntrega");
-        By selectMetodoPago = By.Id("MetodoPago");
-        By inputTelefono = By.Id("Telefono"); // Opcional
+        // Selectores asumidos basados en convenciones de formularios Blazor/Identity (Input.Propiedad)
+        private readonly By _inputNombre = By.Name("Input.ClienteNombre");
+        private readonly By _inputApellidos = By.Name("Input.ClienteApellidos");
+        private readonly By _inputTelefono = By.Name("Input.TelefonoOpcional");
+        private readonly By _inputDescripcionProblema = By.Name("Input.DescripcionProblema");
 
-        // Elementos por herramienta (PASO 5)
-        By inputDescripcionTemplate = By.Id("descripcion"); 
-        By inputCantidadTemplate = By.Id("cantidad"); 
+        private readonly By _pulsarCrearReparacion = By.Id("CrearReparacionButton");
 
-        // Botones (PASO 6)
-        By buttonGuardar = By.Id("btnGuardarReparacion");
-        By modalConfirmar = By.Id("modalConfirmar");
-        By buttonConfirmarModal = By.Id("btnConfirmarModal");
+        // Selectores para mensajes de error de validación en la página
+        private readonly By _validationSummary = By.CssSelector(".text-danger.validation-summary-errors");
 
-        // Mensajes de error
-        By errorMessages = By.ClassName("Error");
 
-        public CrearReparacion_PO(IWebDriver driver, ITestOutputHelper output)
-            : base(driver, output)
+        public CrearReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
 
-        // PASO 5: Rellenar datos del cliente
-        public void RellenarDatosCliente(string nombre, string apellidos,
-                                        DateTime fechaEntrega, string metodoPagoId,
-                                        string telefono = "")
+        public void RellenarDatosGenerales(string nombre, string apellidos, string telefono)
         {
-            WaitForBeingClickable(inputNombre);
+            WaitForBeingVisible(_inputNombre);
+            _driver.FindElement(_inputNombre).SendKeys(nombre);
 
-            _driver.FindElement(inputNombre).Clear();
-            _driver.FindElement(inputNombre).SendKeys(nombre);
+            WaitForBeingVisible(_inputApellidos);
+            _driver.FindElement(_inputApellidos).SendKeys(apellidos);
 
-            _driver.FindElement(inputApellidos).Clear();
-            _driver.FindElement(inputApellidos).SendKeys(apellidos);
-
-            // Fecha usando el método del PageObject base
-            InputDateInDatePicker(inputFechaEntrega, fechaEntrega);
-
-            // Método de pago (dropdown)
-            SelectElement metodoPagoSelect = new SelectElement(_driver.FindElement(selectMetodoPago));
-            metodoPagoSelect.SelectByValue(metodoPagoId); // "0", "1", "2"
-
-            // Teléfono opcional
-            if (!string.IsNullOrEmpty(telefono))
-            {
-                _driver.FindElement(inputTelefono).Clear();
-                _driver.FindElement(inputTelefono).SendKeys(telefono);
-            }
+            WaitForBeingVisible(_inputTelefono);
+            _driver.FindElement(_inputTelefono).SendKeys(telefono);
         }
 
-        // PASO 5: Rellenar datos por herramienta
-        public void RellenarDatosHerramienta(int herramientaId, string descripcion, int cantidad)
+        public void RellenarDescripcionProblema(string descripcion)
         {
-            // Descripción (opcional)
-            if (!string.IsNullOrEmpty(descripcion))
-            {
-                By inputDescripcion = By.Id($"descripcion_{herramientaId}");
-                WaitForBeingClickable(inputDescripcion);
-                _driver.FindElement(inputDescripcion).Clear();
-                _driver.FindElement(inputDescripcion).SendKeys(descripcion);
-            }
-
-            // Cantidad (obligatorio)
-            By inputCantidad = By.Id($"cantidad_{herramientaId}");
-            WaitForBeingClickable(inputCantidad);
-            _driver.FindElement(inputCantidad).Clear();
-            _driver.FindElement(inputCantidad).SendKeys(cantidad.ToString());
+            WaitForBeingVisible(_inputDescripcionProblema);
+            _driver.FindElement(_inputDescripcionProblema).SendKeys(descripcion);
         }
 
-        // PASO 6: Guardar reparación
-        public void PulsarGuardarReparacion()
+        public void PulsarCrearReparacion()
         {
-            WaitForBeingClickable(buttonGuardar);
-            _driver.FindElement(buttonGuardar).Click();
+            WaitForBeingClickable(_pulsarCrearReparacion);
+            _driver.FindElement(_pulsarCrearReparacion).Click();
         }
 
-        // Confirmar modal si aparece
         public void ConfirmarModal()
         {
+            // Usa el método del PageObject base para el modal
+            PressOkModalDialog();
+        }
+
+        public bool CheckErrorMessage(string expectedError)
+        {
+            // Comprueba si el mensaje de error aparece en el resumen de validación o en el cuerpo del modal.
+
+            // 1. Verificar resumen de validación
             try
             {
-                WaitForBeingVisible(modalConfirmar, timeoutSeconds: 5);
-                WaitForBeingClickable(buttonConfirmarModal);
-                _driver.FindElement(buttonConfirmarModal).Click();
+                // Espera a que el resumen de validación esté visible y contenga el error
+                WaitForBeingVisible(_validationSummary);
+                if (_driver.FindElement(_validationSummary).Text.Contains(expectedError))
+                {
+                    _output.WriteLine($"Error de Validación Encontrado: {_driver.FindElement(_validationSummary).Text}");
+                    return true;
+                }
+            }
+            catch (NoSuchElementException)
+            {
+                // No hay resumen de validación, continúa con la comprobación del modal
             }
             catch (WebDriverTimeoutException)
             {
-                // No hay modal, continuar
-                _output.WriteLine("No apareció modal de confirmación");
+                // No hay resumen de validación en el tiempo esperado
             }
-        }
 
-        // Verificar mensajes de error (
-        public bool CheckErrorMessage(string errorMessage)
-        {
-            try
+            // 2. Verificar cuerpo del modal (si no hay resumen de validación)
+            // Se asume que el modal tiene el ID "DialogModal" si no se ha definido otro selector.
+            // Uso una convención común para el ID del modal si se usa el componente Dialog.razor
+            By _modalDialog = By.Id("DialogModal");
+            if (CheckModalBodyText(expectedError, _modalDialog))
             {
-                WaitForBeingVisible(errorMessages, timeoutSeconds: 3);
-                var errors = _driver.FindElements(errorMessages);
-                return errors.Any(e => e.Text.Contains(errorMessage));
+                _output.WriteLine("Error Encontrado en el Cuerpo del Modal.");
+                return true;
             }
-            catch
-            {
-                return false;
-            }
-        }
 
-       
-        private void WaitForBeingVisible(By locator, int timeoutSeconds = 30)
-        {
-            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(timeoutSeconds));
-            wait.Until(ExpectedConditions.ElementIsVisible(locator));
+            return false;
         }
     }
 }
