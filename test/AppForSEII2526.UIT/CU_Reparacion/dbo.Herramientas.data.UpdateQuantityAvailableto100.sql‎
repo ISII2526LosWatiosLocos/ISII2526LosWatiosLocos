@@ -1,1 +1,0 @@
-﻿UPDATE [dbo].[Herramientas] SET QuantityForRental=100;

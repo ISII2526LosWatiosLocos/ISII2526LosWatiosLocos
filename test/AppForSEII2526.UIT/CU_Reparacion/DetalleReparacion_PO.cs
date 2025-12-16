@@ -1,65 +1,42 @@
-﻿using System;
+﻿// Path: test/AppForSEII2526.UIT/CU_Reparacion/DetalleReparacion_PO.cs
+using AppForSEII2526.UIT.Shared;
+using OpenQA.Selenium;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Xunit.Abstractions;
 
 namespace AppForSEII2526.UIT.CU_Reparacion
 {
     public class DetalleReparacion_PO : PageObject
     {
-        // Tablas de la página de detalle (PASO 7)
-        By tablaDetallesReparacion = By.Id("tablaDetallesReparacion");
-        By tablaHerramientasReparadas = By.Id("tablaHerramientasReparadas");
+        // Selectores CORREGIDOS basados en DetalleReparacion.razor
+        private readonly By _tableReparacionItems = By.Id("HerramientasReparacion"); // ID de la tabla de ítems
 
-        // Elementos individuales para verificación directa
-        By labelNombreCompleto = By.Id("NombreCompleto");
-        By labelFechaEntrega = By.Id("FechaEntrega");
-        By labelFechaRecogida = By.Id("FechaRecogida");
-        By labelPrecioTotal = By.Id("PrecioTotal");
-        By labelMetodoPago = By.Id("MetodoPago");
+        // XPath para el Nombre y Apellidos (el dato está en el td que sigue al th)
+        private readonly By _nombreCliente = By.XPath("//th[text()='Nombre y Apellidos']/following-sibling::td");
 
-        public DetalleReparacion_PO(IWebDriver driver, ITestOutputHelper output)
-            : base(driver, output)
+        private readonly By _fechaEntrega = By.Id("FechaEntrega");   // ID en el td de la fecha de entrega
+        private readonly By _precioTotal = By.Id("PrecioTotal");     // ID en el td del período de reparación/precio total
+
+        public DetalleReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
 
-        // Verificar detalles generales usando tabla 
-        public bool CheckDetallesReparacion(List<string[]> expectedDetalles)
+        public bool CheckReparacionItemTable(List<string[]> expectedItems)
         {
-            return CheckBodyTable(expectedDetalles, tablaDetallesReparacion);
+            // Las columnas en el Razor son: ID, Nombre, Precio, Cantidad, Descripción
+            return CheckBodyTable(expectedItems, _tableReparacionItems);
         }
 
-        // Verificar herramientas reparadas
-        public bool CheckHerramientasReparadas(List<string[]> expectedHerramientas)
+        public bool CheckReparacionSummary(string expectedNombreApellidos, string expectedFechaEntrega, string expectedPrecioTotal)
         {
-            return CheckBodyTable(expectedHerramientas, tablaHerramientasReparadas);
-        }
+            WaitForBeingVisible(_fechaEntrega);
 
-        // Métodos de verificación directa (alternativa)
-        public bool VerificarNombreCompleto(string nombreEsperado)
-        {
-            WaitForBeingVisible(labelNombreCompleto);
-            return _driver.FindElement(labelNombreCompleto).Text.Contains(nombreEsperado);
-        }
+            bool nombreApellidosOK = _driver.FindElement(_nombreCliente).Text.Contains(expectedNombreApellidos);
+            bool fechaEntregaOK = _driver.FindElement(_fechaEntrega).Text.Contains(expectedFechaEntrega);
 
-        public bool VerificarFechaEntrega(string fechaEsperada)
-        {
-            WaitForBeingVisible(labelFechaEntrega);
-            return _driver.FindElement(labelFechaEntrega).Text.Contains(fechaEsperada);
-        }
+            bool precioTotalOK = _driver.FindElement(_precioTotal).Text.Contains(expectedPrecioTotal);
 
-        public bool VerificarPrecioTotal(string precioEsperado)
-        {
-            WaitForBeingVisible(labelPrecioTotal);
-            var texto = _driver.FindElement(labelPrecioTotal).Text;
-            return texto.Contains(precioEsperado);
-        }
-
-        public bool VerificarMetodoPago(string metodoPagoEsperado)
-        {
-            WaitForBeingVisible(labelMetodoPago);
-            return _driver.FindElement(labelMetodoPago).Text.Contains(metodoPagoEsperado);
+            return nombreApellidosOK && fechaEntregaOK && precioTotalOK;
         }
     }
 }

@@ -1,95 +1,102 @@
-﻿using OpenQA.Selenium.Support.UI;
-using System;
+﻿// Path: test/AppForSEII2526.UIT/CU_Reparacion/SeleccionarHerramientasParaReparacion_PO.cs
+using AppForSEII2526.UIT.Shared;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Xunit.Abstractions;
 
 namespace AppForSEII2526.UIT.CU_Reparacion
 {
     public class SeleccionarHerramientasParaReparacion_PO : PageObject
     {
-        By inputTitle = By.Id("Nombreherramienta");
-        By inputGenre = By.Id("inputTeimporeparacion");                    // Realmente es el imput de timpo, si me da tiempo cambio el razor para que tenga más sentido
-        By BotonbuscarHerramientas = By.Id("buscarHerramientas");
-        By inputFrom = By.Id("fromDate");
-        By inputTo = By.Id("toDate");
-        By tableReparacion = By.Id("TableReparacion");
-        By errorShownBy = By.Id("ErrorsShown");
-        By BotonRepararHerramientas= By.Id("ReparacionHerramientaBoton");
+        private readonly By _inputNombre = By.Id("inputTitle");
+        private readonly By _inputTiempoReparacion = By.Id("inputGenre");
+        private readonly By _buscarButton = By.Id("buscarHerramientas");
+        private readonly By _tableReparacion = By.Id("TableReparacion");
+        private readonly By _procesarReparacionButton = By.Id("procesarReparacionButton");
+        private readonly By _errorDivVisible = By.XPath("//div[@hidden='False']/p[text()='hAquí voy a mostrar los errores']");
+
         public SeleccionarHerramientasParaReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
-
-
         }
 
-        public void BuscarHerramientas(string nombre, string tiempoReparacion, string from, string to)
+        public void BuscarHerramientas(string nombre, string tiempoReparacion)
         {
-            //wait for the webelement to be clickable
-            WaitForBeingClickable(inputTitle);
-            _driver.FindElement(inputTitle).SendKeys(nombre);
+            WaitForBeingVisible(_inputNombre);
+            _driver.FindElement(_inputNombre).Clear();
+            _driver.FindElement(_inputNombre).SendKeys(nombre);
 
-            _driver.FindElement(inputTitle).SendKeys(nombre);
+            // CORRECCIÓN PARA EL VALOR INICIAL '0' EN inputGenre
+            WaitForBeingVisible(_inputTiempoReparacion);
+            IWebElement tiempoInput = _driver.FindElement(_inputTiempoReparacion);
 
-            if (tiempoReparacion == "")
-                tiempoReparacion = "0";
+            // Simular Ctrl+A o Cmd+A para seleccionar todo el contenido y luego borrarlo.
+            tiempoInput.SendKeys(Keys.Control + "a");
+            tiempoInput.SendKeys(Keys.Delete);
 
-            _driver.FindElement(inputGenre).Clear();
-            _driver.FindElement(inputGenre).SendKeys(tiempoReparacion);
+            if (!string.IsNullOrEmpty(tiempoReparacion))
+            {
+                tiempoInput.SendKeys(tiempoReparacion);
+            }
 
+            _driver.FindElement(_buscarButton).Click();
 
-            if (from != "")
-                _driver.FindElement(inputFrom).SendKeys(from);
-
-
-
-            if (to != "")
-                _driver.FindElement(inputTo).SendKeys(to);
-
-
-
-            _driver.FindElement(BotonbuscarHerramientas).Click();
-
-      
-
-
+            WaitForBeingVisible(_tableReparacion);
         }
 
-        public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
+        // Resto de los métodos del PO sin cambios...
+        public void AñadirHerramientaAReparacionCart(string nombreHerramienta)
         {
-
-            return CheckBodyTable(expectedHerramientas, tableReparacion);
+            By addToolButton = By.Id($"OfertaData_{nombreHerramienta}");
+            WaitForBeingClickable(addToolButton);
+            _driver.FindElement(addToolButton).Click();
         }
 
-
-
-        public bool CheckMessageError(string errorMessage)
+        public void RemoveHerramientaFromReparacionCart(string nombreHerramienta)
         {
-            IWebElement actualErrorShown = _driver.FindElement(errorShownBy);
-            _output.WriteLine($"actual Message shown:{actualErrorShown.Text}");
-            return actualErrorShown.Text.Contains(errorMessage);
-        }
-        public void AddHerramientaToReparacionCart(string herramientaNombre)
-        {
-           
-            WaitForBeingClickable(By.Id("ReparacionData_" + herramientaNombre));
-
-            _driver.FindElement(By.Id("ReparacionData_" + herramientaNombre)).Click();
+            By removeButton = By.Id($"removeHerramienta_{nombreHerramienta}");
+            WaitForBeingClickable(removeButton);
+            _driver.FindElement(removeButton).Click();
         }
 
-        public void RemoveHerramientaFromReparacionCart(string herramientaNombre)
+        public void ProcesarReparacion()
         {
-            // Necesito saber el ID exacto de tu botón "Remove"
-            WaitForBeingClickable(By.Id("removeHerramienta_" + herramientaNombre));
+            WaitForBeingClickable(_procesarReparacionButton);
+            _driver.FindElement(_procesarReparacionButton).Click();
+        }
 
-            _driver.FindElement(By.Id("removeHerramienta_" + herramientaNombre)).Click();
+        public bool CheckListOfHerramientas(List<string[]> expectedRows)
+        {
+            return CheckBodyTable(expectedRows, _tableReparacion);
         }
 
         public bool ReparacionNotAvailable()
         {
-            
-            return _driver.FindElement(BotonRepararHerramientas).Displayed == false;
+            try
+            {
+                var wait = new WebDriverWait(_driver, new TimeSpan(0, 0, 1));
+                wait.Until(ExpectedConditions.ElementIsVisible(_procesarReparacionButton));
+                return false;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return true;
+            }
+        }
+
+        public bool CheckMessageError(string expectedError)
+        {
+            try
+            {
+                WaitForBeingVisible(_errorDivVisible);
+                string actualText = _driver.FindElement(_errorDivVisible).Text;
+                return actualText.Contains(expectedError);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                _output.WriteLine("Error: El mensaje de error esperado no se hizo visible.");
+                return false;
+            }
         }
     }
 }
