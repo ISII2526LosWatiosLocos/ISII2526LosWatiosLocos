@@ -18,15 +18,30 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         }
         public void BuscarHerramientas(string? nombre, string? material)
         {
+
             if (nombre != null)
             {
+                if (material == null)
+                {
+                    WaitForBeingVisible(inputMaterial);
+                    var mat = _driver.FindElement(inputMaterial);
+                    mat.Clear();
+                }
                 WaitForBeingVisible(inputNombre);
                 var nom = _driver.FindElement(inputNombre);
                 nom.Clear();
                 nom.SendKeys(nombre);
             }
+
+
             if (material != null)
             {
+                if (nombre == null)
+                {
+                    WaitForBeingVisible(inputNombre);
+                    var nom = _driver.FindElement(inputNombre);
+                    nom.Clear();
+                }
                 WaitForBeingVisible(inputMaterial);
                 var mat = _driver.FindElement(inputMaterial);
                 mat.Clear();
