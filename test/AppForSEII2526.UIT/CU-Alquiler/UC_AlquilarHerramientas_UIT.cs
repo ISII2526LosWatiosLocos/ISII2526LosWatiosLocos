@@ -23,6 +23,12 @@ namespace AppForSEII2526.UIT.CU_Alquiler
         private const string nombreInvalido = "Fantasma";
         private const string apellidosInvalido = "Fantasmez";
         private const string calleInvalida = "No empieza por Calle";
+        // Constantes para el examen
+        private const string herramientaNombre2 = "Llave";
+        private const string herramientaMaterial2 = "Hierro";
+        private const int herramientaId2 = 2;
+        private const float herramientaPrecio2 = 15.0f;
+
         // Page Objects
         private readonly SelectHerramientasParaAlquilar_PO _selectPO;
         private readonly CrearAlquiler_PO _crearPO;
@@ -38,7 +44,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
 
         private void InitialStepsForCrearAlquiler_UIT()
         {
-            _driver.Navigate().GoToUrl(_URI + "/Alquiler/SeleccionarHerramientasParaAlquilar");
+            _driver.Navigate().GoToUrl(_URI + "Alquiler/SeleccionarHerramientasParaAlquilar");
         }
 
         // UC4_1: Flujo Básico - Creación Exitosa (Esc-1)
@@ -82,7 +88,7 @@ namespace AppForSEII2526.UIT.CU_Alquiler
                     fechaActual.ToString("dd/MM/yyyy"), // Columna 3 
                     fechaInicio.ToString("dd/MM/yyyy"), // Columna 4  
                     fechaFin.ToString("dd/MM/yyyy"),    // Columna 5 
-                    "$"+herramientaPrecio1.ToString("0.00")// Columna 6
+                    herramientaPrecio1.ToString("0.00")// Columna 6
                 }
             };
 
@@ -136,6 +142,61 @@ namespace AppForSEII2526.UIT.CU_Alquiler
                 "Error: La lista de herramientas filtradas no coincide con la esperada.");
         }
 
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC4_PruebaExamen()
+        {
+            // Arrange
+            var fechaInicio = DateTime.Today.AddDays(1);
+            var fechaFin = DateTime.Today.AddDays(30);
+            var fechaActual = DateTime.Today;
+            string usuario = "Yoel";
+            string apellidos = "CS";
+            string direccion = "Calle Verdadera";
+            string telefono = "123456789";
+            string correo = "hola@gmail.com";
+            string pago = "Efectivo"; // ID 0
+            int cantidad = 1;
+            // Act
+            InitialStepsForCrearAlquiler_UIT();
+
+            // 1. Seleccionamos la primera herramienta filtrando por nombre
+            _selectPO.BuscarHerramientas(herramientaNombre1, null);
+            _selectPO.AñadirHerramientasAlCarroDeAlquiler(herramientaNombre1);
+            // ahora filtramos por material
+            _selectPO.BuscarHerramientas(null, herramientaMaterial2);
+            _selectPO.AñadirHerramientasAlCarroDeAlquiler(herramientaNombre2);
+            // vamos a la pantalla del post, volvemos a la del select y borramos la primera herramienta
+            _selectPO.Continuar();
+            _crearPO.PulsarModificarCarrito();
+            _selectPO.borrarHerramienta(herramientaNombre1);
+            _selectPO.Continuar();
+            // 2. Rellenar formulario
+            _crearPO.RellenarDatosGenerales(fechaInicio, fechaFin, usuario, apellidos, direccion, telefono, correo, pago);
+            _crearPO.EstablecerCantidad(herramientaId2, cantidad);
+            _crearPO.PulsarCrearAlquiler();
+            _crearPO.ConfirmarModal();
+
+            // Assert
+            var expectedRow = new List<string[]>
+            {
+                //Nota: Solo compruebo la parte inicial debido a la complejidad de comprobar adicionalmente los items del alquiler.
+                new string[] {
+                    usuario,                            // Columna 0
+                    apellidos,                           //Columna 1
+                    direccion,                          // Columna 2
+                    fechaActual.ToString("dd/MM/yyyy"), // Columna 3 
+                    fechaInicio.ToString("dd/MM/yyyy"), // Columna 4  
+                    fechaFin.ToString("dd/MM/yyyy"),    // Columna 5 
+                    herramientaPrecio2.ToString("0.00")// Columna 6
+                }
+            };
+
+            Assert.True(_detallePO.CheckDetallesAlquiler(expectedRow),
+                "Error: Los detalles del alquiler no coinciden.");
+
+        }
 
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
