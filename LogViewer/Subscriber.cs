@@ -7,6 +7,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 // para ejecutarlo en la carpeta LogViewer hay que hacer:
+// iniciar docker (si abro docker desktop vale)
 // docker build -t nombresubscriber .
 // docker run -it nombresubscriber
 
