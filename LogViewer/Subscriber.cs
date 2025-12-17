@@ -20,6 +20,8 @@ namespace LogViewer
         public void StartReceiving(string subscriptionTopic)
         {
             //Crear la conexión
+            // reemplazar localhost por la IP del ordenador ejecutando la API, ejemplo: 10.194.97.164
+            // para probar la conectividad se pondría en el buscador HostName:Puerto, ejemplo: http://10.194.97.164:15672/ (15672 es el puerto por defecto)
             var factory = new ConnectionFactory() { HostName = "10.69.79.250" }; // CAMBIAR LA IP ANTES DE BUILDEAR
             
             var connection = factory.CreateConnection();
