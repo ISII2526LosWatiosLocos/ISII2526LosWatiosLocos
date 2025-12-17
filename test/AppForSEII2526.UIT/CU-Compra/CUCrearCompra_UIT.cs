@@ -446,5 +446,66 @@ namespace AppForSEII2526.UIT.CU_Compra
             Assert.True(_detallePO.CheckItemsDetails(expectedItems),
                 "Fallo: La lista de ítems comprados o sus detalles no coinciden con lo esperado.");
         }
+
+        // -------------------------------------------------------------------
+        // [Fact]: EXAMEN (Creación Exitosa)
+        // -------------------------------------------------------------------
+        [Fact]
+        [Trait("Category", "UIT")]
+        public void UC1_EXAMEN_Exito()
+        {
+            // 1. ARRANGE
+            string nombre = "Yoel";
+            string apellidos = "CS";
+            string direccionEnvio = "casa de yoel";
+            string pagoValue = "0";
+
+            int herramientaId = 1;
+            string nombreHerramienta = "Martillo";
+            string material = "Madera";
+            string precio = "10";
+            string cantidad = "1";
+            string descripcion = "Descripción cualquiera";
+
+            // Datos esperados:
+            var expectedDetails = new List<string[]>
+            {
+                new string[] { nombre, apellidos, direccionEnvio }
+            };
+            var expectedItems = new List<string[]>
+            {
+                new string[] { nombreHerramienta, material, precio, cantidad, descripcion }
+            };
+
+            // 2. ACT
+            // Navegar
+            _driver.Navigate().GoToUrl(_URI + "Compra/SelectHerramientasParaCompra");
+
+            // Buscar y Seleccionar
+            _selectPO.BuscarHerramientas("Hierro", ""); // 1. Filtra por material
+            _selectPO.AñadirHerramientasAlCarroDeCompra("Llave"); // 2. Añade al carrito una herramienta de las que devuelva
+            _selectPO.BuscarHerramientas("", "10"); // 3. Filtra por precio
+            _selectPO.AñadirHerramientasAlCarroDeCompra("Martillo"); // 4. Añade al carrito una herramienta de las que devuelva (distinta a la anterior)
+            _selectPO.Continuar(); // Voy al post
+            _crearPO.PulsarModificarCarrito(); // Me vuelvo al select
+            _selectPO.borrarHerramienta("Llave"); // 5. Modifica el carrito y elimina la primera herramienta añadida
+            _selectPO.Continuar(); // 6. continuar con el proceso
+
+            // Rellenar Formulario
+            _crearPO.RellenarDatosGenerales(nombre, apellidos, direccionEnvio, pagoValue);
+            _crearPO.RellenarDescripcion(herramientaId, "Descripción cualquiera"); // cualquier descripción no nula es válida
+
+            // Confirmar
+            _crearPO.PulsarCrearCompra();
+            _crearPO.ConfirmarModal();
+
+            // 3. ASSERT
+            // 3.1 Verificar detalles del comprador
+            Assert.True(_detallePO.CheckDetallesCompra(expectedDetails),
+                "Fallo: Los detalles del comprador en la tabla de detalles no coinciden.");
+            // 3.2 Verificar ítems comprados
+            Assert.True(_detallePO.CheckItemsDetails(expectedItems),
+                "Fallo: La lista de ítems comprados o sus detalles no coinciden con lo esperado.");
+        }
     }
 }
