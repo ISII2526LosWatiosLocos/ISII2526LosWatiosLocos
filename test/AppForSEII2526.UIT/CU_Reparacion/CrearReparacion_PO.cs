@@ -17,6 +17,7 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         private readonly By _selectMetodoPago = By.Id("MetodoPago"); 
         private readonly By _pulsarCrearReparacion = By.Id("Submit"); // Corregido: id="Submit"
         private readonly By _validationSummary = By.CssSelector(".validation-summary-errors");
+        private By _modificarButton = By.Id("ModificarHerramientas");
 
         public CrearReparacion_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
@@ -67,6 +68,12 @@ namespace AppForSEII2526.UIT.CU_Reparacion
         public void PulsarCrearReparacion()
         {
             ClickWithRetry(_pulsarCrearReparacion);
+        }
+
+        public void PulsarModificarCarrito()
+        {
+            WaitForBeingClickable(_modificarButton);
+            _driver.FindElement(_modificarButton).Click();
         }
 
         public void ConfirmarModal()

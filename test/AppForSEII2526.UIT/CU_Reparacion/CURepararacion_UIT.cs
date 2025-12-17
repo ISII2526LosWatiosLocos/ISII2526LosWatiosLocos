@@ -266,5 +266,143 @@ namespace AppForSEII2526.UIT.CU_Reparacion
             // El botón debe estar inactivo/deshabilitado
             Assert.True(_crearPO.IsCrearReparacionButtonDisabled(), "El botón 'Guardar' no se inhabilitó al establecer cantidad 0.");
         }
+
+
+
+
+        //UC2_Modificación 
+
+
+        [Fact]
+        [Trait("Category", "UIT")]
+
+
+
+        public void UC2_Mod_CrearReparacion()
+        {
+
+            string FechaEntrega = "25/12/2025";
+            string Precio = "10";
+
+
+
+            // Datos esperados:
+            var expectedDetails = new List<string[]>
+            {
+                new string[] { clienteNombre, Precio,FechaEntrega }
+            };
+            var expectedItems = new List<string[]>
+            {
+                new string[] { HerramientaNombre1, descripcionProblema }
+            };
+
+            InitialStepsForRepararHerramientas();
+            Thread.Sleep(1000);
+
+            _selectPO.BuscarHerramientas("Martillo", "");
+            Thread.Sleep(1000);
+
+            _selectPO.AñadirHerramientaAReparacionCart(HerramientaNombre1);
+            Thread.Sleep(1000);
+
+            _selectPO.BuscarHerramientas("", "44");
+            Thread.Sleep(1000);
+
+            _selectPO.AñadirHerramientaAReparacionCart(HerramientaNombre2);
+            Thread.Sleep(1000);
+
+            _selectPO.ProcesarReparacion();
+            Thread.Sleep(1000);
+
+
+
+            _crearPO.RellenarDatosGenerales(clienteNombre, clienteApellidos, telefonoOpcional, fechaEntregaValida, metodoPagoValue);
+            Thread.Sleep(1000);
+
+            _crearPO.RellenarDatosItemReparacion(HerramientaId1, cantidadItem, descripcionProblema);
+            Thread.Sleep(1000);
+
+            _crearPO.RellenarDatosItemReparacion(HerramientaId1, cantidadItem, descripcionProblema);
+            Thread.Sleep(1000);
+
+            _crearPO.PulsarModificarCarrito();
+            Thread.Sleep(1000);
+            _selectPO.RemoveHerramientaFromReparacionCart(HerramientaNombre1);
+
+
+
+            _selectPO.ProcesarReparacion();
+            Thread.Sleep(1000);
+
+
+
+            _crearPO.RellenarDatosGenerales(clienteNombre, clienteApellidos, telefonoOpcional, fechaEntregaValida, metodoPagoValue);
+            Thread.Sleep(1000);
+
+            _crearPO.RellenarDatosItemReparacion(HerramientaId2, cantidadItem, descripcionProblema);
+            Thread.Sleep(1000);
+
+
+            _crearPO.ConfirmarModal();
+
+            Thread.Sleep(1000);
+            _crearPO.PulsarCrearReparacion();
+
+
+
+
+
+
+
+            // 3. ASSERT
+            // 3.1 Verificar detalles del comprador
+            Assert.True(_detallePO.CheckReparacionItemTable(expectedDetails),
+                "Fallo: Los detalles del comprador en la tabla de detalles no coinciden.");
+            // 3.2 Verificar ítems comprados
+            // Assert.True(_detallePO.CheckReparacionSummary(expectedDetails),
+            //"Fallo: La lista de ítems reparados o sus detalles no coinciden con lo esperado.");
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
