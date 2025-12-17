@@ -3,6 +3,8 @@ using Microsoft.Extensions.Options;
 
 namespace AppForSEII2526.API.Logging;
 
+// Gestiona los loggers (los crea y los destruye)
+
 [ProviderAlias("RabbitMQ")]
 public class RabbitMQLoggerProvider : ILoggerProvider
 {

@@ -8,7 +8,7 @@ namespace AppForSEII2526.API.Logging;
 public class RabbitMQLogger : ILogger, IDisposable
 {
     private readonly string _name;
-    private readonly RabbitMQLoggerConfiguration _config;
+    private readonly RabbitMQLoggerConfiguration _config; // saca de aqui los atributos
     private readonly IConnection _connection;
     private readonly IModel _channel;
     private readonly IBasicProperties _properties;
@@ -34,13 +34,14 @@ public class RabbitMQLogger : ILogger, IDisposable
         _channel.ExchangeDeclare(
         exchange: _config.Exchange,
         type: _config.ExchangeType,
-        durable: _config.Durable);
+        durable: _config.Durable); // persistencia
 
         _properties = _channel.CreateBasicProperties();
         _properties.Persistent = true;
         _properties.ContentType = "application/json";
     }
 
+    // se asegura de que esté todo configurado para poder construir
     private static void ValidateConfiguration(RabbitMQLoggerConfiguration config)
     {
         if (string.IsNullOrEmpty(config.HostName))
@@ -106,6 +107,7 @@ public class RabbitMQLogger : ILogger, IDisposable
         }
     }
 
+    // Libera los recursos
     public void Dispose()
     {
         try

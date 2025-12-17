@@ -7,8 +7,8 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 // para ejecutarlo en la carpeta LogViewer hay que hacer:
-// dotnet run -- "#"
-// -- "#" es para suscribirte a todas las colas
+// docker build -t nombresubscriber .
+// docker run -it nombresubscriber
 
 namespace LogViewer
 {
@@ -19,7 +19,7 @@ namespace LogViewer
         public void StartReceiving(string subscriptionTopic)
         {
             //Crear la conexión
-            var factory = new ConnectionFactory() { HostName = "10.69.79.250" };
+            var factory = new ConnectionFactory() { HostName = "10.69.79.250" }; // CAMBIAR LA IP ANTES DE BUILDEAR
             
             var connection = factory.CreateConnection();
             var channel = connection.CreateModel();
