@@ -126,7 +126,8 @@ namespace AppForSEII2526.UIT.CU_Oferta
                 null,
                 new List<string[]>
                 {
-                    new string[] { "Martillo", "Madera", "EMPRESA1", "10", "Add" }
+                    new string[] { "Martillo", "Madera", "EMPRESA1", "10", "Add" },
+                    new string[] { "Destornillador", "Metal", "EMPRESA1", "30", "Add" }
                 }
             };
         }
@@ -310,6 +311,58 @@ namespace AppForSEII2526.UIT.CU_Oferta
             //Assert
             //Comprobar si el botón de submit sigue desactivo
             Assert.True(_crearPO.IsCrearButtonEnabled(), "Error: El botón no se ha deshabilitado");
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_F0_F0_F2()
+        {
+            //Arrange
+            var herramientaNombreDest = "Destornillador";
+            var fechaInicio = DateTime.Today.AddDays(1);
+            var fechaFinal = DateTime.Today.AddDays(20);
+            var metodoPagoId = "0"; //Efectivo
+            var nombrePagoEsperado = "Efectivo";
+            var usuario = "Yoel";
+            var dirigidaA = "Cliente";
+            var expectedItems = new List<string[]>
+            {
+                new string[] { herramientaNombre1, "Madera", "EMPRESA1"}
+            };
+            //Act
+            InitialStepsForCrearOferta_UIT();
+            _selectPO.SearchHerramientas(herramientaFabricante1, null);
+            _selectPO.AddHerramientaToOfertaCart(herramientaNombreDest);
+            _selectPO.SearchHerramientas(null, 15.0f);
+            _selectPO.AddHerramientaToOfertaCart(herramientaNombre1);
+            _selectPO.PressContinuar();
+
+            _crearPO.PulsarModificarCarrito();
+
+            _selectPO.borrarHerramienta(herramientaNombreDest);
+            _selectPO.PressContinuar();
+
+            _crearPO.RellenarDatosGenerales(fechaInicio, fechaFinal, metodoPagoId, usuario, dirigidaA);
+            _crearPO.EstablecerPorcentaje(1, 10);
+            _crearPO.PulsarCrearOferta();
+            _crearPO.ConfirmarModal();
+
+            // Assert
+            var expectedRow = new List<string[]>
+            {
+                new string[] {
+                    fechaInicio.ToString("dd/MM/yyyy"), // Columna 1: Inicio
+                    fechaFinal.ToString("dd/MM/yyyy"),    // Columna 2: Fin
+                    DateTime.Today.ToString("dd/MM/yyyy"), // Columna 3: Fecha Oferta
+                    nombrePagoEsperado                  // Columna 4: Pago (Efectivo/Paypal/Tarjeta)
+                }
+            };
+
+            // Verificamos que la fila de cabecera coincida con los datos introducidos
+            Assert.True(_detallePO.CheckDetallesOferta(expectedRow),
+                $"Error: Los detalles de la oferta para el caso no coinciden.");
+            Assert.True(_detallePO.CheckItemsDetails(expectedItems),
+                "Fallo: La lista de ítems ofertados o sus detalles no coinciden con lo esperado.");
         }
 
 

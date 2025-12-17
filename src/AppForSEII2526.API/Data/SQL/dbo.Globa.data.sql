@@ -19,6 +19,7 @@ SET IDENTITY_INSERT [dbo].[Fabricantes] OFF
 SET IDENTITY_INSERT [dbo].[Herramientas] ON
 INSERT INTO [dbo].[Herramientas] ([Id], [Nombre], [Material], [Precio], [Stock], [TiempoReparacion], [FabricanteId]) VALUES (1, N'Martillo', N'Madera', 10, 99, 10, 1)
 INSERT INTO [dbo].[Herramientas] ([Id], [Nombre], [Material], [Precio], [Stock], [TiempoReparacion], [FabricanteId]) VALUES (2, N'Llave', N'Hierro', 15, 99, 15, 2)
+INSERT INTO [dbo].[Herramientas] ([Id], [Nombre], [Material], [Precio], [Stock], [TiempoReparacion], [FabricanteId]) VALUES (3, N'Destornillador', N'Metal', 30, 99, 20, 1)
 SET IDENTITY_INSERT [dbo].[Herramientas] OFF
 
 SET IDENTITY_INSERT [dbo].[MetodosPagos] ON
